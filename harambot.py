@@ -1,6 +1,17 @@
+import os
+import json
+import yahoo
+
 from discord.ext import commands
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print('dir_path: '+dir_path)
+with open(dir_path+'/harambot.config', 'r') as f:
+    config = json.load(f)
+
+
 bot = commands.Bot(command_prefix="$")
-TOKEN = "NjAzMDA5MzU4MDAzMTc1NDI0.XTZLEQ.e4Ja7S9d5f6aQGSDkU9yvVLh6rE"
+TOKEN = config["AUTH"]["TOKEN"]
 
 @bot.event
 async def on_ready():
@@ -22,12 +33,22 @@ async def ping(ctx):
 @bot.command()
 async def echo(ctx, *, content:str):
     await ctx.send(content)
-    
-    
+
+
 @bot.command(name="sayHello")
 async def say_hello(ctx):
     print("sayHello called")
     await ctx.send("Hello")
 
+
+@bot.command(name="saydicksoutRIP")
+async def say_hello(ctx):
+    print("saydicksoutRIP called")
+    await ctx.send("Dicks out for Harambe")
+
+@bot.command(name="standings")
+async def standings(ctx):
+    print("standings called")
+    await ctx.send(yahoo.get_standings())    
 
 bot.run(TOKEN, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token
