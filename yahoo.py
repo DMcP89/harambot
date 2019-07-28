@@ -33,5 +33,6 @@ def get_roster(team_name):
         roster_text = roster_text + player['selected_position']+ ': '+player['name']
     return roster_text
 
+
 #print(get_roster("Dave's Team"))
 #print(get_standings())
