@@ -1,6 +1,13 @@
+import logging
+import json
+
 from yahoo_oauth import OAuth2
 from yahoo_fantasy_api import league, game, team
 from datetime import datetime
+
+
+
+logging.basicConfig(level=logging.INFO)
 
 oauth = OAuth2(None, None, from_file='oauth2.json')
 
@@ -30,9 +37,21 @@ def get_roster(team_name):
     team = get_team(team_name)
     roster_text= ''
     for player in team.roster(league.current_week()):
-        roster_text = roster_text + player['selected_position']+ ': '+player['name']
+        roster_text = roster_text + player['selected_position']+ ': '+player['name'] + '\n'
     return roster_text
 
+def get_player_details(player_name):
+    player = league.player_details(player_name)
+    player_details = {}
+    player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
+    player_details_text = player_details_text + "Position: "+player['primary_position']+'\n'
+    player_details_text = player_details_text + "Team: "+player['editorial_team_abbr']+'\n'
+    player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
+    player_details['text'] = player_details_text;
+    player_details['url'] = player['image_url']
+    return player_details
 
+
+#print(get_player_details("Drew Brees"))
 #print(get_roster("Dave's Team"))
 #print(get_standings())

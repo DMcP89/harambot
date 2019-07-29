@@ -1,8 +1,11 @@
 import os
 import json
 import yahoo
+import logging
 
 from discord.ext import commands
+
+logging.basicConfig(level=logging.INFO)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 print('dir_path: '+dir_path)
@@ -16,6 +19,7 @@ TOKEN = config["AUTH"]["TOKEN"]
 @bot.event
 async def on_ready():
     print("Everything's all ready to go~")
+    print("League Id: "+ str(yahoo.league_id))
 
 
 @bot.command()
@@ -49,6 +53,12 @@ async def say_hello(ctx):
 @bot.command(name="standings")
 async def standings(ctx):
     print("standings called")
-    await ctx.send(yahoo.get_standings())    
+    await ctx.send(yahoo.get_standings())
+
+@bot.command(name="player_details")
+async def standings(ctx,  *, content:str):
+    print("player_details called")
+    details = yahoo.get_player_details(content)
+    await ctx.send(content=details['text'] + '\n' + details['url'])  
 
 bot.run(TOKEN, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token
