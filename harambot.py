@@ -52,11 +52,13 @@ async def say_hello(ctx):
 
 @bot.command(name="standings")
 async def standings(ctx):
+    yahoo.refresh_access_token()
     print("standings called")
     await ctx.send(yahoo.get_standings())
 
 @bot.command(name="player_details")
 async def standings(ctx,  *, content:str):
+    yahoo.refresh_access_token()
     print("player_details called")
     details = yahoo.get_player_details(content)
     await ctx.send(content=details['text'] + '\n' + details['url'])  
