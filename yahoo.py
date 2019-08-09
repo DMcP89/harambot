@@ -7,7 +7,10 @@ from datetime import datetime
 
 
 
-logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logging.disable(logging.DEBUG)
 
 oauth = OAuth2(None, None, from_file='oauth2.json')
 
@@ -16,17 +19,20 @@ league_id = gm.league_ids(year=datetime.today().year)[0]
 league = gm.to_league(league_id)
 
 def refresh_access_token():
+    print("Refreshing token")
     if not oauth.token_is_valid():
         oauth.refresh_access_token()
 
 
 def get_standings():
+    refresh_access_token()
     standings_text = ''
     for idx, team in enumerate(league.standings()):
         standings_text = standings_text + str(idx+1) + '. '+team+'\n'
     return standings_text
 
 def get_team(team_name):
+    refresh_access_token()
     target_team = None
     for team in league.teams():
         if team['name'] == team_name:
@@ -41,6 +47,7 @@ def get_roster(team_name):
     return roster_text
 
 def get_player_details(player_name):
+    refresh_access_token()
     player = league.player_details(player_name)
     player_details = {}
     player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
