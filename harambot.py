@@ -17,6 +17,8 @@ with open(dir_path+'/harambot.config', 'r') as f:
     config = json.load(f)
 
 
+http = urllib3.PoolManager()
+
 bot = commands.Bot(command_prefix="$", description="")
 TOKEN = config["AUTH"]["TOKEN"]
 
@@ -48,12 +50,15 @@ async def standings(ctx):
     await ctx.send(yahoo.get_standings())
 
 @bot.command(name="player_details")
-async def standings(ctx,  *, content:str):
+async def player_details(ctx,  *, content:str):
     yahoo.refresh_access_token()
     print("player_details called")
     details = yahoo.get_player_details(content)
-    image = urllib2.urlopen(details['url'])
-    await ctx.send(content=details['text'])
+    response = http.request('GET', details['url'])
+    image_file = open('player_image.png', 'wb')
+    image_file.write(response.data)
+    image_file.close
+    await ctx.send(content=details['text'], file=discord.File('player_image.png', filename='player_image.png'))
 
 yahoo.refresh_access_token()
 bot.run(TOKEN, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token

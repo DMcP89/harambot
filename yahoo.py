@@ -1,5 +1,6 @@
 import logging
 import json
+import os
 
 from yahoo_oauth import OAuth2
 from yahoo_fantasy_api import league, game, team
@@ -12,7 +13,9 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logging.disable(logging.DEBUG)
 
-oauth = OAuth2(None, None, from_file='oauth2.json')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+oauth = OAuth2(None, None, from_file=dir_path+'/oauth2.json')
 
 gm = game.Game(oauth, 'nfl')
 league_id = gm.league_ids(year=datetime.today().year)[0]
@@ -47,14 +50,14 @@ def get_roster(team_name):
     return roster_text
 
 def get_player_details(player_name):
-    refresh_access_token()
     player = league.player_details(player_name)
     player_details = {}
     player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
     player_details_text = player_details_text + "Position: "+player['primary_position']+'\n'
     player_details_text = player_details_text + "Team: "+player['editorial_team_abbr']+'\n'
     player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
-    player_details['text'] = player_details_text;
+    player_details_text = player_details_text + "Total Points: "+player['player_points']['total']+'\n'
+    player_details['text'] = player_details_text
     player_details['url'] = player['image_url']
     return player_details
 
