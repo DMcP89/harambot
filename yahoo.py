@@ -25,6 +25,7 @@ def refresh_access_token():
     print("Refreshing token")
     if not oauth.token_is_valid():
         oauth.refresh_access_token()
+        gm = game.Game(oauth, 'nfl')
 
 
 def get_standings():
