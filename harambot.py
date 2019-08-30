@@ -49,6 +49,12 @@ async def standings(ctx):
     print("standings called")
     await ctx.send(yahoo.get_standings())
 
+@bot.command(name="roster")
+async def roster(ctx, *, content:str):
+    yahoo.refresh_access_token()
+    print("roster called")
+    await ctx.send(yahoo.get_roster(content))
+
 @bot.command(name="player_details")
 async def player_details(ctx,  *, content:str):
     yahoo.refresh_access_token()
