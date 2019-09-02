@@ -8,11 +8,10 @@ import discord
 from discord.ext import commands
 
 #logging.basicConfig(level=logging.INFO)
-logger = logger = logging.getLogger()
+logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print('dir_path: '+dir_path)
 with open(dir_path+'/harambot.config', 'r') as f:
     config = json.load(f)
 
@@ -20,45 +19,38 @@ with open(dir_path+'/harambot.config', 'r') as f:
 http = urllib3.PoolManager()
 
 bot = commands.Bot(command_prefix="$", description="")
+bot.remove_command('help')
 TOKEN = config["AUTH"]["TOKEN"]
 
 @bot.event
 async def on_ready():
-    print("Everything's all ready to go~")
+    logger.info("Everything's all ready to go~")
 
 
 @bot.command()
 async def ping(ctx):
-    '''
-    This text will be shown in the help command
-    '''
-    print("Ping called")
-    # Get the latency of the bot
+    logger.info("Ping called")
     latency = bot.latency  # Included in the Discord.py library
-    # Send it to the user
     await ctx.send(latency)
 
-@bot.command(name="saydicksoutRIP")
-async def say_hello(ctx):
-    print("saydicksoutRIP called")
+@bot.command(name="RIP")
+async def RIP(ctx):
+    logger.info("RIP called")
     await ctx.send("Dicks out for Harambe")
 
 @bot.command(name="standings")
 async def standings(ctx):
-    yahoo.refresh_access_token()
-    print("standings called")
+    logger.info("standings called")
     await ctx.send(yahoo.get_standings())
 
 @bot.command(name="roster")
 async def roster(ctx, *, content:str):
-    yahoo.refresh_access_token()
-    print("roster called")
+    logger.info("roster called")
     await ctx.send(yahoo.get_roster(content))
 
 @bot.command(name="player_details")
 async def player_details(ctx,  *, content:str):
-    yahoo.refresh_access_token()
-    print("player_details called")
+    logger.info("player_details called")
     details = yahoo.get_player_details(content)
     response = http.request('GET', details['url'])
     image_file = open('player_image.png', 'wb')
@@ -66,5 +58,14 @@ async def player_details(ctx,  *, content:str):
     image_file.close
     await ctx.send(content=details['text'], file=discord.File('player_image.png', filename='player_image.png'))
 
-yahoo.refresh_access_token()
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title="Harambot", description="Bot for HML", color=0xeee657)
+    embed.add_field(name="$ping", value="Gives the latency of harambot", inline=False)
+    embed.add_field(name="$RIP", value="Pay respects to Harambe", inline=False)
+    embed.add_field(name="$standings", value="Returns the current standings of HML", inline=False)
+    embed.add_field(name="$roster team_name", value="Returns the roster of the given team", inline=False)
+    embed.add_field(name="$player_details player_name", value="Returns the details of the given player", inline=False)
+    await ctx.send(embed=embed)
+
 bot.run(TOKEN, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token

@@ -18,14 +18,15 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 oauth = OAuth2(None, None, from_file=dir_path+'/oauth2.json')
 
 gm = game.Game(oauth, 'nfl')
-league_id = gm.league_ids(year=datetime.today().year)[0]
-league = gm.to_league(league_id)
+league = gm.to_league(gm.league_ids(year=datetime.today().year)[0])
 
 def refresh_access_token():
-    print("Refreshing token")
+    logger.info("Refreshing token")
     if not oauth.token_is_valid():
         oauth.refresh_access_token()
+        global gm, league
         gm = game.Game(oauth, 'nfl')
+        league = gm.to_league(gm.league_ids(year=datetime.today().year)[0])
 
 
 def get_standings():
@@ -44,6 +45,7 @@ def get_team(team_name):
     return target_team
 
 def get_roster(team_name):
+    refresh_access_token()
     team = get_team(team_name)
     roster_text= ''
     for player in team.roster(league.current_week()):
@@ -51,6 +53,7 @@ def get_roster(team_name):
     return roster_text
 
 def get_player_details(player_name):
+    refresh_access_token()
     player = league.player_details(player_name)
     player_details = {}
     player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
@@ -61,8 +64,3 @@ def get_player_details(player_name):
     player_details['text'] = player_details_text
     player_details['url'] = player['image_url']
     return player_details
-
-
-#print(get_player_details("Drew Brees"))
-#print(get_roster("Matural Ice"))
-#print(get_standings())
