@@ -7,8 +7,9 @@ import urllib3
 import discord
 from discord.ext import commands
 
+
 #logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger()
+logger = logging.getLogger('harambot.py')
 logger.setLevel(logging.INFO)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -21,6 +22,10 @@ http = urllib3.PoolManager()
 bot = commands.Bot(command_prefix="$", description="")
 bot.remove_command('help')
 TOKEN = config["AUTH"]["TOKEN"]
+KEY = config["AUTH"]["CONSUMER_KEY"]
+SECRET = config["AUTH"]["CONSUMER_SECRET"]
+
+yahoo_api = yahoo.Yahoo(key=KEY, secret=SECRET)
 
 @bot.event
 async def on_ready():
@@ -41,17 +46,17 @@ async def RIP(ctx):
 @bot.command(name="standings")
 async def standings(ctx):
     logger.info("standings called")
-    await ctx.send(yahoo.get_standings())
+    await ctx.send(yahoo_api.get_standings())
 
 @bot.command(name="roster")
 async def roster(ctx, *, content:str):
     logger.info("roster called")
-    await ctx.send(yahoo.get_roster(content))
+    await ctx.send(yahoo_api.get_roster(content))
 
 @bot.command(name="player_details")
 async def player_details(ctx,  *, content:str):
     logger.info("player_details called")
-    details = yahoo.get_player_details(content)
+    details = yahoo_api.get_player_details(content)
     response = http.request('GET', details['url'])
     image_file = open('player_image.png', 'wb')
     image_file.write(response.data)
