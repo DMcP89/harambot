@@ -36,7 +36,6 @@ async def on_ready():
 async def ping(ctx):
     logger.info("Ping called")
     latency = bot.latency  # Included in the Discord.py library
-    yahoo_api.league().matchups()
     await ctx.send(latency)
 
 @bot.command(name="RIP")
