@@ -36,12 +36,16 @@ async def on_ready():
 async def ping(ctx):
     logger.info("Ping called")
     latency = bot.latency  # Included in the Discord.py library
+    yahoo_api.league().matchups()
     await ctx.send(latency)
 
 @bot.command(name="RIP")
-async def RIP(ctx):
+async def RIP(ctx, *args):
     logger.info("RIP called")
-    await ctx.send("Dicks out for Harambe")
+    if args:
+        await ctx.send(content="Dicks out for {}".format(args[0]), file=discord.File('harambe-rip.jpg', filename='harambe-rip.jpg'))
+    else:
+        await ctx.send(content="Dicks out for Harambe", file=discord.File('harambe-rip.jpg', filename='harambe-rip.jpg'))
 
 @bot.command(name="standings")
 async def standings(ctx):
