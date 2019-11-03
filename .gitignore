@@ -2,6 +2,7 @@
 __pycache__
 harambot.config
 oauth2.json
+oauth.json
 discord.log
 player_image.jpg
 
