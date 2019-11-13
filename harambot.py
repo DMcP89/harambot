@@ -49,7 +49,7 @@ async def RIP(ctx, *args):
 @bot.command(name="standings")
 async def standings(ctx):
     logger.info("standings called")
-    await ctx.send(yahoo_api.get_standings())
+    await ctx.send(embed=yahoo_api.get_standings())
 
 @bot.command(name="roster")
 async def roster(ctx, *, content:str):

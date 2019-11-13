@@ -1,6 +1,7 @@
 import logging
 import json
 import os
+import discord
 
 from yahoo_oauth import OAuth2
 from yahoo_fantasy_api import league, game, team, yhandler
@@ -35,10 +36,11 @@ class Yahoo:
         return league
         
     def get_standings(self):
-        standings_text = ''
+        embed = discord.Embed(title="Standings", description='Team Name\n W-L-T', color=0xeee657)
         for idx, team in enumerate(self.league().standings()):
-            standings_text = standings_text + str(idx+1) + '. '+team+'\n'
-        return standings_text
+            record = '{}-{}-{}'.format(team['wins'], team['losses'], team['ties'])
+            embed.add_field(name=str(idx+1) + '. '+team['name'],value=record, inline=False)
+        return embed
 
     def get_team(self, team_name):
         target_team = None
