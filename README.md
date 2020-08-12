@@ -1,2 +1,2 @@
 # harambot
-Bot for HML discord server
+Bot for HML discord server.
