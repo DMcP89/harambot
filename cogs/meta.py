@@ -19,6 +19,7 @@ class Meta(commands.Cog):
         embed.add_field(name="$standings", value="Returns the current standings of HML", inline=False)
         embed.add_field(name="$roster team_name", value="Returns the roster of the given team", inline=False)
         embed.add_field(name="$player_details player_name", value="Returns the details of the given player", inline=False)
+        embed.add_field(name="$trade", value="Propose a trade for league approval", inline=False)
         await ctx.send(embed=embed)
 
     @commands.command(name="ping")
