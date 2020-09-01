@@ -40,11 +40,11 @@ class Yahoo(commands.Cog):
         managers = await self.bot.wait_for('message', timeout=30, check=check)
         managers = managers.content.split(",")
 
-        await author.send("What players are {} trading? Reply with the player names in this format: Player 1, Plaer 2".format(managers[0]))
+        await author.send("What players are {} trading? Reply with the player names in this format: Player 1, Player 2".format(managers[0]))
         player_set0 = await self.bot.wait_for('message', timeout=30, check=check)
         player_set0 = player_set0.content.split(",")
 
-        await author.send("What players are {} trading? Reply with the player names in this format: Player 1, Plaer 2".format(managers[1]))
+        await author.send("What players are {} trading? Reply with the player names in this format: Player 1, Player 2".format(managers[1]))
         player_set1 = await self.bot.wait_for('message', timeout=30, check=check)
         player_set1 = player_set1.content.split(",")
 
@@ -53,7 +53,7 @@ class Yahoo(commands.Cog):
         await author.send("is this correct? Reply YES to announce trade")
         confirmation = await self.bot.wait_for('message', timeout=30, check=check)
         confirmation = confirmation.content
-        if confirmation == "YES":
+        if confirmation.upper() == "YES":
             
             player_set0_details = ""
             for player in player_set0:
