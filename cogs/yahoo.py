@@ -87,12 +87,12 @@ class Yahoo(commands.Cog):
                 player_set1_details = player_set1_details + self.yahoo_api.get_player_details(player.strip())["text"]+"\n" 
 
 
-            annoucement = "There's collusion afoot!\n"
+            announcement = "There's collusion afoot!\n"
             embed = discord.Embed(title="The following trade is up for approval:", description=confirm_trade_message, color=0xeee657)
             embed.add_field(name="{} sends:".format(managers[0]), value=player_set0_details, inline=False)
             embed.add_field(name="to {} for:".format(managers[1]), value=player_set1_details, inline=False)
             embed.add_field(name="Voting", value=" Click :white_check_mark: for yes, :no_entry_sign: for no")
-            msg = await ctx.send(content=annoucement, embed=embed)    
+            msg = await ctx.send(content=announcement, embed=embed)    
             yes_emoji = '\U00002705'
             no_emoji = '\U0001F6AB'        
             await msg.add_reaction(yes_emoji)
