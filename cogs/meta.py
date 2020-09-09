@@ -11,7 +11,7 @@ class Meta(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="help")
+    @commands.command("help")
     async def help(self, ctx):
         embed = discord.Embed(title="Harambot", description="Bot for HML", color=0xeee657)
         embed.add_field(name="$ping", value="Gives the latency of harambot", inline=False)
@@ -22,7 +22,7 @@ class Meta(commands.Cog):
         embed.add_field(name="$trade", value="Propose a trade for league approval", inline=False)
         await ctx.send(embed=embed)
 
-    @commands.command(name="ping")
+    @commands.command("ping")
     async def ping(self, ctx):
         logger.info("Ping called")
         latency = self.bot.latency  # Included in the Discord.py library

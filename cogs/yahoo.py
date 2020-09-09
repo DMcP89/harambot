@@ -1,5 +1,6 @@
-from os import name
 from discord.ext import commands
+from yahoo_oauth import OAuth2
+from database import GuildsDatabase
 
 import discord
 import logging
@@ -7,32 +8,53 @@ import urllib3
 import yahoo_api
 
 
+
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
 
+
+# Decorators
+
+def oauth(func):
+    async def setup(cog, ctx):
+        league_details = cog.guild_db.getGuildDetails(ctx.guild.id)
+        cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"])
+        await func(cog, ctx)
+    return setup
+
+
 class Yahoo(commands.Cog):
-    
+
+
     def __init__(self, bot, KEY, SECRET):
         self.bot = bot
-        self.yahoo_api = yahoo_api.Yahoo(key=KEY, secret=SECRET)
         self.http = urllib3.PoolManager()
+        self.KEY = KEY
+        self.SECRET = SECRET
+        self.guild_db = GuildsDatabase()
+        self.yahoo_api = None
     
-    @commands.command(name="standings")
+    
+    @commands.command("standings")
+    @oauth
     async def standings(self,ctx):
         logger.info("standings called")
         await ctx.send(embed=self.yahoo_api.get_standings())
 
-    @commands.command(name="roster")
+    @commands.command("roster")
+    @oauth
     async def roster(self, ctx, *, content:str):
         logger.info("roster called")
         await ctx.send(self.yahoo_api.get_roster(content))
 
-    @commands.command(name="trade")
+    @commands.command("trade")
+    @oauth
     async def trade(self, ctx):
         logger.info("trade called")
         
         def check(m):
             return m.author == author
+
 
         author = ctx.message.author
         await author.send("Lets wheel & deal")
@@ -79,7 +101,8 @@ class Yahoo(commands.Cog):
             await author.send("Seems like I got something wrong, run the $trade command to start over")
 
 
-    @commands.command(name="player_details")
+    @commands.command("player_details")
+    @oauth
     async def player_details(self, ctx,  *, content:str):
         logger.info("player_details called")
         details = self.yahoo_api.get_player_details(content)

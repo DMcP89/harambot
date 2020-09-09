@@ -18,22 +18,20 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class Yahoo:
 
-    def __init__(self, key:str, secret:str):
-        if not os.path.exists(dir_path+'/oauth2.json'):
-            creds = {}
-            creds['consumer_key'] = key
-            creds['consumer_secret'] = secret
-            with open('oauth2.json', "w") as f:
-                f.write(json.dumps(creds))
-        logging.info("Initialized oauth.json")
+    oauth = None
+
+    def __init__(self, oauth, league_id):
+        self.oauth = oauth
+        self.league_id = league_id
 
     def league(self):
-        oauth = OAuth2(None, None, from_file=dir_path+'/oauth2.json')
-        if not oauth.token_is_valid():
-            oauth.refresh_access_token()
-        gm = game.Game(oauth, 'nfl')
-        league = gm.to_league(gm.league_ids(year=datetime.today().year)[0])
-        return league
+        if not self.oauth.token_is_valid():
+            self.oauth.refresh_access_token()
+        gm = game.Game(self.oauth, 'nfl')
+        for id in gm.league_ids(year=datetime.today().year):
+            if self.league_id in id:
+                return gm.to_league(id)
+        return gm.to_league(gm.league_ids(year=datetime.today().year)[0])
         
     def get_standings(self):
         embed = discord.Embed(title="Standings", description='Team Name\n W-L-T', color=0xeee657)
@@ -48,7 +46,6 @@ class Yahoo:
             if team['name'] == team_name:
                 return self.league().to_team(id)
         
-
     def get_roster(self, team_name):
         team = self.get_team(team_name)
         roster_text= ''

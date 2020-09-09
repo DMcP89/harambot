@@ -11,7 +11,7 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="RIP")
+    @commands.command("RIP")
     async def RIP(self, ctx, *args):
         logger.info("RIP called")
         if args:
