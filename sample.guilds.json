@@ -1,0 +1,10 @@
+{
+    "GUILD_ID": {
+        "access_token": "ACCESS_TOKEN",
+        "guid": "GUID",
+        "refresh_token": "REFRESH_TOKEN",
+        "token_time": 0.0,
+        "token_type": "bearer",
+        "league_id": "YAHOO_LEAGUE_ID"
+    }
+}
