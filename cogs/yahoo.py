@@ -16,10 +16,13 @@ logger.setLevel(logging.INFO)
 # Decorators
 
 def oauth(func):
-    async def setup(cog, ctx):
+    async def setup(cog, ctx, *, content=None):
         league_details = cog.guild_db.getGuildDetails(ctx.guild.id)
         cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"])
-        await func(cog, ctx)
+        if content:
+            await func(cog, ctx, content=content)
+        else:
+            await func(cog, ctx)
     return setup
 
 
