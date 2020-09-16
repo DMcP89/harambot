@@ -3,7 +3,6 @@ import json
 import os
 import discord
 
-from yahoo_oauth import OAuth2
 from yahoo_fantasy_api import league, game, team, yhandler
 from datetime import datetime
 
