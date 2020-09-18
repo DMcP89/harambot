@@ -117,3 +117,9 @@ class Yahoo(commands.Cog):
             await ctx.send(content=details['text'], file=discord.File('player_image.png', filename='player_image.png'))
         else:
             await ctx.send("Player not found")
+
+
+    @commands.command("matchups")
+    @oauth
+    async def matchups(self,ctx):
+        await ctx.send(embed=self.yahoo_api.get_matchups())

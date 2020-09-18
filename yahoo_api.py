@@ -1,7 +1,7 @@
 import logging
-import json
 import os
 import discord
+import objectpath
 
 from yahoo_fantasy_api import league, game, team, yhandler
 from datetime import datetime
@@ -75,3 +75,25 @@ class Yahoo:
             return player_details
         except IndexError as e:
             return {}
+
+    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    def get_matchups(self):
+        embed = discord.Embed(title="Matchups for Week {}".format(str(self.league().current_week())), description='', color=0xeee657)
+        matchups_json = objectpath.Tree(self.league().matchups())
+        matchups = matchups_json.execute('$..scoreboard..matchups..matchup..teams')
+        for matchup in matchups:
+            team1 = matchup["0"]["team"]
+            team1_name = team1[0][2]["name"]
+            team1_actual_points = team1[1]['team_points']['total']
+            team1_projected_points = team1[1]['team_projected_points']['total']
+            team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
+            team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
+            team2 = matchup["1"]["team"]
+            team2_name = team2[0][2]["name"]
+            team2_actual_points = team2[1]['team_points']['total']
+            team2_projected_points = team2[1]['team_projected_points']['total']
+            team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
+            team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
+            divider = '--------------------------------------'
+            embed.add_field(name="{} vs {}".format(team1_name, team2_name), value=team1_details + team2_details+divider, inline=False)
+        return embed
