@@ -29,6 +29,10 @@ SECRET = config["AUTH"]["CONSUMER_SECRET"]
 async def on_ready():
     logger.info("Everything's all ready to go~")
 
+@bot.event
+async def on_guild_join(guild):
+    logger.info("Joined {}".format(guild.name))
+
 bot.add_cog(Meta(bot))
 bot.add_cog(Misc(bot))
 bot.add_cog(Yahoo(bot, KEY, SECRET))

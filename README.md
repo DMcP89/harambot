@@ -8,6 +8,7 @@ A Yahoo Fantasy sports bot for Discord.
     $roster "Team name"             - Returns the roster of the given team
     $player_details "Player Name"   - Returns the details of the given player
     $trade                          - Propose a trade for league approval
+    $matchups                       - Returns the current weeks matchups
 
 ## Setup
 
