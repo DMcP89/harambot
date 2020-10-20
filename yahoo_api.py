@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import discord
 import objectpath
 
@@ -30,10 +31,7 @@ class Yahoo:
             self.oauth.refresh_access_token()
         gm = game.Game(self.oauth, 'nfl')
         return gm.to_league('{}.l.{}'.format(gm.game_id(), self.league_id))
-        # for id in gm.league_ids(year=datetime.today().year):
-        #     if self.league_id in id:
-        #         return gm.to_league(id)
-        # return gm.to_league(gm.league_ids(year=datetime.today().year)[0])
+        
         
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_standings(self):
@@ -64,17 +62,43 @@ class Yahoo:
     def get_player_details(self, player_name):
         try:
             player = self.league().player_details(player_name)[0]
-            player_details = {}
+            
+            embed = discord.Embed(title=player['name']['full'], description='#' + player['uniform_number'], color=0xeee657)
+            embed.add_field(name="Postion", value=player['primary_position'])
+            embed.add_field(name="Team", value=player['editorial_team_abbr'])
+            embed.add_field(name="Bye", value=player['bye_weeks']['week'])
+            embed.add_field(name="Total Points", value=player['player_points']['total'])
+            embed.add_field(name="Owner", value=self.get_player_owner(player['player_id']))
+            embed.set_image(url=player['image_url'])
+            
             player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
             player_details_text = player_details_text + "Position: "+player['primary_position']+'\n'
             player_details_text = player_details_text + "Team: "+player['editorial_team_abbr']+'\n'
             player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
             player_details_text = player_details_text + "Total Points: "+player['player_points']['total']+'\n'
+            player_details_text = player_details_text + "Owner: " + self.get_player_owner(player['player_id'])
+            
+            player_details = {}
+            player_details['embed'] = embed
             player_details['text'] = player_details_text
-            player_details['url'] = player['image_url']
             return player_details
         except IndexError as e:
             return {}
+    
+    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    def get_player_owner(self, player_id):
+        player_ownership = self.league().ownership([player_id])[str(player_id)]
+        if 'owner_team_name' in player_ownership:
+            return player_ownership['owner_team_name']
+        else:
+            ownership_map = {
+                "freeagents": "Free Agent",
+                "waivers":    "On Waviers"      
+            }
+            return ownership_map.get(player_ownership['ownership_type'], "")
+
+        
+
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_matchups(self):
