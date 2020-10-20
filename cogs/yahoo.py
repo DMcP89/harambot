@@ -110,11 +110,7 @@ class Yahoo(commands.Cog):
         logger.info("player_details called")
         details = self.yahoo_api.get_player_details(content)
         if details:
-            response = self.http.request('GET', details['url'])
-            image_file = open('player_image.png', 'wb')
-            image_file.write(response.data)
-            image_file.close
-            await ctx.send(content=details['text'], file=discord.File('player_image.png', filename='player_image.png'))
+            await ctx.send(embed=details['embed'])
         else:
             await ctx.send("Player not found")
 
