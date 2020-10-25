@@ -48,7 +48,11 @@ class Yahoo(commands.Cog):
     @oauth
     async def roster(self, ctx, *, content:str):
         logger.info("roster called")
-        await ctx.send(self.yahoo_api.get_roster(content))
+        roster = self.yahoo_api.get_roster(content)
+        if isinstance(roster, discord.Embed):
+            await ctx.send(embed=roster)
+        else:
+            await ctx.send(roster)
 
     @commands.command("trade")
     @oauth

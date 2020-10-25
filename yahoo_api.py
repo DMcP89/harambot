@@ -51,12 +51,12 @@ class Yahoo:
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_roster(self, team_name):
         team = self.get_team(team_name)
-        roster_text= ''
+        embed = discord.Embed(title="{}'s Roster".format(team_name), description='', color=0xeee657)
         for player in team.roster(self.league().current_week()):
-            roster_text = roster_text + player['selected_position']+ ': '+player['name'] + '\n'
-        if not roster_text:
+            embed.add_field(name=player['selected_position'], value=player['name'], inline=False)
+        if not team:
              return "{} roster unavailable".format(team_name)
-        return roster_text
+        return embed
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_player_details(self, player_name):
