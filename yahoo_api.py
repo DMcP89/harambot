@@ -35,28 +35,38 @@ class Yahoo:
         
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_standings(self):
-        embed = discord.Embed(title="Standings", description='Team Name\n W-L-T', color=0xeee657)
-        for idx, team in enumerate(self.league().standings()):
-            outcomes = team['outcome_totals']
-            record = '{}-{}-{}'.format(outcomes['wins'], outcomes['losses'], outcomes['ties'])
-            embed.add_field(name=str(idx+1) + '. '+team['name'],value=record, inline=False)
-        return embed
+        try:
+            embed = discord.Embed(title="Standings", description='Team Name\n W-L-T', color=0xeee657)
+            for idx, team in enumerate(self.league().standings()):
+                outcomes = team['outcome_totals']
+                record = '{}-{}-{}'.format(outcomes['wins'], outcomes['losses'], outcomes['ties'])
+                embed.add_field(name=str(idx+1) + '. '+team['name'],value=record, inline=False)
+            return embed
+        except Exception:
+            logger.exception("Error while fetching standings for league {}".format(self.league_id))
+            return None
+
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_team(self, team_name):
-        for id,team in self.league().teams().items():
-            if team['name'] == team_name:
-                return self.league().to_team(id)
+        try:
+            for id,team in self.league().teams().items():
+                if team['name'] == team_name:
+                    return self.league().to_team(id)
+        except Exception:
+            logger.exception("Error while fetching team: {} from league: {}".format(team_name, self.league_id))
+            return None
         
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_roster(self, team_name):
         team = self.get_team(team_name)
-        embed = discord.Embed(title="{}'s Roster".format(team_name), description='', color=0xeee657)
-        for player in team.roster(self.league().current_week()):
-            embed.add_field(name=player['selected_position'], value=player['name'], inline=False)
-        if not team:
-             return "{} roster unavailable".format(team_name)
-        return embed
+        if team:
+            embed = discord.Embed(title="{}'s Roster".format(team_name), description='', color=0xeee657)
+            for player in team.roster(self.league().current_week()):
+                embed.add_field(name=player['selected_position'], value=player['name'], inline=False)
+            return embed
+        else:
+            return None
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_player_details(self, player_name):
@@ -82,42 +92,50 @@ class Yahoo:
             player_details['embed'] = embed
             player_details['text'] = player_details_text
             return player_details
-        except IndexError as e:
-            return {}
+        except Exception as e:
+            logger.exception("Error while fetching player details for player: {} in league {}".format(player_name, self.league_id))
+            return None
     
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_player_owner(self, player_id):
-        player_ownership = self.league().ownership([player_id])[str(player_id)]
-        if 'owner_team_name' in player_ownership:
-            return player_ownership['owner_team_name']
-        else:
-            ownership_map = {
-                "freeagents": "Free Agent",
-                "waivers":    "On Waviers"      
-            }
-            return ownership_map.get(player_ownership['ownership_type'], "")
+        try:
+            player_ownership = self.league().ownership([player_id])[str(player_id)]
+            if 'owner_team_name' in player_ownership:
+                return player_ownership['owner_team_name']
+            else:
+                ownership_map = {
+                    "freeagents": "Free Agent",
+                    "waivers":    "On Waviers"      
+                }
+                return ownership_map.get(player_ownership['ownership_type'], "")
+        except Exception:
+            logger.exception("Error while fetching ownership for player id: {} in league {}".format(player_id, self.league_id))
+            return None
 
         
 
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_matchups(self):
-        embed = discord.Embed(title="Matchups for Week {}".format(str(self.league().current_week())), description='', color=0xeee657)
-        matchups_json = objectpath.Tree(self.league().matchups())
-        matchups = matchups_json.execute('$..scoreboard..matchups..matchup..teams')
-        for matchup in matchups:
-            team1 = matchup["0"]["team"]
-            team1_name = team1[0][2]["name"]
-            team1_actual_points = team1[1]['team_points']['total']
-            team1_projected_points = team1[1]['team_projected_points']['total']
-            team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
-            team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
-            team2 = matchup["1"]["team"]
-            team2_name = team2[0][2]["name"]
-            team2_actual_points = team2[1]['team_points']['total']
-            team2_projected_points = team2[1]['team_projected_points']['total']
-            team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
-            team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
-            divider = '--------------------------------------'
-            embed.add_field(name="{} vs {}".format(team1_name, team2_name), value=team1_details + team2_details+divider, inline=False)
-        return embed
+        try:
+            embed = discord.Embed(title="Matchups for Week {}".format(str(self.league().current_week())), description='', color=0xeee657)
+            matchups_json = objectpath.Tree(self.league().matchups())
+            matchups = matchups_json.execute('$..scoreboard..matchups..matchup..teams')
+            for matchup in matchups:
+                team1 = matchup["0"]["team"]
+                team1_name = team1[0][2]["name"]
+                team1_actual_points = team1[1]['team_points']['total']
+                team1_projected_points = team1[1]['team_projected_points']['total']
+                team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
+                team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
+                team2 = matchup["1"]["team"]
+                team2_name = team2[0][2]["name"]
+                team2_actual_points = team2[1]['team_points']['total']
+                team2_projected_points = team2[1]['team_projected_points']['total']
+                team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
+                team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
+                divider = '--------------------------------------'
+                embed.add_field(name="{} vs {}".format(team1_name, team2_name), value=team1_details + team2_details+divider, inline=False)
+            return embed
+        except Exception:
+            logger.exception("Error while fetching matchups for league: {}".format(self.league_id))

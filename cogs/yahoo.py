@@ -1,3 +1,4 @@
+from discord import embeds
 from discord.ext import commands
 from yahoo_oauth import OAuth2
 from database import GuildsDatabase
@@ -28,6 +29,7 @@ def oauth(func):
 
 class Yahoo(commands.Cog):
 
+    error_message = "I'm having trouble getting that right now please try again later"
 
     def __init__(self, bot, KEY, SECRET):
         self.bot = bot
@@ -42,17 +44,22 @@ class Yahoo(commands.Cog):
     @oauth
     async def standings(self,ctx):
         logger.info("standings called")
-        await ctx.send(embed=self.yahoo_api.get_standings())
+        embed = self.yahoo_api.get_standings()
+        if embed:
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(self.error_message)
 
     @commands.command("roster")
     @oauth
     async def roster(self, ctx, *, content:str):
         logger.info("roster called")
         roster = self.yahoo_api.get_roster(content)
-        if isinstance(roster, discord.Embed):
+        if roster:
             await ctx.send(embed=roster)
         else:
-            await ctx.send(roster)
+            await ctx.send(self.error_message)
+        
 
     @commands.command("trade")
     @oauth
@@ -86,12 +93,22 @@ class Yahoo(commands.Cog):
             
             player_set0_details = ""
             for player in player_set0:
-                player_set0_details = player_set0_details + self.yahoo_api.get_player_details(player.strip())["text"]+"\n" 
+                api_details = self.yahoo_api.get_player_details(player.strip())["text"]+"\n"
+                if api_details: 
+                    player_set0_details = player_set0_details + api_details
+                else:
+                    await author.send(self.error_message)
+                    return
 
 
             player_set1_details = ""
             for player in player_set1:
-                player_set1_details = player_set1_details + self.yahoo_api.get_player_details(player.strip())["text"]+"\n" 
+                api_details = self.yahoo_api.get_player_details(player.strip())["text"]+"\n"
+                if api_details: 
+                    player_set1_details = player_set1_details + api_details
+                else:
+                    await author.send(self.error_message)
+                    return
 
 
             announcement = "There's collusion afoot!\n"
@@ -122,4 +139,8 @@ class Yahoo(commands.Cog):
     @commands.command("matchups")
     @oauth
     async def matchups(self,ctx):
-        await ctx.send(embed=self.yahoo_api.get_matchups())
+        embed = self.yahoo_api.get_matchups()
+        if embed:
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(self.error_message)
