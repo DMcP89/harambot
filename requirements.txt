@@ -24,3 +24,4 @@ yahoo-fantasy-api @ git+https://github.com/DMcP89/yahoo_fantasy_api.git@f76d00db
 #yahoo-fantasy-api==2.2.0
 yahoo-oauth==1.0
 yarl==1.3.0
+pytest==6.1.2
