@@ -11,16 +11,13 @@ logging.disable(logging.DEBUG)
 class GuildsDatabase():
 
     def __init__(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        with open(dir_path+'/guilds.json', 'r') as f:
-            self.guilds = json.load(f)
-            f.close()
+        self.refreshGuildDatabase()
 
     def getGuildDetails(self,guild_id):
         return self.guilds[str(guild_id)]
 
     def refreshGuildDatabase(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        with open(dir_path+'/guilds.json', 'r') as f:
+        with open(dir_path+'/config/guilds.json', 'r') as f:
             self.guilds = json.load(f)
             f.close()

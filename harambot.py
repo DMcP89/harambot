@@ -7,23 +7,16 @@ from discord.ext import commands
 from cogs.meta import Meta
 from cogs.misc import Misc
 from cogs.yahoo import Yahoo
+from config import settings
 
 
 #logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('harambot.py')
-logger.setLevel(logging.INFO)
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-with open(dir_path+'/harambot.config', 'r') as f:
-    config = json.load(f)
+logger.setLevel(settings.loglevel)
 
 
 bot = commands.Bot(command_prefix="$", description="")
 bot.remove_command('help')
-TOKEN = config["AUTH"]["TOKEN"]
-KEY = config["AUTH"]["CONSUMER_KEY"]
-SECRET = config["AUTH"]["CONSUMER_SECRET"]
-
 
 @bot.event
 async def on_ready():
@@ -35,6 +28,6 @@ async def on_guild_join(guild):
 
 bot.add_cog(Meta(bot))
 bot.add_cog(Misc(bot))
-bot.add_cog(Yahoo(bot, KEY, SECRET))
+bot.add_cog(Yahoo(bot, settings.yahoo_key, settings.yahoo_secret))
 
-bot.run(TOKEN, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token
+bot.run(settings.discord_token, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token

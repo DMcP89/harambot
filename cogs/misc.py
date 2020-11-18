@@ -15,6 +15,6 @@ class Misc(commands.Cog):
     async def RIP(self, ctx, *args):
         logger.info("RIP called")
         if args:
-            await ctx.send(content="Dicks out for {}".format(args[0]), file=discord.File('harambe-rip.jpg', filename='harambe-rip.jpg'))
+            await ctx.send(content="Dicks out for {}".format(args[0]), file=discord.File('static/images/harambe-rip.jpg', filename='harambe-rip.jpg'))
         else:
-            await ctx.send(content="Dicks out for Harambe", file=discord.File('harambe-rip.jpg', filename='harambe-rip.jpg'))
+            await ctx.send(content="Dicks out for Harambe", file=discord.File('static/images/harambe-rip.jpg', filename='harambe-rip.jpg'))
