@@ -1,7 +1,7 @@
 from discord import embeds
 from discord.ext import commands
 from yahoo_oauth import OAuth2
-from database import GuildsDatabase
+
 
 import discord
 import logging
@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 def oauth(func):
     async def setup(cog, ctx, *, content=None):
-        league_details = cog.guild_db.getGuildDetails(ctx.guild.id)
+        league_details = cog.guilds.getGuildDetails(ctx.guild.id)
         cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"])
         if content:
             await func(cog, ctx, content=content)
@@ -31,12 +31,12 @@ class Yahoo(commands.Cog):
 
     error_message = "I'm having trouble getting that right now please try again later"
 
-    def __init__(self, bot, KEY, SECRET):
+    def __init__(self, bot, KEY, SECRET, guilds):
         self.bot = bot
         self.http = urllib3.PoolManager()
         self.KEY = KEY
         self.SECRET = SECRET
-        self.guild_db = GuildsDatabase()
+        self.guilds = guilds
         self.yahoo_api = None
     
     

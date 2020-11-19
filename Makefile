@@ -26,7 +26,7 @@ configure:
 	@python add_guild.py
 
 test:
-	@python -m pytest
+	@python -m pytest -v
 
 run:
 	@python ${MODULE}.py
