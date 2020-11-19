@@ -23,13 +23,13 @@ configure:
 	@read YAHOO_SECRET; echo "YAHOO_SECRET = '$$YAHOO_SECRET'" >> config/.secrets.toml;
 	@echo 'Creating guild datastore...'
 	@test -f config/guilds.json || echo '{}' > config/guilds.json
-	@python add_guild.py
+	@python ${MODULE}/add_guild.py
 
 test:
 	@python -m pytest -v
 
 run:
-	@python ${MODULE}.py
+	@python ${MODULE}/${MODULE}.py
 
 build-docker:
 	@echo "${BLUE}Building docker image.."

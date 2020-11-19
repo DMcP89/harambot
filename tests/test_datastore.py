@@ -1,6 +1,6 @@
 from _pytest.outcomes import fail
 import pytest
-from datastore import GuildsDatastore
+from harambot.datastore import GuildsDatastore
 
 
 @pytest.fixture
