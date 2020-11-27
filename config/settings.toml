@@ -1,0 +1,3 @@
+[default]
+LOGLEVEL = "DEBUG"
+GUILDS_DATASTORE_LOC = "config/guilds.json"

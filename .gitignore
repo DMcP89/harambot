@@ -1,13 +1,11 @@
 .venv
 __pycache__
-harambot.config
 oauth2.json
 oauth.json
-discord.log
-player_image.jpg
 
 .vscode
-player_image.png
 
 secrets.json
 guilds.json
+# Ignore dynaconf secret files
+.secrets.*

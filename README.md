@@ -17,38 +17,16 @@ A Yahoo Fantasy sports bot for Discord.
         git clone git@github.com:DMcP89/harambot.git
         pip install -r requirements.txt
 
-2. Create configuration files.
+2. Configure the bot
 
-    - Rename the sample.guilds.json & sample.harambot.config files to guilds.json and harmabot.config respectively.
-    - Update the values with your own values
-        - harambot.config - Used for connecting to Discord and Yahoo APIs
-
-                {
-                    "AUTH": {
-                        "_comment": "Discord bot token (via app > bot account).",
-                        "TOKEN": "DISCORD_TOKEN",
-                        "CONSUMER_KEY": "YAHOO_CONSUMER_KEY",
-                        "CONSUMER_SECRET": "YAHOO_CONSUMER_SECRET"
-                    }
-                }
-        - guilds.json - Used for Authenticating with the Yahoo API
-
-                {
-                    "GUILD_ID": {
-                        "access_token": "ACCESS_TOKEN",
-                        "guid": "GUID",
-                        "refresh_token": "REFRESH_TOKEN",
-                        "token_time": 0.0,
-                        "token_type": "bearer",
-                        "league_id": "YAHOO_LEAGUE_ID"
-                    }
-                }
-    - Run scripts/get_yahoo_configs.py to get the values for guilds.json 
+        make configure
 
 3. Run the bot. 
 
     ### With Python
         python harambot.py
+        or
+        make run
     ### With Docker
-        docker build -t harambot:1.0 .
-        docker run harambot:1.0
+        make build-docker
+        make run-docker

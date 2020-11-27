@@ -12,4 +12,4 @@ RUN pip install -U pip
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "harambot.py"]
+CMD ["make", "run"]
