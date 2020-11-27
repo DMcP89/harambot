@@ -1,4 +1,3 @@
-from _pytest.outcomes import fail
 import pytest
 from harambot.datastore import GuildsDatastore
 

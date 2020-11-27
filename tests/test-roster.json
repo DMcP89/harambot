@@ -1,0 +1,175 @@
+{
+    "roster": [{
+            "player_id": 30977,
+            "name": "Josh Allen",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "QB"
+            ],
+            "selected_position": "QB"
+        },
+        {
+            "player_id": 26699,
+            "name": "Keenan Allen",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "WR",
+                "W/R/T"
+            ],
+            "selected_position": "WR"
+        },
+        {
+            "player_id": 30197,
+            "name": "Chris Godwin",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "WR",
+                "W/R/T"
+            ],
+            "selected_position": "WR"
+        },
+        {
+            "player_id": 27591,
+            "name": "Jarvis Landry",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "WR",
+                "W/R/T"
+            ],
+            "selected_position": "WR"
+        },
+        {
+            "player_id": 29238,
+            "name": "Ezekiel Elliott",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "RB",
+                "W/R/T"
+            ],
+            "selected_position": "RB"
+        },
+        {
+            "player_id": 28398,
+            "name": "Todd Gurley II",
+            "status": "Q",
+            "position_type": "O",
+            "eligible_positions": [
+                "RB",
+                "W/R/T"
+            ],
+            "selected_position": "RB"
+        },
+        {
+            "player_id": 30213,
+            "name": "Jonnu Smith",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "TE",
+                "W/R/T"
+            ],
+            "selected_position": "TE"
+        },
+        {
+            "player_id": 26060,
+            "name": "Cole Beasley",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "WR",
+                "W/R/T"
+            ],
+            "selected_position": "W/R/T"
+        },
+        {
+            "player_id": 31902,
+            "name": "Darrell Henderson Jr.",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "RB",
+                "W/R/T"
+            ],
+            "selected_position": "BN"
+        },
+        {
+            "player_id": 30247,
+            "name": "Jamaal Williams",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "RB",
+                "W/R/T"
+            ],
+            "selected_position": "BN"
+        },
+        {
+            "player_id": 30511,
+            "name": "Tim Patrick",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "WR",
+                "W/R/T"
+            ],
+            "selected_position": "BN"
+        },
+        {
+            "player_id": 31960,
+            "name": "Tony Pollard",
+            "status": "",
+            "position_type": "O",
+            "eligible_positions": [
+                "RB",
+                "W/R/T"
+            ],
+            "selected_position": "BN"
+        },
+        {
+            "player_id": 31268,
+            "name": "Allen Lazard",
+            "status": "Q",
+            "position_type": "O",
+            "eligible_positions": [
+                "WR",
+                "W/R/T"
+            ],
+            "selected_position": "BN"
+        },
+        {
+            "player_id": 26534,
+            "name": "Justin Tucker",
+            "status": "",
+            "position_type": "K",
+            "eligible_positions": [
+                "K"
+            ],
+            "selected_position": "K"
+        },
+        {
+            "player_id": 100015,
+            "name": "Miami",
+            "status": "",
+            "position_type": "DT",
+            "eligible_positions": [
+                "DEF"
+            ],
+            "selected_position": "DEF"
+        },
+        {
+            "player_id": 100014,
+            "name": "Los Angeles",
+            "status": "",
+            "position_type": "DT",
+            "eligible_positions": [
+                "DEF"
+            ],
+            "selected_position": "BN"
+        }
+    ]
+}

@@ -1,0 +1,57 @@
+{
+    "standings": [{
+            "name": "Hide and Go Zeke",
+            "outcome_totals": {
+                "losses": "1",
+                "percentage": ".909",
+                "ties": 0,
+                "wins": "10"
+            },
+            "playoff_seed": "1",
+            "points_against": 1130.38,
+            "points_for": "1350.94",
+            "rank": "1",
+            "streak": {
+                "type": "win",
+                "value": "6"
+            },
+            "team_key": "399.l.710921.t.8"
+        },
+        {
+            "name": "Too Many Cooks",
+            "outcome_totals": {
+                "losses": "3",
+                "percentage": ".727",
+                "ties": 0,
+                "wins": "8"
+            },
+            "playoff_seed": "2",
+            "points_against": 1149.8799999999999,
+            "points_for": "1360.00",
+            "rank": "2",
+            "streak": {
+                "type": "loss",
+                "value": "2"
+            },
+            "team_key": "399.l.710921.t.9"
+        },
+        {
+            "name": "Kyler The Creator",
+            "outcome_totals": {
+                "losses": "4",
+                "percentage": ".636",
+                "ties": 0,
+                "wins": "7"
+            },
+            "playoff_seed": "3",
+            "points_against": 1292.8,
+            "points_for": "1436.32",
+            "rank": "3",
+            "streak": {
+                "type": "win",
+                "value": "3"
+            },
+            "team_key": "399.l.710921.t.1"
+        }
+    ]
+}
