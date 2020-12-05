@@ -28,10 +28,11 @@ async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
 
 bot.add_cog(Meta(bot))
-bot.add_cog(Misc(bot))
+
 
 guilds = GuildsDatastore(settings.guilds_datastore_loc)
 
 bot.add_cog(Yahoo(bot, settings.yahoo_key, settings.yahoo_secret, guilds))
+bot.add_cog(Misc(bot, guilds))
 
 bot.run(settings.discord_token, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token
