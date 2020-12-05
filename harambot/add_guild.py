@@ -9,7 +9,11 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
 
     guild = input("Enter Discord Guild ID:\n")
     
-    league = input("Enter Yahoo League ID :\n")
+    league = input("Enter Yahoo League ID:\n")
+
+    RIP_text = input("Enter text to use with $RIP command:\n")
+
+    RIP_image_url = input("Enter image url to use with $RIP command:\n")
 
     if guilds[guild]:
         exit()
@@ -24,7 +28,9 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
             "refresh_token": oauth.refresh_token,
             "token_time": oauth.token_time,
             "token_type": oauth.token_type,
-            "league_id": league
+            "league_id": league,
+            "RIP_text": RIP_text,
+            "RIP_image_url": RIP_image_url
         }
     }
 
