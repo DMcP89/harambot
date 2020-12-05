@@ -4,12 +4,15 @@ import json
 import os
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-with open(dir_path+'/config/guilds.json', 'r+') as f:
+with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
     guilds = json.load(f)
 
-    guild = input("Enter Discord Guild ID:")
-    league = input("Enter Yahoo League ID :")
+    guild = input("Enter Discord Guild ID:\n")
+    
+    league = input("Enter Yahoo League ID :\n")
 
+    if guilds[guild]:
+        exit()
 
     oauth = OAuth2(settings.yahoo_key, settings.yahoo_secret)
     os.remove('secrets.json')
