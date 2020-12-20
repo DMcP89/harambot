@@ -13,14 +13,15 @@ showenv:
 	@echo 'Tag:         '${TAG}
 
 configure:
+	@rm config/.secrets.toml
 	@echo 'Creating .secrets.toml file...'
-	@test -f config/.secrets.toml || echo '[default]' > config/.secrets.toml
+	@echo '[default]' > config/.secrets.toml
 	@echo 'Enter Discord token:' 
-	@read DISCORD_TOKEN; test -f config/.secrets.toml ||  echo "DISCORD_TOKEN = '$$DISCORD_TOKEN'" >> config/.secrets.toml;
+	@read DISCORD_TOKEN; echo "DISCORD_TOKEN = '$$DISCORD_TOKEN'" >> config/.secrets.toml;
 	@echo 'Enter Yahoo Consumer key:' 
-	@read YAHOO_KEY; test -f config/.secrets.toml || echo "YAHOO_KEY = '$$YAHOO_KEY'" >> config/.secrets.toml;
+	@read YAHOO_KEY; echo "YAHOO_KEY = '$$YAHOO_KEY'" >> config/.secrets.toml;
 	@echo 'Enter Yahoo Consumer secrect:' 
-	@read YAHOO_SECRET; test -f config/.secrets.toml || echo "YAHOO_SECRET = '$$YAHOO_SECRET'" >> config/.secrets.toml;
+	@read YAHOO_SECRET; echo "YAHOO_SECRET = '$$YAHOO_SECRET'" >> config/.secrets.toml;
 	@echo 'Creating guild datastore...'
 	@test -f config/guilds.json || echo '{}' > config/guilds.json
 	@python ${MODULE}/add_guild.py

@@ -15,7 +15,7 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
 
     RIP_image_url = input("Enter image url to use with $RIP command:\n")
 
-    if guilds[guild]:
+    if guild in guilds:
         exit()
 
     oauth = OAuth2(settings.yahoo_key, settings.yahoo_secret)
