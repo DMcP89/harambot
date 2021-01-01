@@ -139,3 +139,13 @@ class Yahoo:
             return embed
         except Exception:
             logger.exception("Error while fetching matchups for league: {}".format(self.league_id))
+
+    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    def get_latest_trade(self):
+        try:
+            for key, values in self.league().teams().items():
+                if 'is_owned_by_current_login' in values:
+                    team = self.league().to_team(key)
+            return
+        except Exception:
+            logger.exception("Error while fetching latest trade")

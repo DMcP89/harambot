@@ -65,7 +65,7 @@ class Yahoo(commands.Cog):
     @oauth
     async def trade(self, ctx):
         logger.info("trade called")
-        
+        self.yahoo_api.get_latest_trade()
         def check(m):
             return m.author == author
 
