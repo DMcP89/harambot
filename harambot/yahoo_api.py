@@ -21,15 +21,16 @@ class Yahoo:
 
     oauth = None
 
-    def __init__(self, oauth, league_id):
+    def __init__(self, oauth, league_id, league_type):
         self.oauth = oauth
         self.league_id = league_id
+        self.league_type = league_type
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def league(self):
         if not self.oauth.token_is_valid():
             self.oauth.refresh_access_token()
-        gm = game.Game(self.oauth, 'nfl')
+        gm = game.Game(self.oauth, self.league_type)
         return gm.to_league('{}.l.{}'.format(gm.game_id(), self.league_id))
         
         
@@ -76,7 +77,8 @@ class Yahoo:
             embed = discord.Embed(title=player['name']['full'], description='#' + player['uniform_number'], color=0xeee657)
             embed.add_field(name="Postion", value=player['primary_position'])
             embed.add_field(name="Team", value=player['editorial_team_abbr'])
-            embed.add_field(name="Bye", value=player['bye_weeks']['week'])
+            if 'bye_week' in player:
+                embed.add_field(name="Bye", value=player['bye_weeks']['week'])
             embed.add_field(name="Total Points", value=player['player_points']['total'])
             embed.add_field(name="Owner", value=self.get_player_owner(player['player_id']))
             embed.set_image(url=player['image_url'])
@@ -84,7 +86,8 @@ class Yahoo:
             player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
             player_details_text = player_details_text + "Position: "+player['primary_position']+'\n'
             player_details_text = player_details_text + "Team: "+player['editorial_team_abbr']+'\n'
-            player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
+            if 'bye_week' in player:
+                player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
             player_details_text = player_details_text + "Total Points: "+player['player_points']['total']+'\n'
             player_details_text = player_details_text + "Owner: " + self.get_player_owner(player['player_id'])
             
@@ -146,6 +149,8 @@ class Yahoo:
             for key, values in self.league().teams().items():
                 if 'is_owned_by_current_login' in values:
                     team = self.league().to_team(key)
+                    accepted_trades = list(filter(lambda d: d['status'] == 'accepted', team.proposed_trades()))
+                    return accepted_trades[0]
             return
         except Exception:
             logger.exception("Error while fetching latest trade")

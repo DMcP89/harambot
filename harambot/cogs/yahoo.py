@@ -19,7 +19,7 @@ logger.setLevel(logging.INFO)
 def oauth(func):
     async def setup(cog, ctx, *, content=None):
         league_details = cog.guilds.getGuildDetails(ctx.guild.id)
-        cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"])
+        cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"], league_details["league_type"])
         if content:
             await func(cog, ctx, content=content)
         else:
@@ -65,52 +65,37 @@ class Yahoo(commands.Cog):
     @oauth
     async def trade(self, ctx):
         logger.info("trade called")
-        self.yahoo_api.get_latest_trade()
-        def check(m):
-            return m.author == author
+        latest_trade = self.yahoo_api.get_latest_trade()
 
+        teams = self.yahoo_api.league().teams()
 
-        author = ctx.message.author
-        await author.send("Lets wheel & deal")
-        await author.send("Who's trading with who? Reply with the manager names in this format: Manager 1, Manager 2")
-        managers = await self.bot.wait_for('message', timeout=30, check=check)
-        managers = managers.content.split(",")
+        trader = teams[latest_trade['trader_team_key']]
+        tradee = teams[latest_trade['tradee_team_key']]
+        managers = [trader['name'], tradee['name']]
+        
+        player_set0 = []
+        player_set0_details = ""
+        for player in latest_trade['trader_players']:
+            player_set0.append(player['name'])
+            api_details = self.yahoo_api.get_player_details(player['name'])["text"]+"\n"
+            if api_details: 
+                player_set0_details = player_set0_details + api_details
+            else:
+                await ctx.send(self.error_message)
+                return
 
-        await author.send("What players are {} trading? Reply with the player names in this format: Player 1, Player 2".format(managers[0]))
-        player_set0 = await self.bot.wait_for('message', timeout=30, check=check)
-        player_set0 = player_set0.content.split(",")
+        player_set1 = []
+        player_set1_details = ""
+        for player in latest_trade['tradee_players']:
+            player_set1.append(player['name'])
+            api_details = self.yahoo_api.get_player_details(player['name'])["text"]+"\n"
+            if api_details: 
+                player_set1_details = player_set1_details + api_details
+            else:
+                await ctx.send(self.error_message)
+                return
 
-        await author.send("What players are {} trading? Reply with the player names in this format: Player 1, Player 2".format(managers[1]))
-        player_set1 = await self.bot.wait_for('message', timeout=30, check=check)
-        player_set1 = player_set1.content.split(",")
-
-        confirm_trade_message = "{} sends {} to {} for {}".format(managers[0],', '.join(player_set0),managers[1],', '.join(player_set1))
-        await author.send("Okay here is what I got: \n{}".format(confirm_trade_message))
-        await author.send("is this correct? Reply YES to announce trade")
-        confirmation = await self.bot.wait_for('message', timeout=30, check=check)
-        confirmation = confirmation.content
-        if confirmation.upper() == "YES":
-            
-            player_set0_details = ""
-            for player in player_set0:
-                api_details = self.yahoo_api.get_player_details(player.strip())["text"]+"\n"
-                if api_details: 
-                    player_set0_details = player_set0_details + api_details
-                else:
-                    await author.send(self.error_message)
-                    return
-
-
-            player_set1_details = ""
-            for player in player_set1:
-                api_details = self.yahoo_api.get_player_details(player.strip())["text"]+"\n"
-                if api_details: 
-                    player_set1_details = player_set1_details + api_details
-                else:
-                    await author.send(self.error_message)
-                    return
-
-
+            confirm_trade_message = "{} sends {} to {} for {}".format(managers[0],', '.join(player_set0),managers[1],', '.join(player_set1))
             announcement = "There's collusion afoot!\n"
             embed = discord.Embed(title="The following trade is up for approval:", description=confirm_trade_message, color=0xeee657)
             embed.add_field(name="{} sends:".format(managers[0]), value=player_set0_details, inline=False)
@@ -121,8 +106,6 @@ class Yahoo(commands.Cog):
             no_emoji = '\U0001F6AB'        
             await msg.add_reaction(yes_emoji)
             await msg.add_reaction(no_emoji)
-        else:
-            await author.send("Seems like I got something wrong, run the $trade command to start over")
 
 
     @commands.command("player_details")
