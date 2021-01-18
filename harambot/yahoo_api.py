@@ -77,7 +77,7 @@ class Yahoo:
             embed = discord.Embed(title=player['name']['full'], description='#' + player['uniform_number'], color=0xeee657)
             embed.add_field(name="Postion", value=player['primary_position'])
             embed.add_field(name="Team", value=player['editorial_team_abbr'])
-            if 'bye_week' in player:
+            if 'bye_weeks' in player:
                 embed.add_field(name="Bye", value=player['bye_weeks']['week'])
             embed.add_field(name="Total Points", value=player['player_points']['total'])
             embed.add_field(name="Owner", value=self.get_player_owner(player['player_id']))
@@ -86,7 +86,7 @@ class Yahoo:
             player_details_text = player['name']['full'] + ' #' + player['uniform_number'] + '\n'
             player_details_text = player_details_text + "Position: "+player['primary_position']+'\n'
             player_details_text = player_details_text + "Team: "+player['editorial_team_abbr']+'\n'
-            if 'bye_week' in player:
+            if 'bye_weeks' in player:
                 player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
             player_details_text = player_details_text + "Total Points: "+player['player_points']['total']+'\n'
             player_details_text = player_details_text + "Owner: " + self.get_player_owner(player['player_id'])
