@@ -11,6 +11,8 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
     
     league = input("Enter Yahoo League ID:\n")
 
+    league_type = input("Enter Yahoo League Type(nfl, nhl, nba, mlb):\n")
+
     RIP_text = input("Enter text to use with $RIP command:\n")
 
     RIP_image_url = input("Enter image url to use with $RIP command:\n")
@@ -19,7 +21,6 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
         exit()
 
     oauth = OAuth2(settings.yahoo_key, settings.yahoo_secret)
-    os.remove('secrets.json')
 
     guild_details = {
         guild:{
@@ -29,6 +30,7 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
             "token_time": oauth.token_time,
             "token_type": oauth.token_type,
             "league_id": league,
+            "league_type": league_type,
             "RIP_text": RIP_text,
             "RIP_image_url": RIP_image_url
         }
