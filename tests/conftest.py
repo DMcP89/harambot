@@ -49,7 +49,7 @@ def mock_matchups():
 
 @pytest.fixture
 def api(mock_oauth, mock_standings, mock_teams, mock_player_details, mock_ownership, mock_matchups):
-        api = Yahoo(mock_oauth, "123456")
+        api = Yahoo(mock_oauth, "123456", "nfl")
         league = None
         with patch.object(game.Game, 'game_id', return_value='319'):
             league = api.league()

@@ -7,7 +7,7 @@ A Yahoo Fantasy sports bot for Discord.
     $standings                      - Returns the current standings of HML
     $roster "Team name"             - Returns the roster of the given team
     $player_details "Player Name"   - Returns the details of the given player
-    $trade                          - Propose a trade for league approval
+    $trade                          - Create poll for latest trade for league approval
     $matchups                       - Returns the current weeks matchups
 
 ## Setup
