@@ -4,7 +4,7 @@ MODULE := harambot
 BLUE='\033[0;34m'
 NC='\033[0m' # No color
 
-TAG := $(shell git describe --tags --always --dirty)
+TAG := $(shell git describe --tags --always)
 
 showenv:
 	@echo 'Environment:'
