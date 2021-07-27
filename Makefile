@@ -13,6 +13,7 @@ showenv:
 	@echo 'Tag:         '${TAG}
 
 configure:
+	@pip install -r requirements.txt
 	@./configure.sh
 
 test:
