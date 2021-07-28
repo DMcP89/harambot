@@ -18,7 +18,7 @@ In order to properly configure your bot you will need the following:
 
 * Discord API Token
 * Discord Guild ID
-* Yahoo API Consumer key & secret
+* Yahoo API Client Id & Secret
 * Yahoo League ID
 
 ### Discord API Token
@@ -41,7 +41,17 @@ In order to properly configure your bot you will need the following:
 
 ### Yahoo API Consumer Key & Secret
 
+1. Navigate to https://developer.yahoo.com/apps/ and click the "Create an App" button
+   ![yahoo-create-app](/assests/yahoo-create-app.png)
+2. Fill out the form as shown below, you can provide your own values for Application Name,  Description, and Homepage URL. Once complete click the "Create App" button
+   ![yahoo-app-details](/assests/yahoo-app-details.png)
+3. Copy the Client ID and Client Secret values
+   ![yahoo-app-secrets](/assests/yahoo-app-secrets.png) 
+
 ### Yahoo League ID
+
+You can find your league's ID under the settings page of your league
+![yahoo-league-id](/assests/yahoo-league-id.png)
 
 ## Install
 
