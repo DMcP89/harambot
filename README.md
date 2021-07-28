@@ -39,7 +39,7 @@ In order to properly configure your bot you will need the following:
    https://discord.com/channels/[guild-id-is-here]/12345678910
    ```
 
-### Yahoo API Consumer Key & Secret
+### Yahoo API Client ID & Secret
 
 1. Navigate to https://developer.yahoo.com/apps/ and click the "Create an App" button
    ![yahoo-create-app](/assests/yahoo-create-app.png)
