@@ -18,7 +18,7 @@ In order to properly configure your bot you will need the following:
 
 * Discord API Token
 * Discord Guild ID
-* Yahoo API Consumer key & secret
+* Yahoo API Client Id & Secret
 * Yahoo League ID
 
 ### Discord API Token
@@ -39,25 +39,50 @@ In order to properly configure your bot you will need the following:
    https://discord.com/channels/[guild-id-is-here]/12345678910
    ```
 
-### Yahoo API Consumer Key & Secret
+### Yahoo API Client ID & Secret
+
+1. Navigate to https://developer.yahoo.com/apps/ and click the "Create an App" button
+   ![yahoo-create-app](/assests/yahoo-create-app.png)
+2. Fill out the form as shown below, you can provide your own values for Application Name,  Description, and Homepage URL. Once complete click the "Create App" button
+   ![yahoo-app-details](/assests/yahoo-app-details.png)
+3. Copy the Client ID and Client Secret values
+   ![yahoo-app-secrets](/assests/yahoo-app-secrets.png) 
 
 ### Yahoo League ID
+
+You can find your league's ID under the settings page of your league
+![yahoo-league-id](/assests/yahoo-league-id.png)
 
 ## Install
 
 1. Clone this repository 
 
         git clone git@github.com:DMcP89/harambot.git
+        cd harambot
 
 2. Configure the bot
 
-        make configure
+   * Create a copy of example.secrets.toml named .secrets.toml
+      ```
+      cd config
+      cp example.secrets.toml .secrets.toml
+      ```
+   * Update .secrets.toml with the values from the prerequisites section
+      ```
+      [default]
+      DISCORD_TOKEN = 'Discord API Token'
+      YAHOO_KEY = 'Yahoo Client ID'
+      YAHOO_SECRET = 'Yahoo Client Secret'
+      ```
+   * Run make configure from the root directory
+      ```
+      cd ..
+      make configure
+      ```
 
 3. Run the bot. 
 
-    ### With Python
-        python harambot.py
-        or
+    ### On local machine
         make run
     ### With Docker
         make build-docker
