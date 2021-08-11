@@ -58,16 +58,31 @@ You can find your league's ID under the settings page of your league
 1. Clone this repository 
 
         git clone git@github.com:DMcP89/harambot.git
+        cd harambot
 
 2. Configure the bot
 
-        make configure
+   * Create a copy of example.secrets.toml named .secrets.toml
+      ```
+      cd config
+      cp example.secrets.toml .secrets.toml
+      ```
+   * Update .secrets.toml with the values from the prerequisites section
+      ```
+      [default]
+      DISCORD_TOKEN = 'Discord API Token'
+      YAHOO_KEY = 'Yahoo Client ID'
+      YAHOO_SECRET = 'Yahoo Client Secret'
+      ```
+   * Run make configure from the root directory
+      ```
+      cd ..
+      make configure
+      ```
 
 3. Run the bot. 
 
-    ### With Python
-        python harambot.py
-        or
+    ### On local machine
         make run
     ### With Docker
         make build-docker

@@ -14,7 +14,7 @@ showenv:
 
 configure:
 	@pip install -r requirements.txt
-	@./configure.sh
+	@./scripts/configure.sh
 
 test:
 	@python -m pytest -v

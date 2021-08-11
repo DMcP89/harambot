@@ -1,13 +1,27 @@
 from yahoo_oauth import OAuth2
-from config import settings
+from dynaconf import Dynaconf
 import json
 import os
+import logging
+
+settings = Dynaconf(
+    envvar_prefix="DYNACONF",
+    settings_files=['settings.toml', '.secrets.toml'],
+    environments=True,
+)
+
+oauth_logger = logging.getLogger('yahoo_oauth')
+oauth_logger.disabled = True
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
+with open(os.path.dirname(dir_path) + '/config/guilds.json', 'r+') as f:
     guilds = json.load(f)
 
     guild = input("Enter Discord Guild ID:\n")
+
+    if guild in guilds:
+        print("configuration for guild:{} already exists".format(guild))
+        exit()
     
     league = input("Enter Yahoo League ID:\n")
 
@@ -17,10 +31,8 @@ with open(settings.GUILDS_DATASTORE_LOC, 'r+') as f:
 
     RIP_image_url = input("Enter image url to use with $RIP command:\n")
 
-    if guild in guilds:
-        exit()
-
-    oauth = OAuth2(settings.yahoo_key, settings.yahoo_secret)
+    print("Follow this url to login to Yahoo and provide the verifer code...")
+    oauth = OAuth2(consumer_key=settings.yahoo_key, consumer_secret=settings.yahoo_secret, browser_callback=False)
 
     guild_details = {
         guild:{
