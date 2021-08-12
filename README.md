@@ -87,3 +87,6 @@ You can find your league's ID under the settings page of your league
     ### With Docker
         make build-docker
         make run-docker
+
+## Support Harambot!
+<a href="https://www.buymeacoffee.com/wochstudios" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
