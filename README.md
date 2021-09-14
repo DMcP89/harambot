@@ -88,5 +88,36 @@ You can find your league's ID under the settings page of your league
         make build-docker
         make run-docker
 
+## Command Examples
+
+### $player_details Rashaad Penny
+
+![player-details](/assests/player_details.PNG)
+
+
+### $roster Lamb Chop's Play-Along
+
+![roster](/assests/roster.PNG)
+
+
+### $standings
+
+![standings](/assests/standings.PNG)
+
+
+### $matchups
+
+![matchups](/assests/matchups.PNG)
+
+
+### $trade
+
+![trade](/assests/trade.PNG)
+
+
+### $RIP "My Season"
+
+![rip](/assests/rip.PNG)
+
 ## Support Harambot!
 <a href="https://www.buymeacoffee.com/wochstudios" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
