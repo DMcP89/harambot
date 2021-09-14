@@ -90,39 +90,33 @@ You can find your league's ID under the settings page of your league
 
 ## Command Examples
 
-```
-$player_details Rashaad Penny
-```
+### $player_details Rashaad Penny
+
 ![player-details](/assests/player_details.PNG)
 
 
-```
-$roster Lamb Chop's Play-Along
-```
+### $roster Lamb Chop's Play-Along
+
 ![roster](/assests/roster.PNG)
 
 
-```
-$standings
-```
+### $standings
+
 ![standings](/assests/standings.PNG)
 
 
-```
-$matchups
-```
+### $matchups
+
 ![matchups](/assests/matchups.PNG)
 
 
-```
-$trade
-```
+### $trade
+
 ![trade](/assests/trade.PNG)
 
 
-```
-$RIP "My Season"
-```
+### $RIP "My Season"
+
 ![rip](/assests/rip.PNG)
 
 ## Support Harambot!
