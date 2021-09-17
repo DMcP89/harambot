@@ -32,7 +32,7 @@ rauth==0.7.3
 requests==2.26.0
 six==1.12.0
 toml==0.10.2
-urllib3==1.26.6S
+urllib3==1.26.6
 websockets==9.1
 yahoo-fantasy-api==2.4.0
 yahoo-oauth==1.1
