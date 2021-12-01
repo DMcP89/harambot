@@ -129,14 +129,20 @@ class Yahoo:
                 team1_name = team1[0][2]["name"]
                 team1_actual_points = team1[1]['team_points']['total']
                 team1_projected_points = team1[1]['team_projected_points']['total']
-                team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
-                team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
+                if 'win_probability' in team1[1]:
+                    team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
+                    team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
+                else:
+                    team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n'.format(team1_name, team1_projected_points, team1_actual_points)
                 team2 = matchup["1"]["team"]
                 team2_name = team2[0][2]["name"]
                 team2_actual_points = team2[1]['team_points']['total']
                 team2_projected_points = team2[1]['team_projected_points']['total']
-                team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
-                team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
+                if 'win_probability' in team2[1]:
+                    team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
+                    team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
+                else:
+                    team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n'.format(team2_name, team2_projected_points, team2_actual_points)
                 divider = '--------------------------------------'
                 embed.add_field(name="{} vs {}".format(team1_name, team2_name), value=team1_details + team2_details+divider, inline=False)
             return embed
