@@ -67,6 +67,10 @@ class Yahoo(commands.Cog):
         logger.info("trade called")
         latest_trade = self.yahoo_api.get_latest_trade()
 
+        if latest_trade == None:
+            await ctx.send("No trades up for approval at this time")
+            return
+
         teams = self.yahoo_api.league().teams()
 
         trader = teams[latest_trade['trader_team_key']]
