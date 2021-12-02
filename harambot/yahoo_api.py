@@ -156,7 +156,8 @@ class Yahoo:
                 if 'is_owned_by_current_login' in values:
                     team = self.league().to_team(key)
                     accepted_trades = list(filter(lambda d: d['status'] == 'accepted', team.proposed_trades()))
-                    return accepted_trades[0]
+                    if accepted_trades:
+                        return accepted_trades[0]
             return
         except Exception:
             logger.exception("Error while fetching latest trade")
