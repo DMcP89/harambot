@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 def oauth(func):
     async def setup(cog, ctx, *, content=None):
-        league_details = cog.guilds.getGuildDetails(ctx.guild.id)
+        league_details = cog.guilds.getGuildDetails(str(ctx.guild.id))
         cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"], league_details["league_type"])
         if content:
             await func(cog, ctx, content=content)
