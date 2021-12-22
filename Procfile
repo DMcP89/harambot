@@ -1,1 +1,1 @@
-worker: python harambot.py
+worker: make run
