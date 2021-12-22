@@ -1,0 +1,33 @@
+{
+    "name": "Harambot",
+    "description": "A Yahoo Fantasy sports bot for Discord.",
+    "keywords": [
+        "fantasy football",
+        "discord",
+        "yahoo",
+        "chat bot",
+        "ff",
+        "harambe"
+    ],
+    "website" : "https://github.com/DMcP89/harambot",
+    "repository": "https://github.com/DMcP89/harambot",
+    "env": {
+        "HARAMBOT_YAHOO_KEY" : {
+            "description": "Yahoo Consumer Key",
+            "value": "",
+            "required": "true"
+        }, 
+        "HARAMBOT_YAHOO_SECRET" : {
+            "description": "Yahoo Consumer Secret",
+            "value": "",
+            "required": "true"
+        },
+        "HARAMBOT_DISCORD_TOKEN" : {
+            "description": "Discord bot token",
+            "value": "",
+            "required": "true"
+        }
+    }
+
+
+}
