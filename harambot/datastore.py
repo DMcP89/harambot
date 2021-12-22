@@ -2,6 +2,7 @@ import logging
 import time
 import json
 
+from os.path import exists
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -12,6 +13,10 @@ class GuildsDatastore():
 
     def __init__(self, path_to_datastore):
         self.path_to_datastore = path_to_datastore
+        if not exists(path_to_datastore):
+            with open(path_to_datastore, 'w+') as f:
+                f.write("{}")
+                f.close
         self.refreshDatastore()
 
     def getGuildDetails(self,guild_id):
