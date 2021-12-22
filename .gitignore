@@ -6,7 +6,6 @@ oauth.json
 .vscode
 
 secrets.json
-guilds.json
 # Ignore dynaconf secret files
 .secrets.*
 answers.txt
