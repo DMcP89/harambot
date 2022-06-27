@@ -2,17 +2,13 @@ from discord import embeds
 from discord.ext import commands
 from yahoo_oauth import OAuth2
 
-
 import discord
 import logging
 import urllib3
 import yahoo_api
 
-
-
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
-
 
 # Decorators
 
@@ -29,7 +25,7 @@ def oauth(func):
 
 class Yahoo(commands.Cog):
 
-    error_message = "I'm having trouble getting that right now please try again later"
+    error_message = "I'm having trouble getting that right now, please try again later"
 
     def __init__(self, bot, KEY, SECRET, guilds):
         self.bot = bot
@@ -39,6 +35,15 @@ class Yahoo(commands.Cog):
         self.guilds = guilds
         self.yahoo_api = None
     
+    @commands.command("test")
+    @oauth
+    async def test(self,ctx):
+        logger.info("test called")
+        content = self.yahoo_api.get_test()
+        if content:
+            await ctx.send(content=content)
+        else:
+            await ctx.send(self.error_message)
     
     @commands.command("standings")
     @oauth

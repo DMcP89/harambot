@@ -28,3 +28,4 @@ class Meta(commands.Cog):
         logger.info("Ping called")
         latency = self.bot.latency  # Included in the Discord.py library
         await ctx.send(latency)
+        

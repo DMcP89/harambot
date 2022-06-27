@@ -27,6 +27,12 @@ async def on_ready():
 async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound): 
+        content = 'Sorry, I don\'t understand that command.' 
+        await ctx.send(content=content)
+
 bot.add_cog(Meta(bot))
 
 
