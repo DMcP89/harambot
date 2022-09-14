@@ -13,7 +13,6 @@ from discord.ext import commands
 from cogs.meta import Meta
 from cogs.misc import Misc
 from cogs.yahoo import Yahoo
-from datastore import GuildsDatastore
 from config import settings
 from models.models import Guild
 
@@ -27,7 +26,7 @@ intents.members = True
 bot = commands.Bot(command_prefix="$", description="", intents=intents)
 bot.remove_command('help')
 
-guilds = GuildsDatastore(settings.guilds_datastore_loc)
+
 
 @bot.event
 async def on_ready():
@@ -36,7 +35,7 @@ async def on_ready():
 @bot.event
 async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
-    if  not guilds.getGuildDetails(guild.id):
+    if not Guild.select().where(Guild.guild_id == str(guild.id)).exists():
         await configure_guild(guild.owner, guild.id)
         logger.info("Guild not configured!")
     
@@ -73,12 +72,10 @@ async def configure_guild(owner, id):
     details["RIP_text"] = RIP_text.clean_content
     details["RIP_image_url"] = RIP_image_url.clean_content
     Guild.create(guild_id=id,**details)
-    guilds.addGuildToDatastore({id : details})
-
     return
 
 bot.add_cog(Meta(bot))
-bot.add_cog(Yahoo(bot, settings.yahoo_key, settings.yahoo_secret, guilds))
-bot.add_cog(Misc(bot, guilds))
+bot.add_cog(Yahoo(bot, settings.yahoo_key, settings.yahoo_secret))
+bot.add_cog(Misc(bot))
 
 bot.run(settings.discord_token, bot=True, reconnect=True)  # Where 'TOKEN' is your bot token
