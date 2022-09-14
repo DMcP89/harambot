@@ -15,8 +15,7 @@ from cogs.misc import Misc
 from cogs.yahoo import Yahoo
 from datastore import GuildsDatastore
 from config import settings
-
-
+from models.models import Guild
 
 #logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('harambot.py')
@@ -73,8 +72,9 @@ async def configure_guild(owner, id):
     details["league_type"] = leauge_type.clean_content
     details["RIP_text"] = RIP_text.clean_content
     details["RIP_image_url"] = RIP_image_url.clean_content
-
+    Guild.create(guild_id=id,**details)
     guilds.addGuildToDatastore({id : details})
+
     return
 
 bot.add_cog(Meta(bot))
