@@ -1,3 +1,4 @@
 [default]
 LOGLEVEL = "DEBUG"
-GUILDS_DATASTORE_LOC = "config/guilds.json"
+GUILDS_DATASTORE_TYPE = "sqlite"
+GUILDS_DATASTORE_LOC = "harambot.db"
