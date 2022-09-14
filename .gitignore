@@ -12,3 +12,4 @@ guilds.json
 answers.txt
 *.pem
 .python-version
+*.db
