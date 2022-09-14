@@ -112,9 +112,9 @@ class Yahoo(commands.Cog):
             await msg.add_reaction(no_emoji)
 
 
-    @commands.command("player_details")
+    @commands.command("stats")
     @oauth
-    async def player_details(self, ctx,  *, content:str):
+    async def stats(self, ctx,  *, content:str):
         logger.info("player_details called")
         details = self.yahoo_api.get_player_details(content)
         if details:
