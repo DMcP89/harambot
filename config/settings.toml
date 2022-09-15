@@ -1,4 +1,5 @@
 [default]
 LOGLEVEL = "DEBUG"
+# Supported databases are sqlite, mysql, and postgres
 GUILDS_DATASTORE_TYPE = "sqlite"
 GUILDS_DATASTORE_LOC = "harambot.db"
