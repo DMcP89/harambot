@@ -1,17 +1,17 @@
-from os.path import exists
-
 from peewee import *
 from config import settings
+from databasetype import DatabaseType
 
-
-if settings.guilds_datastore_type == "postgres":
+if settings.guilds_datastore_type == DatabaseType.POSTGRES:
     database = PostgresqlDatabase(settings.guild_db,user=settings.guild_db_user, password=settings.guild_db_pass,
                                     host=settings.guild_db_host, port=settings.guild_db_port)
-elif settings.guilds_datastore_type == "mysql":
+elif settings.guilds_datastore_type == DatabaseType.MYSQL:
     database = MySQLDatabase(settings.guild_db,user=settings.guild_db_user, password=settings.guild_db_pass,
                                     host=settings.guild_db_host, port=settings.guild_db_port)
-else:
+elif settings.guilds_datastore_type == DatabaseType.SQLITE:
     database = SqliteDatabase(settings.guilds_datastore_loc)
+else:
+    database = SqliteDatabase(':memory:')
 
 
 class BaseModel(Model):
