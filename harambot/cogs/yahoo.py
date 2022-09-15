@@ -1,6 +1,7 @@
 from discord import embeds
 from discord.ext import commands
 from yahoo_oauth import OAuth2
+from playhouse.shortcuts import model_to_dict
 
 
 import discord
@@ -8,6 +9,7 @@ import logging
 import urllib3
 import yahoo_api
 
+from database.models import Guild
 
 
 logger = logging.getLogger(__file__)
@@ -18,8 +20,8 @@ logger.setLevel(logging.INFO)
 
 def oauth(func):
     async def setup(cog, ctx, *, content=None):
-        league_details = cog.guilds.getGuildDetails(ctx.guild.id)
-        cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **league_details), league_details["league_id"], league_details["league_type"])
+        guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
+        cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **model_to_dict(guild)), guild.league_id, guild.league_type)
         if content:
             await func(cog, ctx, content=content)
         else:
@@ -31,12 +33,11 @@ class Yahoo(commands.Cog):
 
     error_message = "I'm having trouble getting that right now please try again later"
 
-    def __init__(self, bot, KEY, SECRET, guilds):
+    def __init__(self, bot, KEY, SECRET):
         self.bot = bot
         self.http = urllib3.PoolManager()
         self.KEY = KEY
         self.SECRET = SECRET
-        self.guilds = guilds
         self.yahoo_api = None
     
     
@@ -112,9 +113,9 @@ class Yahoo(commands.Cog):
             await msg.add_reaction(no_emoji)
 
 
-    @commands.command("player_details")
+    @commands.command("stats")
     @oauth
-    async def player_details(self, ctx,  *, content:str):
+    async def stats(self, ctx,  *, content:str):
         logger.info("player_details called")
         details = self.yahoo_api.get_player_details(content)
         if details:

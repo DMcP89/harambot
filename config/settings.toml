@@ -1,3 +1,5 @@
 [default]
 LOGLEVEL = "DEBUG"
-GUILDS_DATASTORE_LOC = "config/guilds.json"
+# Supported databases are sqlite, mysql, and postgres
+GUILDS_DATASTORE_TYPE = "sqlite"
+GUILDS_DATASTORE_LOC = "harambot.db"
