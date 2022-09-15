@@ -1,6 +1,6 @@
 from peewee import *
 from config import settings
-from databasetype import DatabaseType
+from database.databasetype import DatabaseType
 
 if settings.guilds_datastore_type == DatabaseType.POSTGRES:
     database = PostgresqlDatabase(settings.guild_db,user=settings.guild_db_user, password=settings.guild_db_pass,

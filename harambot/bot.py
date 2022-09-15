@@ -14,7 +14,7 @@ from cogs.meta import Meta
 from cogs.misc import Misc
 from cogs.yahoo import Yahoo
 from config import settings
-from models.models import Guild
+from database.models import Guild
 
 #logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('harambot.py')

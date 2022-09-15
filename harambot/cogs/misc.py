@@ -4,7 +4,7 @@ from discord.ext import commands
 import discord
 import logging
 
-from models.models import Guild
+from database.models import Guild
 
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)

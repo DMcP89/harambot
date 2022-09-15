@@ -9,7 +9,7 @@ import logging
 import urllib3
 import yahoo_api
 
-from models.models import Guild
+from database.models import Guild
 
 
 logger = logging.getLogger(__file__)
