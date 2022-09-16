@@ -15,20 +15,6 @@ from database.models import Guild
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
 
-
-# Decorators
-
-def oauth(func):
-    async def setup(cog, ctx, *, content=None):
-        guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
-        cog.yahoo_api = yahoo_api.Yahoo(OAuth2(cog.KEY, cog.SECRET, **model_to_dict(guild)), guild.league_id, guild.league_type)
-        if content:
-            await func(cog, ctx, content=content)
-        else:
-            await func(cog, ctx)
-    return setup
-
-
 class Yahoo(commands.Cog):
 
     error_message = "I'm having trouble getting that right now please try again later"
@@ -40,10 +26,13 @@ class Yahoo(commands.Cog):
         self.SECRET = SECRET
         self.yahoo_api = None
     
+    async def cog_before_invoke(self, ctx):
+        guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
+        self.yahoo_api = yahoo_api.Yahoo(OAuth2(self.KEY, self.SECRET, **model_to_dict(guild)), guild.league_id, guild.league_type)
+        return
     
     @commands.command("standings")
-    @oauth
-    async def standings(self,ctx):
+    async def standings(self, ctx):
         logger.info("standings called")
         embed = self.yahoo_api.get_standings()
         if embed:
@@ -52,7 +41,6 @@ class Yahoo(commands.Cog):
             await ctx.send(self.error_message)
 
     @commands.command("roster")
-    @oauth
     async def roster(self, ctx, *, content:str):
         logger.info("roster called")
         roster = self.yahoo_api.get_roster(content)
@@ -63,7 +51,6 @@ class Yahoo(commands.Cog):
         
 
     @commands.command("trade")
-    @oauth
     async def trade(self, ctx):
         logger.info("trade called")
         latest_trade = self.yahoo_api.get_latest_trade()
@@ -114,7 +101,6 @@ class Yahoo(commands.Cog):
 
 
     @commands.command("stats")
-    @oauth
     async def stats(self, ctx,  *, content:str):
         logger.info("player_details called")
         details = self.yahoo_api.get_player_details(content)
@@ -125,7 +111,6 @@ class Yahoo(commands.Cog):
 
 
     @commands.command("matchups")
-    @oauth
     async def matchups(self,ctx):
         embed = self.yahoo_api.get_matchups()
         if embed:
