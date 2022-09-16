@@ -36,6 +36,9 @@ async def on_ready():
     await bot.add_cog(Meta(bot))
     await bot.add_cog(Yahoo(bot, settings.yahoo_key, settings.yahoo_secret))
     await bot.add_cog(Misc(bot))
+    for guild in bot.guilds:
+        bot.tree.copy_global_to(guild=guild)
+        await bot.tree.sync(guild=guild)
     logger.info("Everything's all ready to go~")
 
 @bot.event

@@ -30,3 +30,7 @@ class Meta(commands.Cog):
         logger.info("Ping called")
         latency = self.bot.latency  # Included in the Discord.py library
         await ctx.send(latency)
+
+    @commands.hybrid_command()
+    async def configure(self, ctx):
+        await ctx.send("configure called")
