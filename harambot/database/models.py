@@ -2,13 +2,13 @@ from peewee import *
 from config import settings
 from database.databasetype import DatabaseType
 
-if settings.guilds_datastore_type == DatabaseType.POSTGRES:
+if settings.guilds_datastore_type == DatabaseType.POSTGRES.value:
     database = PostgresqlDatabase(settings.guild_db,user=settings.guild_db_user, password=settings.guild_db_pass,
                                     host=settings.guild_db_host, port=settings.guild_db_port)
-elif settings.guilds_datastore_type == DatabaseType.MYSQL:
+elif settings.guilds_datastore_type == DatabaseType.MYSQL.value:
     database = MySQLDatabase(settings.guild_db,user=settings.guild_db_user, password=settings.guild_db_pass,
                                     host=settings.guild_db_host, port=settings.guild_db_port)
-elif settings.guilds_datastore_type == DatabaseType.SQLITE:
+elif settings.guilds_datastore_type == DatabaseType.SQLITE.value:
     database = SqliteDatabase(settings.guilds_datastore_loc)
 else:
     database = SqliteDatabase(':memory:')
