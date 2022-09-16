@@ -3,6 +3,8 @@ from discord.ext import commands
 import discord
 import logging
 
+from utils import configure_guild
+
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
 
