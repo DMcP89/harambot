@@ -36,5 +36,11 @@ async def configure_guild(bot,owner, id):
     details["league_type"] = leauge_type.clean_content
     details["RIP_text"] = RIP_text.clean_content
     details["RIP_image_url"] = RIP_image_url.clean_content
-    Guild.create(guild_id=id,**details)
+    guild = Guild.get_or_none(Guild.guild_id == str(id))
+    if guild:
+        query = (Guild.update(details).where(Guild.guild_id == str(id)))
+        query.execute()
+    else:
+        guild = Guild(guild_id=str(id), **details)
+        guild.save()
     return

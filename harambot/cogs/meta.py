@@ -32,5 +32,8 @@ class Meta(commands.Cog):
         await ctx.send(latency)
 
     @commands.hybrid_command()
+
     async def configure(self, ctx):
-        await ctx.send("configure called")
+        await ctx.send("Configuring guild...")
+        await configure_guild(self.bot, ctx.guild.owner, ctx.guild.id)
+        await ctx.send("Guild configured successfully")
