@@ -6,7 +6,11 @@ ADD . /app/harambot
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y gcc libc-dev make git libffi-dev python3-dev libxml2-dev libxslt-dev 
+    apt-get install -y gcc libc-dev make git libffi-dev python3-dev libxml2-dev libxslt-dev
+
+RUN apt-get install -y default-libmysqlclient-dev
+
+RUN apt-get install -y libpq-dev
 
 RUN pip install -U pip
 
