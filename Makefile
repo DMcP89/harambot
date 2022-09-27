@@ -17,7 +17,7 @@ test:
 
 run:
 	@pip install -r requirements.txt
-	@python ${MODULE}/${MODULE}.py
+	@python ${MODULE}/bot.py
 
 build-docker:
 	@echo "${BLUE}Building docker image.."
