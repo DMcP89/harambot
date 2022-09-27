@@ -1,4 +1,4 @@
-FROM python:3.7.4-slim
+FROM python:3.8.10-slim
 
 WORKDIR /app/harambot
 
