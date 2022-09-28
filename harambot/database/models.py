@@ -1,4 +1,5 @@
 from peewee import *
+from playhouse.db_url import connect
 from config import settings
 from database.databasetype import DatabaseType
 
@@ -13,6 +14,8 @@ elif settings.guilds_datastore_type == DatabaseType.SQLITE.value:
 else:
     database = SqliteDatabase(':memory:')
 
+if settings.database_url:
+    database = connect(settings.database_url)
 
 class BaseModel(Model):
     class Meta:
