@@ -1,5 +1,5 @@
 # Harambot
-[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/)
+![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/workflow/status/DMcP89/harambot/Pytest)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -11,7 +11,7 @@ A Yahoo Fantasy sports bot for Discord.
     $RIP                            - Pay respects
     $standings                      - Returns the current standings of the current league
     $roster "Team name"             - Returns the roster of the given team
-    $player_details "Player Name"   - Returns the details of the given player
+    $stats "Player Name"            - Returns the details of the given player
     $trade                          - Create poll for latest trade for league approval
     $matchups                       - Returns the current weeks matchups
 
@@ -20,7 +20,6 @@ A Yahoo Fantasy sports bot for Discord.
 In order to properly configure your bot you will need the following:
 
 * Discord API Token
-* Discord Guild ID
 * Yahoo API Client Id & Secret
 * Yahoo League ID
 
@@ -34,13 +33,6 @@ In order to properly configure your bot you will need the following:
 4. Click the "Copy" button under token to copy your bots API token to your clipboard
    ![discord-copy-token](/assests/discord-copy-token.png)
 
-### Discord Guild ID
-1. Open the discord web app  - https://discord.com/app
-2. Navigate to your guild
-3. Copy the guild ID from the url
-   ``` 
-   https://discord.com/channels/[guild-id-is-here]/12345678910
-   ```
 
 ### Yahoo API Client ID & Secret
 
@@ -56,44 +48,65 @@ In order to properly configure your bot you will need the following:
 You can find your league's ID under the settings page of your league
 ![yahoo-league-id](/assests/yahoo-league-id.png)
 
-## Install
+## Deployment
 
+### Heroku
+
+Harambot now supports heroku deployments!
+
+Click the button at the top and fill out the form with your discord token and yahoo api client key and and secret. 
+
+![heroku-deployment](/assests/heroku-deployment.png)
+
+### Local deployment
 1. Clone this repository 
 
         git clone git@github.com:DMcP89/harambot.git
         cd harambot
 
-2. Configure the bot
-
-   * Create a copy of example.secrets.toml named .secrets.toml
-      ```
-      cd config
-      cp example.secrets.toml .secrets.toml
-      ```
-   * Update .secrets.toml with the values from the prerequisites section
-      ```
-      [default]
-      DISCORD_TOKEN = 'Discord API Token'
-      YAHOO_KEY = 'Yahoo Client ID'
-      YAHOO_SECRET = 'Yahoo Client Secret'
-      ```
-   * Run make configure from the root directory
-      ```
-      cd ..
-      make configure
-      ```
-
-3. Run the bot. 
+2. Run the bot. 
 
     ### On local machine
         make run
     ### With Docker
-        make build-docker
+        make build-image
         make run-docker
+
+## Setup
+
+### Add the bot to your guild
+1. Generate a OAuth url from the discord developer portal using the bot scope and the following permissions:
+
+* Send Messages
+* Send Messages in Threads
+* Embed Links
+* Attach Files
+* Read Message History
+* Add Reactions
+* Use Slash Commands
+
+The permission value should be 277025507392
+
+![discord-oauth](/assests/discord-oauth-generator.png)
+
+2. Navigate to the generated url in a web browser and authorize the bot for your guild
+
+![discord-oauth-url-1](/assests/discord-oauth-url-authorize-1.png)
+![discord-oauth-url-2](/assests/discord-oauth-url-authorize-2.png)
+
+### Configure your guild
+
+1. From your guild run the configure slash command
+
+![discord-config-command](/assests/discord-config-command.png)
+
+2. The bot will DM you to complete the guild setup
+
+![discord-config-dm](/assests/discord-config-dm.png)
 
 ## Command Examples
 
-### $player_details Rashaad Penny
+### $stats Rashaad Penny
 
 ![player-details](/assests/player_details.PNG)
 
