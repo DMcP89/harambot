@@ -12,15 +12,12 @@ showenv:
 	@echo 'Module:      '${MODULE}
 	@echo 'Tag:         '${TAG}
 
-configure:
-	@pip install -r requirements.txt
-	@./scripts/configure.sh
-
 test:
 	@python -m pytest -v
 
 run:
-	@python ${MODULE}/${MODULE}.py
+	@pip install -r requirements.txt
+	@python ${MODULE}/bot.py
 
 build-docker:
 	@echo "${BLUE}Building docker image.."

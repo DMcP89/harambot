@@ -12,22 +12,25 @@
     "website" : "https://github.com/DMcP89/harambot",
     "repository": "https://github.com/DMcP89/harambot",
     "env": {
-        "HARAMBOT_YAHOO_KEY" : {
+        "YAHOO_KEY" : {
             "description": "Yahoo Consumer Key",
             "value": "",
             "required": "true"
         }, 
-        "HARAMBOT_YAHOO_SECRET" : {
+        "YAHOO_SECRET" : {
             "description": "Yahoo Consumer Secret",
             "value": "",
             "required": "true"
         },
-        "HARAMBOT_DISCORD_TOKEN" : {
+        "DISCORD_TOKEN" : {
             "description": "Discord bot token",
             "value": "",
             "required": "true"
         }
-    }
+    },
+    "addons": [
+        "heroku-postgresql"
+    ]
 
 
 }
