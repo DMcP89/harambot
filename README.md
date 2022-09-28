@@ -134,6 +134,3 @@ The permission value should be 277025507392
 ### $RIP "My Season"
 
 ![rip](/assests/rip.PNG)
-
-## Support Harambot!
-<a href="https://www.buymeacoffee.com/wochstudios" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
