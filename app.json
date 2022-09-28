@@ -26,31 +26,6 @@
             "description": "Discord bot token",
             "value": "",
             "required": "true"
-        },
-        "GUILD_DB" : {
-            "description": "Name of database to store guild data",
-            "value": "",
-            "required": "false"
-        },
-        "GUILD_DB_USER" : {
-            "description": "User to access database for guild data",
-            "value": "",
-            "required": "false"
-        },
-        "GUILD_DB_PASS" : {
-            "description": "Password to access database for guild data",
-            "value": "",
-            "required": "false"
-        },
-        "GUILD_DB_HOST" : {
-            "description": "Host for guild data database",
-            "value": "",
-            "required": "false"
-        },
-        "GUILD_DB_PORT" : {
-            "description": "Port for guild data database",
-            "value": "",
-            "required": "false"
         }
     },
     "addons": [
