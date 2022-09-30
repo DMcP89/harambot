@@ -18,3 +18,5 @@ coverage.xml
 .venv
 .vscode
 .gitignore
+secrets.json
+.secrets.toml

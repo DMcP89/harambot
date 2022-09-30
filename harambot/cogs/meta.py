@@ -3,6 +3,8 @@ from discord.ext import commands
 import discord
 import logging
 
+from utils import configure_guild
+
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
 
@@ -18,7 +20,7 @@ class Meta(commands.Cog):
         embed.add_field(name="$RIP", value="Pay respects to Harambe", inline=False)
         embed.add_field(name="$standings", value="Returns the current standings of your league", inline=False)
         embed.add_field(name="$roster team_name", value="Returns the roster of the given team", inline=False)
-        embed.add_field(name="$player_details player_name", value="Returns the details of the given player", inline=False)
+        embed.add_field(name="$stats player_name", value="Returns the details of the given player", inline=False)
         embed.add_field(name="$trade", value="Create poll for latest trade for league approval", inline=False)
         embed.add_field(name="$matchups", value="Returns the current weeks matchups", inline=False)
         await ctx.send(embed=embed)
@@ -28,3 +30,10 @@ class Meta(commands.Cog):
         logger.info("Ping called")
         latency = self.bot.latency  # Included in the Discord.py library
         await ctx.send(latency)
+
+    @commands.hybrid_command()
+
+    async def configure(self, ctx):
+        await ctx.send("Configuring guild...")
+        await configure_guild(self.bot, ctx.guild.owner, ctx.guild.id)
+        await ctx.send("Guild configured successfully")

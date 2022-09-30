@@ -4,7 +4,7 @@ MODULE := harambot
 BLUE='\033[0;34m'
 NC='\033[0m' # No color
 
-TAG := $(shell git describe --tags --always)
+TAG := $(shell git describe --tags --always --abbrev=0)
 
 showenv:
 	@echo 'Environment:'
@@ -12,17 +12,14 @@ showenv:
 	@echo 'Module:      '${MODULE}
 	@echo 'Tag:         '${TAG}
 
-configure:
-	@pip install -r requirements.txt
-	@./scripts/configure.sh
-
 test:
 	@python -m pytest -v
 
 run:
-	@python ${MODULE}/${MODULE}.py
+	@pip install -r requirements.txt
+	@python ${MODULE}/bot.py
 
-build-docker:
+build-image:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
@@ -32,4 +29,4 @@ run-docker:
 	@echo "${BLUE}Running docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker run ${MODULE}:${TAG} 
+	@docker run --name ${MODULE} -d ${MODULE}:${TAG} 

@@ -11,3 +11,5 @@ guilds.json
 .secrets.*
 answers.txt
 *.pem
+.python-version
+*.db
