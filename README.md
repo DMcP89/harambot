@@ -96,13 +96,13 @@ The permission value should be 277025507392
 
 ### Configure your guild
 
-1. From your guild run the configure slash command
-
-![discord-config-command](/assests/discord-config-command.png)
-
-2. The bot will DM you to complete the guild setup
+* When the bot joins your guild for the first time it will DM you to complete the guild setup
 
 ![discord-config-dm](/assests/discord-config-dm.png)
+
+* You can reconfigure your guild by running the configure slash command from your guild
+
+![discord-config-command](/assests/discord-config-command.png)
 
 ## Command Examples
 
