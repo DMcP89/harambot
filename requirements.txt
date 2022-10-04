@@ -40,6 +40,6 @@ typing-extensions==4.3.0
 urllib3==1.26.6
 websockets==9.1
 yahoo-fantasy-api==2.5.1
-yahoo-oauth==1.1
+yahoo-oauth==2.0
 yarl==1.3.0
 zipp==3.4.0
