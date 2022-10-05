@@ -1,7 +1,7 @@
 # Harambot
 ![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/workflow/status/DMcP89/harambot/Pytest)
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/DMcP89/harambot/tree/release/0.2.1-Beta)
 
 
 A Yahoo Fantasy sports bot for Discord.
