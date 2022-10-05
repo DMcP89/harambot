@@ -28,7 +28,7 @@ class Guild(BaseModel):
     refresh_token = TextField()
     expires_in = IntegerField()
     token_type = TextField()
-    xoauth_yahoo_guid = TextField()
+    xoauth_yahoo_guid = TextField(null=True)
     token_time = BigIntegerField()
     league_id = TextField()
     league_type = TextField()
