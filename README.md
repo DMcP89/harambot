@@ -58,6 +58,10 @@ Click the button at the top and fill out the form with your discord token and ya
 
 ![heroku-deployment](/assests/heroku-deployment.png)
 
+Once the deployment is complete enable the dyno
+
+![heroku-dyno](/assests/heroku-dyno.png)
+
 ### Local deployment
 1. Clone this repository 
 
@@ -89,7 +93,16 @@ The permission value should be 277025507392
 
 ![discord-oauth](/assests/discord-oauth-generator.png)
 
-2. Navigate to the generated url in a web browser and authorize the bot for your guild
+2. Set the gateway intents
+
+In order for the bot to work properly it requires the following intents:
+
+* Sever Members Intent
+* Message Content Intent
+
+![discord-intents](/assests/discord-intents.png)
+
+3. Navigate to the generated url in a web browser and authorize the bot for your guild
 
 ![discord-oauth-url-1](/assests/discord-oauth-url-authorize-1.png)
 ![discord-oauth-url-2](/assests/discord-oauth-url-authorize-2.png)
