@@ -1,5 +1,5 @@
 # Harambot
-![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/workflow/status/DMcP89/harambot/Pytest)
+![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/workflow/status/DMcP89/harambot/Pytest) ![Version](https://img.shields.io/badge/version-0.2.1--Beta-red)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -58,6 +58,10 @@ Click the button at the top and fill out the form with your discord token and ya
 
 ![heroku-deployment](/assests/heroku-deployment.png)
 
+Once the deployment is complete enable the dyno
+
+![heroku-dyno](/assests/heroku-dyno.png)
+
 ### Local deployment
 1. Clone this repository 
 
@@ -89,20 +93,29 @@ The permission value should be 277025507392
 
 ![discord-oauth](/assests/discord-oauth-generator.png)
 
-2. Navigate to the generated url in a web browser and authorize the bot for your guild
+2. Set the gateway intents
+
+In order for the bot to work properly it requires the following intents:
+
+* Sever Members Intent
+* Message Content Intent
+
+![discord-intents](/assests/discord-intents.png)
+
+3. Navigate to the generated url in a web browser and authorize the bot for your guild
 
 ![discord-oauth-url-1](/assests/discord-oauth-url-authorize-1.png)
 ![discord-oauth-url-2](/assests/discord-oauth-url-authorize-2.png)
 
 ### Configure your guild
 
-1. From your guild run the configure slash command
-
-![discord-config-command](/assests/discord-config-command.png)
-
-2. The bot will DM you to complete the guild setup
+* When the bot joins your guild for the first time it will DM you to complete the guild setup
 
 ![discord-config-dm](/assests/discord-config-dm.png)
+
+* You can reconfigure your guild by running the configure slash command from your guild
+
+![discord-config-command](/assests/discord-config-command.png)
 
 ## Command Examples
 
