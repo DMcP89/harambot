@@ -1,11 +1,9 @@
 import logging
 import os
-import re
 import discord
 import objectpath
 
-from yahoo_fantasy_api import league, game, team, yhandler
-from datetime import datetime
+from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
 
 
