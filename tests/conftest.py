@@ -5,7 +5,7 @@ import pytest
 
 from unittest.mock import MagicMock, patch
 from harambot.yahoo_api import Yahoo
-from yahoo_fantasy_api import game
+from yahoo_fantasy_api import game, League
 
 root_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -50,9 +50,10 @@ def mock_matchups():
 @pytest.fixture
 def api(mock_oauth, mock_standings, mock_teams, mock_player_details, mock_ownership, mock_matchups):
         api = Yahoo(mock_oauth, "123456", "nfl")
+        api.scoring_type = "head"
         league = None
         with patch.object(game.Game, 'game_id', return_value='319'):
-            league = api.league()
+            league = League(mock_oauth, 123456)
             league.standings = MagicMock(return_value = mock_standings)
             league.teams = MagicMock(return_value = mock_teams)
             league.current_week = MagicMock(return_value = 1)
