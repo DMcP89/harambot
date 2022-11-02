@@ -1,11 +1,9 @@
 import logging
 import os
-import re
 import discord
 import objectpath
 
-from yahoo_fantasy_api import league, game, team, yhandler
-from datetime import datetime
+from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
 
 
@@ -20,18 +18,22 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 class Yahoo:
 
     oauth = None
+    scoring_type = None
 
     def __init__(self, oauth, league_id, league_type):
         self.oauth = oauth
         self.league_id = league_id
         self.league_type = league_type
 
+
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def league(self):
         if not self.oauth.token_is_valid():
             self.oauth.refresh_access_token()
         gm = game.Game(self.oauth, self.league_type)
-        return gm.to_league('{}.l.{}'.format(gm.game_id(), self.league_id))
+        league = gm.to_league('{}.l.{}'.format(gm.game_id(), self.league_id))
+        self.scoring_type = league.settings()['scoring_type']
+        return league
         
         
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
@@ -79,7 +81,8 @@ class Yahoo:
             embed.add_field(name="Team", value=player['editorial_team_abbr'])
             if 'bye_weeks' in player:
                 embed.add_field(name="Bye", value=player['bye_weeks']['week'])
-            embed.add_field(name="Total Points", value=player['player_points']['total'])
+            if self.scoring_type == 'head':
+                embed.add_field(name="Total Points", value=player['player_points']['total'])
             embed.add_field(name="Owner", value=self.get_player_owner(player['player_id']))
             embed.set_image(url=player['image_url'])
             
@@ -88,7 +91,8 @@ class Yahoo:
             player_details_text = player_details_text + "Team: "+player['editorial_team_abbr']+'\n'
             if 'bye_weeks' in player:
                 player_details_text = player_details_text + "Bye: "+player['bye_weeks']['week']+'\n'
-            player_details_text = player_details_text + "Total Points: "+player['player_points']['total']+'\n'
+            if self.scoring_type == 'head':
+                player_details_text = player_details_text + "Total Points: "+player['player_points']['total']+'\n'
             player_details_text = player_details_text + "Owner: " + self.get_player_owner(player['player_id'])
             
             player_details = {}
@@ -124,25 +128,29 @@ class Yahoo:
             embed = discord.Embed(title="Matchups for Week {}".format(str(self.league().current_week())), description='', color=0xeee657)
             matchups_json = objectpath.Tree(self.league().matchups())
             matchups = matchups_json.execute('$..scoreboard..matchups..matchup..teams')
+            team1_details = ""
+            team2_details = ""
             for matchup in matchups:
                 team1 = matchup["0"]["team"]
                 team1_name = team1[0][2]["name"]
-                team1_actual_points = team1[1]['team_points']['total']
-                team1_projected_points = team1[1]['team_projected_points']['total']
-                if 'win_probability' in team1[1]:
-                    team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
-                    team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
-                else:
-                    team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n'.format(team1_name, team1_projected_points, team1_actual_points)
+                if self.scoring_type == 'head':
+                    team1_actual_points = team1[1]['team_points']['total']
+                    team1_projected_points = team1[1]['team_projected_points']['total']
+                    if 'win_probability' in team1[1]:
+                        team1_win_probability = "{:.0%}".format(team1[1]['win_probability'])
+                        team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {} \n'.format(team1_name, team1_projected_points, team1_actual_points, team1_win_probability)
+                    else:
+                        team1_details = '***{}*** \n Projected Score: {} \n  Actual Score: {} \n'.format(team1_name, team1_projected_points, team1_actual_points)
                 team2 = matchup["1"]["team"]
                 team2_name = team2[0][2]["name"]
-                team2_actual_points = team2[1]['team_points']['total']
-                team2_projected_points = team2[1]['team_projected_points']['total']
-                if 'win_probability' in team2[1]:
-                    team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
-                    team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
-                else:
-                    team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n'.format(team2_name, team2_projected_points, team2_actual_points)
+                if self.scoring_type == 'head':
+                    team2_actual_points = team2[1]['team_points']['total']
+                    team2_projected_points = team2[1]['team_projected_points']['total']
+                    if 'win_probability' in team2[1]:
+                        team2_win_probability = "{:.0%}".format(team2[1]['win_probability'])
+                        team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n Win Probability: {}\n'.format(team2_name, team2_projected_points, team2_actual_points, team2_win_probability)
+                    else:
+                        team2_details = '\n***{}*** \n Projected Score: {} \n  Actual Score: {} \n'.format(team2_name, team2_projected_points, team2_actual_points)
                 divider = '--------------------------------------'
                 embed.add_field(name="{} vs {}".format(team1_name, team2_name), value=team1_details + team2_details+divider, inline=False)
             return embed
