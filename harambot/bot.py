@@ -2,9 +2,6 @@ import os
 
 import logging
 import discord
-import requests
-import base64
-import time
 from yahoo_fantasy_api import game
 from yahoo_oauth import OAuth2
 
