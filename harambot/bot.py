@@ -16,7 +16,10 @@ from utils import configure_guild
 
 #logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('harambot.py')
-logger.setLevel(settings.loglevel)
+if 'LOGLEVEL' in settings:
+    logger.setLevel(settings.loglevel)
+else:
+    logger.setLevel('INFO')
 
 intents = discord.Intents.default()
 intents.members = True

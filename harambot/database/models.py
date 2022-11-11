@@ -2,7 +2,7 @@ from peewee import *
 from playhouse.db_url import connect
 from config import settings
 
-if settings.database_url:
+if 'DATABASE_URL' in settings:
     database = connect(settings.database_url)
 else:
     database = SqliteDatabase(':memory:')
