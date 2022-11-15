@@ -2,8 +2,8 @@ import base64
 import requests
 import time
 
-from config import settings
-from database.models import Guild
+from harambot.config import settings
+from harambot.database.models import Guild
 
 async def configure_guild(bot,owner, id):
 

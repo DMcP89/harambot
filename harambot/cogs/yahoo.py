@@ -1,15 +1,14 @@
+import discord
+import logging
+import urllib3
+
 from discord import embeds
 from discord.ext import commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
 
-
-import discord
-import logging
-import urllib3
-import yahoo_api
-
-from database.models import Guild
+from harambot.yahoo_api import Yahoo
+from harambot.database.models import Guild
 
 
 logger = logging.getLogger(__file__)
@@ -28,7 +27,7 @@ class Yahoo(commands.Cog):
     
     async def cog_before_invoke(self, ctx):
         guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
-        self.yahoo_api = yahoo_api.Yahoo(OAuth2(self.KEY, self.SECRET,store_file=False, **model_to_dict(guild)), guild.league_id, guild.league_type)
+        self.yahoo_api = Yahoo(OAuth2(self.KEY, self.SECRET,store_file=False, **model_to_dict(guild)), guild.league_id, guild.league_type)
         return
     
     @commands.command("standings")

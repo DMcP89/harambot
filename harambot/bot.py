@@ -7,12 +7,12 @@ from yahoo_oauth import OAuth2
 
 
 from discord.ext import commands
-from cogs.meta import Meta
-from cogs.misc import Misc
-from cogs.yahoo import Yahoo
-from config import settings
-from database.models import Guild
-from utils import configure_guild
+from harambot.cogs.meta import Meta
+from harambot.cogs.misc import Misc
+from harambot.cogs.yahoo import Yahoo
+from harambot.config import settings
+from harambot.database.models import Guild
+from harambot.utils import configure_guild
 
 #logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('harambot.py')
@@ -49,5 +49,8 @@ async def on_guild_join(guild):
     if not Guild.select().where(Guild.guild_id == str(guild.id)).exists():
         await configure_guild(bot,guild.owner, guild.id)
         logger.info("Guild not configured!")
-    
-bot.run(settings.discord_token, reconnect=True)  # Where 'TOKEN' is your bot token
+
+def run():    
+    bot.run(settings.discord_token, reconnect=True)  # Where 'TOKEN' is your bot token
+
+run()
