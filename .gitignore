@@ -13,3 +13,6 @@ answers.txt
 *.pem
 .python-version
 *.db
+
+# Pytest
+.coverage

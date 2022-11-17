@@ -29,4 +29,4 @@ run-docker:
 	@echo "${BLUE}Running docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker run --name ${MODULE} -d ${MODULE}:${TAG} 
+	@docker run --name ${MODULE} -d ${MODULE}:${TAG}

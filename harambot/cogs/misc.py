@@ -4,13 +4,13 @@ from discord.ext import commands
 import discord
 import logging
 
-from database.models import Guild
+from harambot.database.models import Guild
 
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
 
+
 class Misc(commands.Cog):
-    
     def __init__(self, bot):
         self.bot = bot
 
@@ -19,8 +19,8 @@ class Misc(commands.Cog):
         logger.info("RIP called")
         guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
         respected = args[0] if args else "Harambe"
-        message = guild.RIP_text +" "+ respected
-        embed = discord.Embed(title="", description='', color=0xeee657)
+        message = guild.RIP_text + " " + respected
+        embed = discord.Embed(title="", description="", color=0xEEE657)
         embed.set_image(url=guild.RIP_image_url)
-        
-        await ctx.send(content=message,embed=embed)
+
+        await ctx.send(content=message, embed=embed)
