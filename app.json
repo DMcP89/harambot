@@ -16,7 +16,7 @@
             "description": "Yahoo Consumer Key",
             "value": "",
             "required": "true"
-        }, 
+        },
         "YAHOO_SECRET" : {
             "description": "Yahoo Consumer Secret",
             "value": "",

@@ -1,11 +1,13 @@
-from peewee import *
+from peewee import SqliteDatabase
+from peewee import Model, TextField, IntegerField, BigIntegerField
 from playhouse.db_url import connect
 from harambot.config import settings
 
-if 'DATABASE_URL' in settings:
+if "DATABASE_URL" in settings:
     database = connect(settings.database_url)
 else:
-    database = SqliteDatabase(':memory:')
+    database = SqliteDatabase(":memory:")
+
 
 class BaseModel(Model):
     class Meta:
@@ -22,6 +24,5 @@ class Guild(BaseModel):
     token_time = BigIntegerField()
     league_id = TextField()
     league_type = TextField()
-    RIP_text   = TextField()
+    RIP_text = TextField()
     RIP_image_url = TextField()
-

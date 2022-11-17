@@ -41,7 +41,7 @@ In order to properly configure your bot you will need the following:
 2. Fill out the form as shown below, you can provide your own values for Application Name,  Description, and Homepage URL. Once complete click the "Create App" button
    ![yahoo-app-details](/assests/yahoo-app-details.png)
 3. Copy the Client ID and Client Secret values
-   ![yahoo-app-secrets](/assests/yahoo-app-secrets.png) 
+   ![yahoo-app-secrets](/assests/yahoo-app-secrets.png)
 
 ### Yahoo League ID
 
@@ -54,7 +54,7 @@ You can find your league's ID under the settings page of your league
 
 Harambot now supports heroku deployments!
 
-Click the button at the top and fill out the form with your discord token and yahoo api client key and and secret. 
+Click the button at the top and fill out the form with your discord token and yahoo api client key and and secret.
 
 ![heroku-deployment](/assests/heroku-deployment.png)
 
@@ -63,12 +63,12 @@ Once the deployment is complete enable the dyno
 ![heroku-dyno](/assests/heroku-dyno.png)
 
 ### Local deployment
-1. Clone this repository 
+1. Clone this repository
 
         git clone git@github.com:DMcP89/harambot.git
         cd harambot
 
-2. Run the bot. 
+2. Run the bot.
 
     ### On local machine
         make run
