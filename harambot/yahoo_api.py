@@ -199,67 +199,27 @@ class Yahoo:
                 description="",
                 color=0xEEE657,
             )
-            matchups_json = objectpath.Tree(self.league().matchups())
-            matchups = matchups_json.execute(
+            matchups = objectpath.Tree(self.league().matchups()).execute(
                 "$..scoreboard..matchups..matchup..teams"
             )
-            team1_details = ""
-            team2_details = ""
+
+            # loop through each matchup element
             for matchup in matchups:
-                team1 = matchup["0"]["team"]
-                team1_name = team1[0][2]["name"]
-                if self.scoring_type == "head":
-                    team1_actual_points = team1[1]["team_points"]["total"]
-                    team1_projected_points = team1[1]["team_projected_points"][
-                        "total"
-                    ]
-                    if "win_probability" in team1[1]:
-                        team1_win_probability = "{:.0%}".format(
-                            team1[1]["win_probability"]
-                        )
-                        team1_details = "***{}*** \n Projected Score: {} \n  \
-                            Actual Score: {} \n Win Probability: {} \n".format(
-                            team1_name,
-                            team1_projected_points,
-                            team1_actual_points,
-                            team1_win_probability,
-                        )
-                    else:
-                        team1_details = "***{}*** \n Projected Score: {} \n  \
-                            Actual Score: {} \n".format(
-                            team1_name,
-                            team1_projected_points,
-                            team1_actual_points,
-                        )
-                team2 = matchup["1"]["team"]
-                team2_name = team2[0][2]["name"]
-                if self.scoring_type == "head":
-                    team2_actual_points = team2[1]["team_points"]["total"]
-                    team2_projected_points = team2[1]["team_projected_points"][
-                        "total"
-                    ]
-                    if "win_probability" in team2[1]:
-                        team2_win_probability = "{:.0%}".format(
-                            team2[1]["win_probability"]
-                        )
-                        team2_details = "\n***{}*** \n Projected Score: {} \n \
-                            Actual Score: {} \n Win Probability: {}\n".format(
-                            team2_name,
-                            team2_projected_points,
-                            team2_actual_points,
-                            team2_win_probability,
-                        )
-                    else:
-                        team2_details = "\n***{}*** \n Projected Score: {} \n \
-                            Actual Score: {} \n".format(
-                            team2_name,
-                            team2_projected_points,
-                            team2_actual_points,
-                        )
+                # handle team 1
+                team1_details = self.get_matchup_details(matchup["0"]["team"])
+
+                # handle team 2
+                team2_details = self.get_matchup_details(matchup["1"]["team"])
                 divider = "--------------------------------------"
+
+                # Add details to embed
                 embed.add_field(
-                    name="{} vs {}".format(team1_name, team2_name),
-                    value=team1_details + team2_details + divider,
+                    name="{} vs {}".format(
+                        team1_details["name"], team2_details["name"]
+                    ),
+                    value=team1_details["text"]
+                    + team2_details["text"]
+                    + divider,
                     inline=False,
                 )
             return embed
@@ -269,6 +229,44 @@ class Yahoo:
                     self.league_id
                 )
             )
+
+    def get_matchup_details(self, team):
+        team_name = team[0][2]["name"]
+        team_details = ""
+        if self.scoring_type == "head":
+            # handle data for head to head scoring
+            team1_actual_points = team[1]["team_points"]["total"]
+            team1_projected_points = team[1]["team_projected_points"]["total"]
+            if "win_probability" in team[1]:
+                team1_win_probability = "{:.0%}".format(
+                    team[1]["win_probability"]
+                )
+                team_details = "***{}*** \n Projected Score: {} \n  \
+                            Actual Score: {} \n Win Probability: {} \n".format(
+                    team_name,
+                    team1_projected_points,
+                    team1_actual_points,
+                    team1_win_probability,
+                )
+            else:
+                team_details = "***{}*** \n Projected Score: {} \n  \
+                            Actual Score: {} \n".format(
+                    team_name,
+                    team1_projected_points,
+                    team1_actual_points,
+                )
+        else:
+            team_details = "***{}*** \n Score: {} \n  \
+                            Remaining Games: {} \n \
+                                Live Games: {} \n \
+                                    Completed Games: {} \n".format(
+                team_name,
+                team[1]["team_points"]["total"],
+                team[1]["team_remaining_games"]["total"]["remaining_games"],
+                team[1]["team_remaining_games"]["total"]["live_games"],
+                team[1]["team_remaining_games"]["total"]["completed_games"],
+            )
+        return {"name": team_name, "text": team_details}
 
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_latest_trade(self):
