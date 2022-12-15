@@ -9,9 +9,9 @@ def test_league(api):
 
 def test_get_standings(api):
     return_value = api.get_standings()
-    assert isinstance(return_value, Embed)
-    assert len(return_value.fields) == 3
-    assert return_value.fields[0].name == "1. Hide and Go Zeke"
+    assert isinstance(return_value, list)
+    assert len(return_value) == 3
+    assert return_value[0]["place"] == "1. Hide and Go Zeke"
 
 
 def test_get_team(api):

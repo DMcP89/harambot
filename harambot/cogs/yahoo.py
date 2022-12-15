@@ -41,7 +41,17 @@ class YahooCog(commands.Cog):
     @commands.command("standings")
     async def standings(self, ctx):
         logger.info("standings called")
-        embed = self.yahoo_api.get_standings()
+        embed = discord.Embed(
+            title="Standings",
+            description="Team Name\n W-L-T",
+            color=0xEEE657,
+        )
+        for team in self.yahoo_api.get_standings():
+            embed.add_field(
+                name=team["place"],
+                value=team["record"],
+                inline=False,
+            )
         if embed:
             await ctx.send(embed=embed)
         else:

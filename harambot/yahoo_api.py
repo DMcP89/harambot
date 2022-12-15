@@ -36,22 +36,19 @@ class Yahoo:
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_standings(self):
         try:
-            embed = discord.Embed(
-                title="Standings",
-                description="Team Name\n W-L-T",
-                color=0xEEE657,
-            )
+            standings = []
             for idx, team in enumerate(self.league().standings()):
                 outcomes = team["outcome_totals"]
                 record = "{}-{}-{}".format(
                     outcomes["wins"], outcomes["losses"], outcomes["ties"]
                 )
-                embed.add_field(
-                    name=str(idx + 1) + ". " + team["name"],
-                    value=record,
-                    inline=False,
+                standings.append(
+                    {
+                        "place": str(idx + 1) + ". " + team["name"],
+                        "record": record,
+                    }
                 )
-            return embed
+            return standings
         except Exception:
             logger.exception(
                 "Error while fetching standings for league {}".format(
