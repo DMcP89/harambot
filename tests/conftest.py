@@ -54,6 +54,11 @@ def mock_matchups():
 
 
 @pytest.fixture
+def mock_matchups_category():
+    return load_test_data("test-matchups-category.json")
+
+
+@pytest.fixture
 def api(
     mock_oauth,
     mock_standings,
@@ -61,6 +66,7 @@ def api(
     mock_player_details,
     mock_ownership,
     mock_matchups,
+    mock_matchups_category,
 ):
     api = Yahoo(mock_oauth, "123456", "nfl")
     api.scoring_type = "head"
@@ -73,5 +79,29 @@ def api(
         league.player_details = MagicMock(return_value=mock_player_details)
         league.ownership = MagicMock(return_value=mock_ownership)
         league.matchups = MagicMock(return_value=mock_matchups)
+    api.league = MagicMock(return_value=league)
+    return api
+
+
+@pytest.fixture
+def category_api(
+    mock_oauth,
+    mock_standings,
+    mock_teams,
+    mock_player_details,
+    mock_ownership,
+    mock_matchups_category,
+):
+    api = Yahoo(mock_oauth, "123456", "nfl")
+    api.scoring_type = "headone"
+    league = None
+    with patch.object(game.Game, "game_id", return_value="319"):
+        league = League(mock_oauth, 123456)
+        league.standings = MagicMock(return_value=mock_standings)
+        league.teams = MagicMock(return_value=mock_teams)
+        league.current_week = MagicMock(return_value=1)
+        league.player_details = MagicMock(return_value=mock_player_details)
+        league.ownership = MagicMock(return_value=mock_ownership)
+        league.matchups = MagicMock(return_value=mock_matchups_category)
     api.league = MagicMock(return_value=league)
     return api

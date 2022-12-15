@@ -46,3 +46,9 @@ def test_get_matchups(api):
     return_value = api.get_matchups()
     assert isinstance(return_value, Embed)
     assert len(return_value.fields) == 6
+
+
+def test_get_matchups_category(category_api):
+    return_value = category_api.get_matchups()
+    assert isinstance(return_value, Embed)
+    assert len(return_value.fields) == 7
