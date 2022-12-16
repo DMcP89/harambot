@@ -82,14 +82,6 @@ optional = false
 python-versions = "~=3.7"
 
 [[package]]
-name = "certifi"
-version = "2022.9.24"
-description = "Python package for providing Mozilla's CA Bundle."
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
 name = "cfgv"
 version = "3.3.1"
 description = "Validate configuration and produce human readable error messages."
@@ -174,14 +166,6 @@ name = "distlib"
 version = "0.3.6"
 description = "Distribution utilities"
 category = "dev"
-optional = false
-python-versions = "*"
-
-[[package]]
-name = "docopt"
-version = "0.6.2"
-description = "Pythonic argument parser, that will make you smile"
-category = "main"
 optional = false
 python-versions = "*"
 
@@ -318,14 +302,6 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*
 setuptools = "*"
 
 [[package]]
-name = "objectpath"
-version = "0.6.1"
-description = "The agile query language for semi-structured data. #JSON"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -401,17 +377,6 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
-name = "pyaml"
-version = "21.10.1"
-description = "PyYAML-based module to produce pretty and readable YAML-serialized data"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-PyYAML = "*"
-
-[[package]]
 name = "pycodestyle"
 version = "2.9.1"
 description = "Python style guide checker"
@@ -474,49 +439,12 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtualenv"]
 
 [[package]]
-name = "pytz"
-version = "2022.6"
-description = "World timezone definitions, modern and historical"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
-
-[[package]]
-name = "rauth"
-version = "0.7.3"
-description = "A Python library for OAuth 1.0/a, 2.0, and Ofly."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-requests = ">=1.2.3"
-
-[[package]]
-name = "requests"
-version = "2.28.1"
-description = "Python HTTP for Humans."
-category = "main"
-optional = false
-python-versions = ">=3.7, <4"
-
-[package.dependencies]
-certifi = ">=2017.4.17"
-charset-normalizer = ">=2,<3"
-idna = ">=2.5,<4"
-urllib3 = ">=1.21.1,<1.27"
-
-[package.extras]
-socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "setuptools"
@@ -556,19 +484,6 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
-name = "urllib3"
-version = "1.26.12"
-description = "HTTP library with thread-safe connection pooling, file post, and more."
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
-
-[package.extras]
-brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)", "brotlipy (>=0.6.0)"]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)", "urllib3-secure-extra"]
-socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
-
-[[package]]
 name = "virtualenv"
 version = "20.16.7"
 description = "Virtual Python Environment builder"
@@ -586,32 +501,6 @@ docs = ["proselint (>=0.13)", "sphinx (>=5.3)", "sphinx-argparse (>=0.3.2)", "sp
 testing = ["coverage (>=6.2)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=21.3)", "pytest (>=7.0.1)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.2)", "pytest-mock (>=3.6.1)", "pytest-randomly (>=3.10.3)", "pytest-timeout (>=2.1)"]
 
 [[package]]
-name = "yahoo-fantasy-api"
-version = "2.6.0"
-description = "Python bindings to access the Yahoo! Fantasy APIs"
-category = "main"
-optional = false
-python-versions = ">=3"
-
-[package.dependencies]
-docopt = "*"
-objectpath = "*"
-pytz = "*"
-yahoo_oauth = "*"
-
-[[package]]
-name = "yahoo-oauth"
-version = "2.0"
-description = "Python Yahoo OAuth Library. Supports OAuth1 and OAuth2"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pyaml = "*"
-rauth = "*"
-
-[[package]]
 name = "yarl"
 version = "1.8.1"
 description = "Yet another URL library"
@@ -626,7 +515,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "84615cf3da8ad6ec805acac5b828c3126ee2c0bba37c4b70bb076b6c7056ec13"
+content-hash = "8155a81d642c470ea2d821fc66750883522ff0d10a09307f52ccd75e5d2839d7"
 
 [metadata.files]
 aiohttp = [
@@ -757,10 +646,6 @@ cachetools = [
     {file = "cachetools-5.2.0-py3-none-any.whl", hash = "sha256:f9f17d2aec496a9aa6b76f53e3b614c965223c061982d434d160f930c698a9db"},
     {file = "cachetools-5.2.0.tar.gz", hash = "sha256:6a94c6402995a99c3970cc7e4884bb60b4a8639938157eeed436098bf9831757"},
 ]
-certifi = [
-    {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
-    {file = "certifi-2022.9.24.tar.gz", hash = "sha256:0d9c601124e5a6ba9712dbc60d9c53c21e34f5f641fe83002317394311bdce14"},
-]
 cfgv = [
     {file = "cfgv-3.3.1-py2.py3-none-any.whl", hash = "sha256:c6a0883f3917a037485059700b9e75da2464e6c27051014ad85ba6aaa5884426"},
     {file = "cfgv-3.3.1.tar.gz", hash = "sha256:f5a830efb9ce7a445376bb66ec94c638a9787422f96264c98edc6bdeed8ab736"},
@@ -840,9 +725,6 @@ discord-py = [
 distlib = [
     {file = "distlib-0.3.6-py2.py3-none-any.whl", hash = "sha256:f35c4b692542ca110de7ef0bea44d73981caeb34ca0b9b6b2e6d7790dda8f80e"},
     {file = "distlib-0.3.6.tar.gz", hash = "sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46"},
-]
-docopt = [
-    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
 ]
 dynaconf = [
     {file = "dynaconf-3.1.11-py2.py3-none-any.whl", hash = "sha256:87e0b3b12b5db9e8fb465e1f8c7fdb926cd2ec5b6d88aa7f821f316df93fb165"},
@@ -1030,10 +912,6 @@ nodeenv = [
     {file = "nodeenv-1.7.0-py2.py3-none-any.whl", hash = "sha256:27083a7b96a25f2f5e1d8cb4b6317ee8aeda3bdd121394e5ac54e498028a042e"},
     {file = "nodeenv-1.7.0.tar.gz", hash = "sha256:e0e7f7dfb85fc5394c6fe1e8fa98131a2473e04311a45afb6508f7cf1836fa2b"},
 ]
-objectpath = [
-    {file = "objectpath-0.6.1-py2.py3-none-any.whl", hash = "sha256:7ac2c507e7e5bfbf245701044453edc8e4073ded01d53349237d918124d7ca87"},
-    {file = "objectpath-0.6.1.tar.gz", hash = "sha256:461263136c79292e42431fbb85cdcaac4c6a256f6b1aa5b3ae9316e4965ad819"},
-]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
     {file = "packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb"},
@@ -1072,10 +950,6 @@ psycopg2 = [
     {file = "psycopg2-2.9.5-cp39-cp39-win_amd64.whl", hash = "sha256:190d51e8c1b25a47484e52a79638a8182451d6f6dff99f26ad9bd81e5359a0fa"},
     {file = "psycopg2-2.9.5.tar.gz", hash = "sha256:a5246d2e683a972e2187a8714b5c2cf8156c064629f9a9b1a873c1730d9e245a"},
 ]
-pyaml = [
-    {file = "pyaml-21.10.1-py2.py3-none-any.whl", hash = "sha256:19985ed303c3a985de4cf8fd329b6d0a5a5b5c9035ea240eccc709ebacbaf4a0"},
-    {file = "pyaml-21.10.1.tar.gz", hash = "sha256:c6519fee13bf06e3bb3f20cacdea8eba9140385a7c2546df5dbae4887f768383"},
-]
 pycodestyle = [
     {file = "pycodestyle-2.9.1-py2.py3-none-any.whl", hash = "sha256:d1735fc58b418fd7c5f658d28d943854f8a849b01a5d0a1e6f3f3fdd0166804b"},
     {file = "pycodestyle-2.9.1.tar.gz", hash = "sha256:2c9607871d58c76354b697b42f5d57e1ada7d261c261efac224b664affdc5785"},
@@ -1095,10 +969,6 @@ pytest = [
 pytest-cov = [
     {file = "pytest-cov-4.0.0.tar.gz", hash = "sha256:996b79efde6433cdbd0088872dbc5fb3ed7fe1578b68cdbba634f14bb8dd0470"},
     {file = "pytest_cov-4.0.0-py3-none-any.whl", hash = "sha256:2feb1b751d66a8bd934e5edfa2e961d11309dc37b73b0eabe73b5945fee20f6b"},
-]
-pytz = [
-    {file = "pytz-2022.6-py2.py3-none-any.whl", hash = "sha256:222439474e9c98fced559f1709d89e6c9cbf8d79c794ff3eb9f8800064291427"},
-    {file = "pytz-2022.6.tar.gz", hash = "sha256:e89512406b793ca39f5971bc999cc538ce125c0e51c27941bef4568b460095e2"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
@@ -1142,14 +1012,6 @@ pyyaml = [
     {file = "PyYAML-6.0-cp39-cp39-win_amd64.whl", hash = "sha256:b3d267842bf12586ba6c734f89d1f5b871df0273157918b0ccefa29deb05c21c"},
     {file = "PyYAML-6.0.tar.gz", hash = "sha256:68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2"},
 ]
-rauth = [
-    {file = "rauth-0.7.3-py2-none-any.whl", hash = "sha256:b18590fbd77bc3d871936bbdb851377d1b0c08e337b219c303f8fc2b5a42ef2d"},
-    {file = "rauth-0.7.3.tar.gz", hash = "sha256:524cdbc1c28560eacfc9a9d40c59525eb8d00fdf07fbad86107ea24411477b0a"},
-]
-requests = [
-    {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
-    {file = "requests-2.28.1.tar.gz", hash = "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983"},
-]
 setuptools = [
     {file = "setuptools-65.5.1-py3-none-any.whl", hash = "sha256:d0b9a8433464d5800cbe05094acf5c6d52a91bfac9b52bcfc4d41382be5d5d31"},
     {file = "setuptools-65.5.1.tar.gz", hash = "sha256:e197a19aa8ec9722928f2206f8de752def0e4c9fc6953527360d1c36d94ddb2f"},
@@ -1166,19 +1028,9 @@ typing-extensions = [
     {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
     {file = "typing_extensions-4.4.0.tar.gz", hash = "sha256:1511434bb92bf8dd198c12b1cc812e800d4181cfcb867674e0f8279cc93087aa"},
 ]
-urllib3 = [
-    {file = "urllib3-1.26.12-py2.py3-none-any.whl", hash = "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"},
-    {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
-]
 virtualenv = [
     {file = "virtualenv-20.16.7-py3-none-any.whl", hash = "sha256:efd66b00386fdb7dbe4822d172303f40cd05e50e01740b19ea42425cbe653e29"},
     {file = "virtualenv-20.16.7.tar.gz", hash = "sha256:8691e3ff9387f743e00f6bb20f70121f5e4f596cae754531f2b3b3a1b1ac696e"},
-]
-yahoo-fantasy-api = [
-    {file = "yahoo_fantasy_api-2.6.0.tar.gz", hash = "sha256:8dbc247c0d3128b03b132044b559e4aa47a57de88dff7a841c2147ce5d3e0075"},
-]
-yahoo-oauth = [
-    {file = "yahoo_oauth-2.0.tar.gz", hash = "sha256:912921bf8724ced6e5d7924308b2b15c2b51e14ed7d25c9c42cb8b52e3e75158"},
 ]
 yarl = [
     {file = "yarl-1.8.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:abc06b97407868ef38f3d172762f4069323de52f2b70d133d096a48d72215d28"},
