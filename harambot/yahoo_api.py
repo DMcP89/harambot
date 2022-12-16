@@ -61,20 +61,7 @@ class Yahoo:
     def get_roster(self, team_name):
         team_details = self.league().get_team(team_name)
         if team_details:
-            embed = discord.Embed(
-                title="{}'s Roster".format(team_name),
-                description="",
-                color=0xEEE657,
-            )
-            for player in team_details[team_name].roster(
-                self.league().current_week()
-            ):
-                embed.add_field(
-                    name=player["selected_position"],
-                    value=player["name"],
-                    inline=False,
-                )
-            return embed
+            return team_details[team_name].roster(self.league().current_week())
         else:
             return None
 

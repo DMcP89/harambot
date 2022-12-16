@@ -60,9 +60,20 @@ class YahooCog(commands.Cog):
     @commands.command("roster")
     async def roster(self, ctx, *, content: str):
         logger.info("roster called")
+        embed = discord.Embed(
+            title="{}'s Roster".format(content),
+            description="",
+            color=0xEEE657,
+        )
         roster = self.yahoo_api.get_roster(content)
         if roster:
-            await ctx.send(embed=roster)
+            for player in roster:
+                embed.add_field(
+                    name=player["selected_position"],
+                    value=player["name"],
+                    inline=False,
+                )
+            await ctx.send(embed=embed)
         else:
             await ctx.send(self.error_message)
 

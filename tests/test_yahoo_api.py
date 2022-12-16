@@ -23,9 +23,9 @@ def test_get_team(api):
 def test_get_roster(api, mock_roster):
     with patch.object(team.Team, "roster", return_value=mock_roster):
         return_value = api.get_roster("Too Many Cooks")
-        assert isinstance(return_value, Embed)
-        assert return_value.fields[0].name == "QB"
-        assert return_value.fields[0].value == "Josh Allen"
+        assert isinstance(return_value, list)
+        assert return_value[0]["selected_position"] == "QB"
+        assert return_value[0]["name"] == "Josh Allen"
 
 
 def test_get_player_owner(api):
