@@ -37,9 +37,8 @@ def test_get_player_owner(api):
 def test_get_player_details(api):
     return_value = api.get_player_details("Josh Allen")
     assert isinstance(return_value, dict)
-    assert isinstance(return_value["embed"], Embed)
-    assert len(return_value["embed"].fields) == 5
-    assert isinstance(return_value["text"], str)
+    assert return_value["player_key"] == "399.p.30977"
+    assert return_value["owner"] == "Hide and Go Zeke"
 
 
 def test_get_matchups(api):

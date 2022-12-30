@@ -1,6 +1,5 @@
 import logging
 import os
-import discord
 import objectpath
 
 from yahoo_fantasy_api import game
@@ -69,64 +68,8 @@ class Yahoo:
     def get_player_details(self, player_name):
         try:
             player = self.league().player_details(player_name)[0]
-
-            embed = discord.Embed(
-                title=player["name"]["full"],
-                description="#" + player["uniform_number"],
-                color=0xEEE657,
-            )
-            embed.add_field(name="Postion", value=player["primary_position"])
-            embed.add_field(name="Team", value=player["editorial_team_abbr"])
-            if "bye_weeks" in player:
-                embed.add_field(name="Bye", value=player["bye_weeks"]["week"])
-            if self.scoring_type == "head":
-                embed.add_field(
-                    name="Total Points", value=player["player_points"]["total"]
-                )
-            embed.add_field(
-                name="Owner", value=self.get_player_owner(player["player_id"])
-            )
-            embed.set_image(url=player["image_url"])
-
-            player_details_text = (
-                player["name"]["full"] + " #" + player["uniform_number"] + "\n"
-            )
-            player_details_text = (
-                player_details_text
-                + "Position: "
-                + player["primary_position"]
-                + "\n"
-            )
-            player_details_text = (
-                player_details_text
-                + "Team: "
-                + player["editorial_team_abbr"]
-                + "\n"
-            )
-            if "bye_weeks" in player:
-                player_details_text = (
-                    player_details_text
-                    + "Bye: "
-                    + player["bye_weeks"]["week"]
-                    + "\n"
-                )
-            if self.scoring_type == "head":
-                player_details_text = (
-                    player_details_text
-                    + "Total Points: "
-                    + player["player_points"]["total"]
-                    + "\n"
-                )
-            player_details_text = (
-                player_details_text
-                + "Owner: "
-                + self.get_player_owner(player["player_id"])
-            )
-
-            player_details = {}
-            player_details["embed"] = embed
-            player_details["text"] = player_details_text
-            return player_details
+            player["owner"] = self.get_player_owner(player["player_id"])
+            return player
         except Exception:
             logger.exception(
                 "Error while fetching player details for player: \
