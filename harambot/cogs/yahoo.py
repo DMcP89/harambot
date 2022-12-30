@@ -164,8 +164,18 @@ class YahooCog(commands.Cog):
 
     @commands.command("matchups")
     async def matchups(self, ctx):
-        embed = self.yahoo_api.get_matchups()
-        if embed:
+        week, details = self.yahoo_api.get_matchups()
+
+        if details:
+            embed = discord.Embed(
+                title="Matchups for Week {}".format(week),
+                description="",
+                color=0xEEE657,
+            )
+            for detail in details:
+                embed.add_field(
+                    name=detail["name"], value=detail["value"], inline=False
+                )
             await ctx.send(embed=embed)
         else:
             await ctx.send(self.error_message)

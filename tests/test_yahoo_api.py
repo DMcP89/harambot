@@ -43,9 +43,9 @@ def test_get_player_details(api):
 
 
 def test_get_matchups(api):
-    return_value = api.get_matchups()
-    assert isinstance(return_value, Embed)
-    assert len(return_value.fields) == 6
+    week, details = api.get_matchups()
+    assert isinstance(details, list)
+    assert week == "1"
 
 
 def test_get_matchups_category(category_api):

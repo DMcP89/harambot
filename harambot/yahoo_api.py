@@ -164,37 +164,26 @@ class Yahoo:
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_matchups(self):
         try:
-            embed = discord.Embed(
-                title="Matchups for Week {}".format(
-                    str(self.league().current_week())
-                ),
-                description="",
-                color=0xEEE657,
-            )
             matchups = objectpath.Tree(self.league().matchups()).execute(
                 "$..scoreboard..matchups..matchup..teams"
             )
 
-            # loop through each matchup element
+            details = []
+            divider = "--------------------------------------"
             for matchup in matchups:
-                # handle team 1
                 team1_details = self.get_matchup_details(matchup["0"]["team"])
-
-                # handle team 2
                 team2_details = self.get_matchup_details(matchup["1"]["team"])
-                divider = "--------------------------------------"
-
-                # Add details to embed
-                embed.add_field(
-                    name="{} vs {}".format(
-                        team1_details["name"], team2_details["name"]
-                    ),
-                    value=team1_details["text"]
-                    + team2_details["text"]
-                    + divider,
-                    inline=False,
+                details.append(
+                    {
+                        "name": "{} vs {}".format(
+                            team1_details["name"], team2_details["name"]
+                        ),
+                        "value": team1_details["text"]
+                        + team2_details["text"]
+                        + divider,
+                    }
                 )
-            return embed
+            return str(self.league().current_week()), details
         except Exception:
             logger.exception(
                 "Error while fetching matchups for league: {}".format(
