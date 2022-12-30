@@ -1,6 +1,5 @@
 from unittest.mock import patch
 from yahoo_fantasy_api import team
-from discord import Embed
 
 
 def test_league(api):
@@ -12,12 +11,6 @@ def test_get_standings(api):
     assert isinstance(return_value, list)
     assert len(return_value) == 3
     assert return_value[0]["place"] == "1. Hide and Go Zeke"
-
-
-def test_get_team(api):
-    return_value = api.get_team("Too Many Cooks")
-    assert isinstance(return_value, team.Team)
-    assert return_value.team_key == "399.l.710921.t.9"
 
 
 def test_get_roster(api, mock_roster):
@@ -48,6 +41,7 @@ def test_get_matchups(api):
 
 
 def test_get_matchups_category(category_api):
-    return_value = category_api.get_matchups()
-    assert isinstance(return_value, Embed)
-    assert len(return_value.fields) == 7
+    week, details = category_api.get_matchups()
+    assert isinstance(details, list)
+    assert len(details) == 7
+    assert week == "1"
