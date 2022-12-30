@@ -41,7 +41,17 @@ class YahooCog(commands.Cog):
     @commands.command("standings")
     async def standings(self, ctx):
         logger.info("standings called")
-        embed = self.yahoo_api.get_standings()
+        embed = discord.Embed(
+            title="Standings",
+            description="Team Name\n W-L-T",
+            color=0xEEE657,
+        )
+        for team in self.yahoo_api.get_standings():
+            embed.add_field(
+                name=team["place"],
+                value=team["record"],
+                inline=False,
+            )
         if embed:
             await ctx.send(embed=embed)
         else:
@@ -50,9 +60,20 @@ class YahooCog(commands.Cog):
     @commands.command("roster")
     async def roster(self, ctx, *, content: str):
         logger.info("roster called")
+        embed = discord.Embed(
+            title="{}'s Roster".format(content),
+            description="",
+            color=0xEEE657,
+        )
         roster = self.yahoo_api.get_roster(content)
         if roster:
-            await ctx.send(embed=roster)
+            for player in roster:
+                embed.add_field(
+                    name=player["selected_position"],
+                    value=player["name"],
+                    inline=False,
+                )
+            await ctx.send(embed=embed)
         else:
             await ctx.send(self.error_message)
 
@@ -76,7 +97,9 @@ class YahooCog(commands.Cog):
         for player in latest_trade["trader_players"]:
             player_set0.append(player["name"])
             api_details = (
-                self.yahoo_api.get_player_details(player["name"])["text"]
+                self.get_player_text(
+                    self.yahoo_api.get_player_details(player["name"])
+                )
                 + "\n"
             )
             if api_details:
@@ -90,7 +113,9 @@ class YahooCog(commands.Cog):
         for player in latest_trade["tradee_players"]:
             player_set1.append(player["name"])
             api_details = (
-                self.yahoo_api.get_player_details(player["name"])["text"]
+                self.get_player_text(
+                    self.yahoo_api.get_player_details(player["name"])
+                )
                 + "\n"
             )
             if api_details:
@@ -135,16 +160,81 @@ class YahooCog(commands.Cog):
     @commands.command("stats")
     async def stats(self, ctx, *, content: str):
         logger.info("player_details called")
-        details = self.yahoo_api.get_player_details(content)
-        if details:
-            await ctx.send(embed=details["embed"])
+        player = self.yahoo_api.get_player_details(content)
+        if player:
+            embed = self.get_player_embed(player)
+            await ctx.send(embed=embed)
         else:
             await ctx.send("Player not found")
 
+    def get_player_embed(self, player):
+        embed = discord.Embed(
+            title=player["name"]["full"],
+            description="#" + player["uniform_number"],
+            color=0xEEE657,
+        )
+        embed.add_field(name="Postion", value=player["primary_position"])
+        embed.add_field(name="Team", value=player["editorial_team_abbr"])
+        if "bye_weeks" in player:
+            embed.add_field(name="Bye", value=player["bye_weeks"]["week"])
+        if "player_points" in player:
+            embed.add_field(
+                name="Total Points", value=player["player_points"]["total"]
+            )
+        embed.add_field(name="Owner", value=player["owner"])
+        embed.set_image(url=player["image_url"])
+        return embed
+
+    def get_player_text(self, player):
+        player_details_text = (
+            player["name"]["full"] + " #" + player["uniform_number"] + "\n"
+        )
+        player_details_text = (
+            player_details_text
+            + "Position: "
+            + player["primary_position"]
+            + "\n"
+        )
+        player_details_text = (
+            player_details_text
+            + "Team: "
+            + player["editorial_team_abbr"]
+            + "\n"
+        )
+        if "bye_weeks" in player:
+            player_details_text = (
+                player_details_text
+                + "Bye: "
+                + player["bye_weeks"]["week"]
+                + "\n"
+            )
+        if "player_points" in player:
+            player_details_text = (
+                player_details_text
+                + "Total Points: "
+                + player["player_points"]["total"]
+                + "\n"
+            )
+        player_details_text = (
+            player_details_text
+            + "Owner: "
+            + self.get_player_owner(player["player_id"])
+        )
+
     @commands.command("matchups")
     async def matchups(self, ctx):
-        embed = self.yahoo_api.get_matchups()
-        if embed:
+        week, details = self.yahoo_api.get_matchups()
+
+        if details:
+            embed = discord.Embed(
+                title="Matchups for Week {}".format(week),
+                description="",
+                color=0xEEE657,
+            )
+            for detail in details:
+                embed.add_field(
+                    name=detail["name"], value=detail["value"], inline=False
+                )
             await ctx.send(embed=embed)
         else:
             await ctx.send(self.error_message)
