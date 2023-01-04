@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord import app_commands
 
 import discord
 import logging
@@ -53,11 +54,11 @@ class Meta(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.command("ping")
-    async def ping(self, ctx):
-        logger.info("Ping called")
-        latency = self.bot.latency  # Included in the Discord.py library
-        await ctx.send(latency)
+    @app_commands.command(
+        name="ping", description="Gives the latency of harambot"
+    )
+    async def ping(self, interaction: discord.Interaction):
+        await interaction.response.send_message(self.bot.latency)
 
     @commands.hybrid_command()
     async def configure(self, ctx):
