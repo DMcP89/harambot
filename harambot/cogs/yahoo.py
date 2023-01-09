@@ -3,6 +3,7 @@ import logging
 import urllib3
 
 from discord.ext import commands
+from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
 
@@ -38,14 +39,31 @@ class YahooCog(commands.Cog):
         )
         return
 
-    @commands.command("standings")
-    async def standings(self, ctx):
+    async def set_yahoo_from_interaction(
+        self, interaction: discord.Interaction
+    ):
+        guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
+        self.yahoo_api = Yahoo(
+            OAuth2(
+                self.KEY, self.SECRET, store_file=False, **model_to_dict(guild)
+            ),
+            guild.league_id,
+            guild.league_type,
+        )
+        return
+
+    @app_commands.command(
+        name="standings",
+        description="Returns the current standings of your league",
+    )
+    async def standings(self, interaction: discord.Interaction):
         logger.info("standings called")
         embed = discord.Embed(
             title="Standings",
             description="Team Name\n W-L-T",
             color=0xEEE657,
         )
+        await self.set_yahoo_from_interaction(interaction)
         for team in self.yahoo_api.get_standings():
             embed.add_field(
                 name=team["place"],
@@ -53,9 +71,9 @@ class YahooCog(commands.Cog):
                 inline=False,
             )
         if embed:
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send(self.error_message)
+            await interaction.response.send_message(self.error_message)
 
     @commands.command("roster")
     async def roster(self, ctx, *, content: str):
