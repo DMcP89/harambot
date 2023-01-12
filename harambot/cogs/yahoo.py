@@ -245,10 +245,12 @@ class YahooCog(commands.Cog):
             + self.get_player_owner(player["player_id"])
         )
 
-    @commands.command("matchups")
-    async def matchups(self, ctx):
+    @app_commands.command(
+        name="matchups", description="Returns the current weeks matchups"
+    )
+    async def matchups(self, interaction: discord.Interaction):
+        await self.set_yahoo_from_interaction(interaction)
         week, details = self.yahoo_api.get_matchups()
-
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
@@ -259,6 +261,6 @@ class YahooCog(commands.Cog):
                 embed.add_field(
                     name=detail["name"], value=detail["value"], inline=False
                 )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send(self.error_message)
+            await interaction.response.send_message(self.error_message)
