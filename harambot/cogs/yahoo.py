@@ -75,15 +75,18 @@ class YahooCog(commands.Cog):
         else:
             await interaction.response.send_message(self.error_message)
 
-    @commands.command("roster")
-    async def roster(self, ctx, *, content: str):
+    @app_commands.command(
+        name="roster", description="Returns the roster of the given team"
+    )
+    async def roster(self, interaction: discord.Interaction, team_name: str):
         logger.info("roster called")
+        await self.set_yahoo_from_interaction(interaction)
         embed = discord.Embed(
-            title="{}'s Roster".format(content),
+            title="{}'s Roster".format(team_name),
             description="",
             color=0xEEE657,
         )
-        roster = self.yahoo_api.get_roster(content)
+        roster = self.yahoo_api.get_roster(team_name)
         if roster:
             for player in roster:
                 embed.add_field(
@@ -91,9 +94,9 @@ class YahooCog(commands.Cog):
                     value=player["name"],
                     inline=False,
                 )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send(self.error_message)
+            await interaction.response.send_message(self.error_message)
 
     @commands.command("trade")
     async def trade(self, ctx):
@@ -175,15 +178,18 @@ class YahooCog(commands.Cog):
             await msg.add_reaction(yes_emoji)
             await msg.add_reaction(no_emoji)
 
-    @commands.command("stats")
-    async def stats(self, ctx, *, content: str):
+    @app_commands.command(
+        name="stats", description="Returns the details of the given player"
+    )
+    async def stats(self, interaction: discord.Interaction, player_name: str):
         logger.info("player_details called")
-        player = self.yahoo_api.get_player_details(content)
+        await self.set_yahoo_from_interaction(interaction)
+        player = self.yahoo_api.get_player_details(player_name)
         if player:
             embed = self.get_player_embed(player)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send("Player not found")
+            await interaction.response.send_message("Player not found")
 
     def get_player_embed(self, player):
         embed = discord.Embed(
