@@ -98,13 +98,19 @@ class YahooCog(commands.Cog):
         else:
             await interaction.response.send_message(self.error_message)
 
-    @commands.command("trade")
-    async def trade(self, ctx):
+    @app_commands.command(
+        name="trade",
+        description="Create poll for latest trade for league approval",
+    )
+    async def trade(self, interaction: discord.Interaction):
         logger.info("trade called")
+        await self.set_yahoo_from_interaction(interaction)
         latest_trade = self.yahoo_api.get_latest_trade()
 
         if latest_trade is None:
-            await ctx.send("No trades up for approval at this time")
+            await interaction.response.send_message(
+                "No trades up for approval at this time"
+            )
             return
 
         teams = self.yahoo_api.league().teams()
@@ -116,18 +122,19 @@ class YahooCog(commands.Cog):
         player_set0 = []
         player_set0_details = ""
         for player in latest_trade["trader_players"]:
-            player_set0.append(player["name"])
-            api_details = (
-                self.get_player_text(
-                    self.yahoo_api.get_player_details(player["name"])
+            if player:
+                player_set0.append(player["name"])
+                api_details = (
+                    self.get_player_text(
+                        self.yahoo_api.get_player_details(player["name"])
+                    )
+                    + "\n"
                 )
-                + "\n"
-            )
-            if api_details:
-                player_set0_details = player_set0_details + api_details
-            else:
-                await ctx.send(self.error_message)
-                return
+                if api_details:
+                    player_set0_details = player_set0_details + api_details
+                else:
+                    await interaction.send(self.error_message)
+                    return
 
         player_set1 = []
         player_set1_details = ""
@@ -142,7 +149,7 @@ class YahooCog(commands.Cog):
             if api_details:
                 player_set1_details = player_set1_details + api_details
             else:
-                await ctx.send(self.error_message)
+                await interaction.response.send_message(self.error_message)
                 return
 
             confirm_trade_message = "{} sends {} to {} for {}".format(
@@ -172,11 +179,14 @@ class YahooCog(commands.Cog):
                 value=" Click :white_check_mark: for yes,\
                      :no_entry_sign: for no",
             )
-            msg = await ctx.send(content=announcement, embed=embed)
+            await interaction.response.send_message(
+                content=announcement, embed=embed
+            )
+            response_message = await interaction.original_response()
             yes_emoji = "\U00002705"
             no_emoji = "\U0001F6AB"
-            await msg.add_reaction(yes_emoji)
-            await msg.add_reaction(no_emoji)
+            await response_message.add_reaction(yes_emoji)
+            await response_message.add_reaction(no_emoji)
 
     @app_commands.command(
         name="stats", description="Returns the details of the given player"
@@ -242,8 +252,9 @@ class YahooCog(commands.Cog):
         player_details_text = (
             player_details_text
             + "Owner: "
-            + self.get_player_owner(player["player_id"])
+            + self.yahoo_api.get_player_owner(player["player_id"])
         )
+        return player_details_text
 
     @app_commands.command(
         name="matchups", description="Returns the current weeks matchups"
