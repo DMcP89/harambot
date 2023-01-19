@@ -60,8 +60,14 @@ class Meta(commands.Cog):
     async def ping(self, interaction: discord.Interaction):
         await interaction.response.send_message(self.bot.latency)
 
-    @commands.hybrid_command()
-    async def configure(self, ctx):
-        await ctx.send("Configuring guild...")
-        await configure_guild(self.bot, ctx.guild.owner, ctx.guild.id)
-        await ctx.send("Guild configured successfully")
+    @app_commands.command(
+        name="configure", description="Configure your guild for Harambot"
+    )
+    async def configure(self, interaction: discord.Interaction):
+        await interaction.response.send_message("configuring guild")
+        await configure_guild(
+            self.bot, interaction.guild.owner, interaction.guild_id
+        )
+        await interaction.response.send_message(
+            "Guild configured successfully"
+        )
