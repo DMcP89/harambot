@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord import app_commands
 
 import discord
 import logging
@@ -13,54 +14,60 @@ class Meta(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command("help")
-    async def help(self, ctx):
+    @app_commands.command(name="help", description="View available commands")
+    async def help(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="Harambot",
             description="Yahoo Fantasy Sports Bot for Discord",
             color=0xEEE657,
         )
         embed.add_field(
-            name="$ping", value="Gives the latency of harambot", inline=False
+            name="/ping", value="Gives the latency of harambot", inline=False
         )
         embed.add_field(
-            name="$RIP", value="Pay respects to Harambe", inline=False
+            name="/rip", value="Pay respects to Harambe", inline=False
         )
         embed.add_field(
-            name="$standings",
+            name="/standings",
             value="Returns the current standings of your league",
             inline=False,
         )
         embed.add_field(
-            name="$roster team_name",
+            name="/roster team_name",
             value="Returns the roster of the given team",
             inline=False,
         )
         embed.add_field(
-            name="$stats player_name",
+            name="/stats player_name",
             value="Returns the details of the given player",
             inline=False,
         )
         embed.add_field(
-            name="$trade",
+            name="/trade",
             value="Create poll for latest trade for league approval",
             inline=False,
         )
         embed.add_field(
-            name="$matchups",
+            name="/matchups",
             value="Returns the current weeks matchups",
             inline=False,
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command("ping")
-    async def ping(self, ctx):
-        logger.info("Ping called")
-        latency = self.bot.latency  # Included in the Discord.py library
-        await ctx.send(latency)
+    @app_commands.command(
+        name="ping", description="Gives the latency of harambot"
+    )
+    async def ping(self, interaction: discord.Interaction):
+        await interaction.response.send_message(self.bot.latency)
 
-    @commands.hybrid_command()
-    async def configure(self, ctx):
-        await ctx.send("Configuring guild...")
-        await configure_guild(self.bot, ctx.guild.owner, ctx.guild.id)
-        await ctx.send("Guild configured successfully")
+    @app_commands.command(
+        name="configure", description="Configure your guild for Harambot"
+    )
+    async def configure(self, interaction: discord.Interaction):
+        await interaction.response.send_message("configuring guild")
+        await configure_guild(
+            self.bot, interaction.guild.owner, interaction.guild_id
+        )
+        await interaction.response.send_message(
+            "Guild configured successfully"
+        )

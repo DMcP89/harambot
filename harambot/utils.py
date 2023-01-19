@@ -5,6 +5,9 @@ import time
 from harambot.config import settings
 from harambot.database.models import Guild
 
+YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"
+YAHOO_AUTH_URI = "request_auth?redirect_uri=oob&response_type=code&client_id="
+
 
 async def configure_guild(bot, owner, id):
     def check(m):
@@ -12,15 +15,10 @@ async def configure_guild(bot, owner, id):
 
     await owner.send("Thank you for adding Harambot to your server!")
     await owner.send(
-        "Please open the following link to authorize with Yahoo, respond with\
-            the code given after authorization"
+        "Please open the following link to authorize with Yahoo, respond with \
+the code given after authorization"
     )
-    await owner.send(
-        "https://api.login.yahoo.com/oauth2/request_auth?\
-            redirect_uri=oob&response_type=code&client_id={}".format(
-            settings.yahoo_key
-        )
-    )
+    await owner.send(YAHOO_API_URL + YAHOO_AUTH_URI + settings.yahoo_key)
     code = await bot.wait_for("message", timeout=60, check=check)
     encoded_creds = base64.b64encode(
         ("{0}:{1}".format(settings.yahoo_key, settings.yahoo_secret)).encode(
@@ -28,7 +26,7 @@ async def configure_guild(bot, owner, id):
         )
     )
     details = requests.post(
-        url="https://api.login.yahoo.com/oauth2/get_token",
+        url="{}get_token".format(YAHOO_API_URL),
         data={
             "code": code.clean_content,
             "redirect_uri": "oob",

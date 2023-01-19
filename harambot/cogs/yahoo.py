@@ -3,6 +3,7 @@ import logging
 import urllib3
 
 from discord.ext import commands
+from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
 
@@ -38,14 +39,31 @@ class YahooCog(commands.Cog):
         )
         return
 
-    @commands.command("standings")
-    async def standings(self, ctx):
+    async def set_yahoo_from_interaction(
+        self, interaction: discord.Interaction
+    ):
+        guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
+        self.yahoo_api = Yahoo(
+            OAuth2(
+                self.KEY, self.SECRET, store_file=False, **model_to_dict(guild)
+            ),
+            guild.league_id,
+            guild.league_type,
+        )
+        return
+
+    @app_commands.command(
+        name="standings",
+        description="Returns the current standings of your league",
+    )
+    async def standings(self, interaction: discord.Interaction):
         logger.info("standings called")
         embed = discord.Embed(
             title="Standings",
             description="Team Name\n W-L-T",
             color=0xEEE657,
         )
+        await self.set_yahoo_from_interaction(interaction)
         for team in self.yahoo_api.get_standings():
             embed.add_field(
                 name=team["place"],
@@ -53,19 +71,22 @@ class YahooCog(commands.Cog):
                 inline=False,
             )
         if embed:
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send(self.error_message)
+            await interaction.response.send_message(self.error_message)
 
-    @commands.command("roster")
-    async def roster(self, ctx, *, content: str):
+    @app_commands.command(
+        name="roster", description="Returns the roster of the given team"
+    )
+    async def roster(self, interaction: discord.Interaction, team_name: str):
         logger.info("roster called")
+        await self.set_yahoo_from_interaction(interaction)
         embed = discord.Embed(
-            title="{}'s Roster".format(content),
+            title="{}'s Roster".format(team_name),
             description="",
             color=0xEEE657,
         )
-        roster = self.yahoo_api.get_roster(content)
+        roster = self.yahoo_api.get_roster(team_name)
         if roster:
             for player in roster:
                 embed.add_field(
@@ -73,17 +94,23 @@ class YahooCog(commands.Cog):
                     value=player["name"],
                     inline=False,
                 )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send(self.error_message)
+            await interaction.response.send_message(self.error_message)
 
-    @commands.command("trade")
-    async def trade(self, ctx):
+    @app_commands.command(
+        name="trade",
+        description="Create poll for latest trade for league approval",
+    )
+    async def trade(self, interaction: discord.Interaction):
         logger.info("trade called")
+        await self.set_yahoo_from_interaction(interaction)
         latest_trade = self.yahoo_api.get_latest_trade()
 
         if latest_trade is None:
-            await ctx.send("No trades up for approval at this time")
+            await interaction.response.send_message(
+                "No trades up for approval at this time"
+            )
             return
 
         teams = self.yahoo_api.league().teams()
@@ -95,18 +122,19 @@ class YahooCog(commands.Cog):
         player_set0 = []
         player_set0_details = ""
         for player in latest_trade["trader_players"]:
-            player_set0.append(player["name"])
-            api_details = (
-                self.get_player_text(
-                    self.yahoo_api.get_player_details(player["name"])
+            if player:
+                player_set0.append(player["name"])
+                api_details = (
+                    self.get_player_text(
+                        self.yahoo_api.get_player_details(player["name"])
+                    )
+                    + "\n"
                 )
-                + "\n"
-            )
-            if api_details:
-                player_set0_details = player_set0_details + api_details
-            else:
-                await ctx.send(self.error_message)
-                return
+                if api_details:
+                    player_set0_details = player_set0_details + api_details
+                else:
+                    await interaction.send(self.error_message)
+                    return
 
         player_set1 = []
         player_set1_details = ""
@@ -121,7 +149,7 @@ class YahooCog(commands.Cog):
             if api_details:
                 player_set1_details = player_set1_details + api_details
             else:
-                await ctx.send(self.error_message)
+                await interaction.response.send_message(self.error_message)
                 return
 
             confirm_trade_message = "{} sends {} to {} for {}".format(
@@ -151,21 +179,27 @@ class YahooCog(commands.Cog):
                 value=" Click :white_check_mark: for yes,\
                      :no_entry_sign: for no",
             )
-            msg = await ctx.send(content=announcement, embed=embed)
+            await interaction.response.send_message(
+                content=announcement, embed=embed
+            )
+            response_message = await interaction.original_response()
             yes_emoji = "\U00002705"
             no_emoji = "\U0001F6AB"
-            await msg.add_reaction(yes_emoji)
-            await msg.add_reaction(no_emoji)
+            await response_message.add_reaction(yes_emoji)
+            await response_message.add_reaction(no_emoji)
 
-    @commands.command("stats")
-    async def stats(self, ctx, *, content: str):
+    @app_commands.command(
+        name="stats", description="Returns the details of the given player"
+    )
+    async def stats(self, interaction: discord.Interaction, player_name: str):
         logger.info("player_details called")
-        player = self.yahoo_api.get_player_details(content)
+        await self.set_yahoo_from_interaction(interaction)
+        player = self.yahoo_api.get_player_details(player_name)
         if player:
             embed = self.get_player_embed(player)
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send("Player not found")
+            await interaction.response.send_message("Player not found")
 
     def get_player_embed(self, player):
         embed = discord.Embed(
@@ -218,13 +252,16 @@ class YahooCog(commands.Cog):
         player_details_text = (
             player_details_text
             + "Owner: "
-            + self.get_player_owner(player["player_id"])
+            + self.yahoo_api.get_player_owner(player["player_id"])
         )
+        return player_details_text
 
-    @commands.command("matchups")
-    async def matchups(self, ctx):
+    @app_commands.command(
+        name="matchups", description="Returns the current weeks matchups"
+    )
+    async def matchups(self, interaction: discord.Interaction):
+        await self.set_yahoo_from_interaction(interaction)
         week, details = self.yahoo_api.get_matchups()
-
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
@@ -235,6 +272,6 @@ class YahooCog(commands.Cog):
                 embed.add_field(
                     name=detail["name"], value=detail["value"], inline=False
                 )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send(self.error_message)
+            await interaction.response.send_message(self.error_message)
