@@ -3,11 +3,6 @@ import discord
 
 class ConfigModal(discord.ui.Modal, title="Configure Guild"):
 
-    yahoo_auth_code = discord.ui.TextInput(
-        label="Yahoo Auth Code",
-        placeholder="Enter code from Yahoo Authentication Url",
-    )
-
     league_id = discord.ui.TextInput(
         label="Yahoo League ID", placeholder="Enter Yahoo League ID"
     )
