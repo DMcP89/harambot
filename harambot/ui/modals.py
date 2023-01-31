@@ -10,7 +10,7 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     league_id = discord.ui.TextInput(
         label="Yahoo League ID", placeholder="Enter Yahoo League ID"
     )
-    leauge_type = discord.ui.TextInput(
+    league_type = discord.ui.TextInput(
         label="Yahoo League Type",
         placeholder="Enter Yahoo League Type(nfl, nhl, nba, mlb)",
     )
@@ -36,14 +36,14 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
         super().__init__(title=title, timeout=timeout, custom_id=custom_id)
         self.guild = guild
         self.league_id.default = guild.league_id
-        self.leauge_type.default = guild.league_type
+        self.league_type.default = guild.league_type
         self.RIP_text.default = guild.RIP_text
         self.RIP_image_url.default = guild.RIP_image_url
 
     async def on_submit(self, interaction: discord.Interaction):
         details = {
             "league_id": self.league_id.value,
-            "league_type": self.leauge_type.value,
+            "league_type": self.league_type.value,
             "RIP_text": self.RIP_text.value,
             "RIP_image_url": self.RIP_image_url.value,
         }
