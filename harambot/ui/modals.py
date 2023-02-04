@@ -7,6 +7,11 @@ from harambot.database.models import Guild
 
 class ConfigModal(discord.ui.Modal, title="Configure Guild"):
 
+    yahoo_token = discord.ui.TextInput(
+        label="Yahoo Token",
+        placeholder="Enter the token from the Yahoo login link",
+    )
+
     league_id = discord.ui.TextInput(
         label="Yahoo League ID", placeholder="Enter Yahoo League ID"
     )
@@ -35,10 +40,12 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     ) -> None:
         super().__init__(title=title, timeout=timeout, custom_id=custom_id)
         self.guild = guild
-        self.league_id.default = guild.league_id
-        self.league_type.default = guild.league_type
-        self.RIP_text.default = guild.RIP_text
-        self.RIP_image_url.default = guild.RIP_image_url
+        if self.guild:
+            self.remove_item(self.yahoo_token)
+            self.league_id.default = guild.league_id
+            self.league_type.default = guild.league_type
+            self.RIP_text.default = guild.RIP_text
+            self.RIP_image_url.default = guild.RIP_image_url
 
     async def on_submit(self, interaction: discord.Interaction):
         details = {
