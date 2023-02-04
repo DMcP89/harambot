@@ -20,24 +20,7 @@ the code given after authorization"
     )
     await owner.send(YAHOO_API_URL + YAHOO_AUTH_URI + settings.yahoo_key)
     code = await bot.wait_for("message", timeout=60, check=check)
-    encoded_creds = base64.b64encode(
-        ("{0}:{1}".format(settings.yahoo_key, settings.yahoo_secret)).encode(
-            "utf-8"
-        )
-    )
-    details = requests.post(
-        url="{}get_token".format(YAHOO_API_URL),
-        data={
-            "code": code.clean_content,
-            "redirect_uri": "oob",
-            "grant_type": "authorization_code",
-        },
-        headers={
-            "Authorization": "Basic {0}".format(encoded_creds.decode("utf-8")),
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    ).json()
-    details["token_time"] = time.time()
+    details = yahoo_auth(code)
     await owner.send("Enter Yahoo League ID")
     leauge_id = await bot.wait_for("message", timeout=60, check=check)
     await owner.send("Enter Yahoo League Type(nfl, nhl, nba, mlb)")
@@ -58,3 +41,26 @@ the code given after authorization"
         guild = Guild(guild_id=str(id), **details)
         guild.save()
     return
+
+
+def yahoo_auth(code):
+    encoded_creds = base64.b64encode(
+        ("{0}:{1}".format(settings.yahoo_key, settings.yahoo_secret)).encode(
+            "utf-8"
+        )
+    )
+    details = requests.post(
+        url="{}get_token".format(YAHOO_API_URL),
+        data={
+            "code": code.clean_content,
+            "redirect_uri": "oob",
+            "grant_type": "authorization_code",
+        },
+        headers={
+            "Authorization": "Basic {0}".format(encoded_creds.decode("utf-8")),
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    ).json()
+
+    details["token_time"] = time.time()
+    return details
