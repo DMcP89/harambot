@@ -3,6 +3,7 @@ import discord
 from discord.utils import MISSING
 from typing import Optional
 from harambot.database.models import Guild
+from harambot.utils import yahoo_auth
 
 
 class ConfigModal(discord.ui.Modal, title="Configure Guild"):
@@ -54,9 +55,14 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
             "RIP_text": self.RIP_text.value,
             "RIP_image_url": self.RIP_image_url.value,
         }
-        Guild.update(details).where(
-            Guild.guild_id == self.guild.guild_id
-        ).execute()
+        if self.guild:
+            Guild.update(details).where(
+                Guild.guild_id == self.guild.guild_id
+            ).execute()
+        else:
+            details.update(yahoo_auth(self.yahoo_token.value))
+            self.guild = Guild(guild_id=str(interaction.guild_id), **details)
+            self.guild.save()
         await interaction.response.send_message(
             "Guild settings updated!",
             ephemeral=True,
