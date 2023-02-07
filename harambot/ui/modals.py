@@ -37,16 +37,16 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
         title: str = MISSING,
         timeout: Optional[float] = None,
         custom_id: str = MISSING,
-        guild: Guild = None,
+        guild_id: str = None,
     ) -> None:
         super().__init__(title=title, timeout=timeout, custom_id=custom_id)
-        self.guild = guild
+        self.guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
         if self.guild:
             self.remove_item(self.yahoo_token)
-            self.league_id.default = guild.league_id
-            self.league_type.default = guild.league_type
-            self.RIP_text.default = guild.RIP_text
-            self.RIP_image_url.default = guild.RIP_image_url
+            self.league_id.default = self.guild.league_id
+            self.league_type.default = self.guild.league_type
+            self.RIP_text.default = self.guild.RIP_text
+            self.RIP_image_url.default = self.guild.RIP_image_url
 
     async def on_submit(self, interaction: discord.Interaction):
         details = {

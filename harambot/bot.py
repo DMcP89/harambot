@@ -8,7 +8,6 @@ from harambot.cogs.misc import Misc
 from harambot.cogs.yahoo import YahooCog
 from harambot.config import settings
 from harambot.database.models import Guild
-from harambot.utils import configure_guild
 
 # logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("harambot.py")
@@ -43,7 +42,7 @@ async def on_ready():
 async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
     if not Guild.select().where(Guild.guild_id == str(guild.id)).exists():
-        await configure_guild(bot, guild.owner, guild.id)
+        # await configure_guild(bot, guild.owner, guild.id)
         logger.info("Guild not configured!")
 
 
