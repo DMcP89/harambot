@@ -30,6 +30,7 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     )
 
     guild = None
+    view = None
 
     def __init__(
         self,
@@ -38,8 +39,10 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
         timeout: Optional[float] = None,
         custom_id: str = MISSING,
         guild_id: str = None,
+        view: discord.ui.View = None,
     ) -> None:
         super().__init__(title=title, timeout=timeout, custom_id=custom_id)
+        self.view = view
         self.guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
         if self.guild:
             self.remove_item(self.yahoo_token)
@@ -67,6 +70,7 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
             "Guild settings updated!",
             ephemeral=True,
         )
+        self.view.stop()
 
     async def on_error(
         self, interaction: discord.Interaction, error: Exception

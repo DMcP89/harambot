@@ -15,9 +15,20 @@ class YahooAuthButton(discord.ui.Button):
 
 
 class ConfigGuildButton(discord.ui.Button):
+
+    parent_view: None
+
+    def __init__(self, parent_view: discord.ui.View):
+        super().__init__(
+            label="Configure Guild", style=discord.ButtonStyle.blurple
+        )
+        self.parent_view = parent_view
+
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_modal(
-            ConfigModal(guild_id=str(interaction.guild_id))
+            ConfigModal(
+                guild_id=str(interaction.guild_id), view=self.parent_view
+            )
         )
 
 
@@ -27,8 +38,4 @@ class ConfigView(discord.ui.View):
     ):
         super().__init__()
         self.add_item(YahooAuthButton())
-        self.add_item(
-            ConfigGuildButton(
-                label="Configure Guild", style=discord.ButtonStyle.blurple
-            )
-        )
+        self.add_item(ConfigGuildButton(parent_view=self))

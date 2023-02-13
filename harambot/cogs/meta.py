@@ -71,4 +71,5 @@ class Meta(commands.Cog):
             2. Configure harambot with your league information
             """,
             view=ConfigView(),
+            ephemeral=True,
         )
