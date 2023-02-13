@@ -42,8 +42,11 @@ async def on_ready():
 async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
     if not Guild.select().where(Guild.guild_id == str(guild.id)).exists():
-        # await configure_guild(bot, guild.owner, guild.id)
         logger.info("Guild not configured!")
+        await guild.owner.send(
+            """Thank you for adding Harambot to your server!
+        Please complete your setup by running the /configure command!"""
+        )
 
 
 def run():
