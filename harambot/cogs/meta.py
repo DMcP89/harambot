@@ -4,7 +4,7 @@ from discord import app_commands
 import discord
 import logging
 
-from harambot.utils import configure_guild
+from harambot.ui.views import ConfigView
 
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.INFO)
@@ -64,10 +64,12 @@ class Meta(commands.Cog):
         name="configure", description="Configure your guild for Harambot"
     )
     async def configure(self, interaction: discord.Interaction):
-        await interaction.response.send_message("configuring guild")
-        await configure_guild(
-            self.bot, interaction.guild.owner, interaction.guild_id
-        )
         await interaction.response.send_message(
-            "Guild configured successfully"
+            """
+            Lets setup your guild
+            1. Login into Yahoo and copy you authentication token
+            2. Configure harambot with your league information
+            """,
+            view=ConfigView(),
+            ephemeral=True,
         )
