@@ -50,9 +50,7 @@ async def on_guild_join(guild):
 
 
 def run():
-    bot.run(
-        settings.discord_token, reconnect=True
-    )  # Where 'TOKEN' is your bot token
+    bot.run(settings.discord_token, reconnect=True)
 
 
 run()
