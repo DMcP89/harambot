@@ -1,5 +1,6 @@
 from peewee import SqliteDatabase
-from peewee import Model, TextField, IntegerField, BigIntegerField
+from peewee import Model
+from peewee import TextField, IntegerField, BigIntegerField, TimestampField
 from playhouse.db_url import connect
 from harambot.config import settings
 
@@ -26,3 +27,4 @@ class Guild(BaseModel):
     league_type = TextField()
     RIP_text = TextField()
     RIP_image_url = TextField()
+    last_transaction_check = TimestampField()
