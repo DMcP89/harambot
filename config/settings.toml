@@ -1,2 +1,4 @@
 [default]
 LOGLEVEL = "DEBUG"
+VERSION = "0.0.3-Beta"
+RUN_MIGRATIONS = false
