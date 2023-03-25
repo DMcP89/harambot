@@ -17,7 +17,7 @@ def yahoo_auth(code):
     details = requests.post(
         url="{}get_token".format(YAHOO_API_URL),
         data={
-            "code": code.clean_content,
+            "code": code,
             "redirect_uri": "oob",
             "grant_type": "authorization_code",
         },

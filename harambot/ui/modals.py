@@ -1,9 +1,13 @@
 import discord
+import logging
 
 from discord.utils import MISSING
 from typing import Optional
 from harambot.database.models import Guild
 from harambot.utils import yahoo_auth
+
+logger = logging.getLogger(__file__)
+logger.setLevel(logging.INFO)
 
 
 class ConfigModal(discord.ui.Modal, title="Configure Guild"):
@@ -75,6 +79,7 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception
     ) -> None:
+        logger.exception(error)
         await interaction.response.send_message(
             "Oops! Something went wrong with configuring your guild.\
              Please try again",
