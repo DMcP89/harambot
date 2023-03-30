@@ -2,7 +2,7 @@ import discord
 import logging
 import urllib3
 
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
@@ -27,11 +27,6 @@ class YahooCog(commands.Cog):
         self.KEY = KEY
         self.SECRET = SECRET
         self.yahoo_api = None
-        self.transaction_alerts.start()
-
-    def cog_unload(self) -> None:
-        self.transaction_alerts.cancel()
-        return super().cog_unload()
 
     async def cog_before_invoke(self, ctx):
         guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
@@ -281,6 +276,13 @@ class YahooCog(commands.Cog):
         else:
             await interaction.response.send_message(self.error_message)
 
-    @tasks.loop(seconds=15.0)
-    async def transaction_alerts(self):
-        logger.info("Place holder for transaction alerts")
+    @app_commands.command(
+        name="transactions",
+        description="Returns the transactions fomr the last 24 hours",
+    )
+    async def transactions(self, interaction: discord.Interaction):
+        await self.set_yahoo_from_interaction(interaction)
+        embed = discord.Embed(title="Transactions from last day")
+        for transaction in self.yahoo_api.get_latest_transactions():
+            embed.add_field(name="", value="", inline=False)
+        await interaction.response.send_message(embed=embed)
