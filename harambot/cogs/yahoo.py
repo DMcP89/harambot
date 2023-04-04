@@ -282,7 +282,27 @@ class YahooCog(commands.Cog):
     )
     async def transactions(self, interaction: discord.Interaction):
         await self.set_yahoo_from_interaction(interaction)
-        embed = discord.Embed(title="Transactions from last day")
+        embed_functions_dict = {
+            "add/drop": self.create_add_drop_embed,
+            "add": self.create_add_embed,
+            "drop": self.create_drop_embed,
+            "trade": self.create_trade_embed,
+        }
+        embeds = []
         for transaction in self.yahoo_api.get_latest_transactions():
-            embed.add_field(name="", value="", inline=False)
-        await interaction.response.send_message(embed=embed)
+            embeds.append(
+                embed_functions_dict[transaction["type"]](transaction)
+            )
+        await interaction.response.send_message(embeds=embeds)
+
+    def create_add_embed(self, transaction):
+        return discord.Embed(title="Add Transaction")
+
+    def create_drop_embed(self, transaction):
+        return discord.Embed(title="Drop Transaction")
+
+    def create_add_drop_embed(self, transaction):
+        return discord.Embed(title="Add/Drop Transaction")
+
+    def create_trade_embed(self, transaction):
+        return discord.Embed(title="Trade Transaction")
