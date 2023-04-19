@@ -275,3 +275,73 @@ class YahooCog(commands.Cog):
             await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message(self.error_message)
+
+    @app_commands.command(
+        name="waviers",
+        description="Returns the wavier transactions from the last 24 hours",
+    )
+    async def waviers(self, interaction: discord.Interaction):
+        await self.set_yahoo_from_interaction(interaction)
+        await interaction.response.defer(thinking=True)
+        embed_functions_dict = {
+            "add/drop": self.create_add_drop_embed,
+            "add": self.create_add_embed,
+            "drop": self.create_drop_embed,
+        }
+        for transaction in self.yahoo_api.get_latest_waiver_transactions():
+            await interaction.followup.send(
+                embed=embed_functions_dict[transaction["type"]](transaction)
+            )
+
+    def create_add_embed(self, transaction):
+        embed = discord.Embed(title="Player Added")
+        self.add_player_fields_to_embed(
+            embed, transaction["players"]["0"]["player"][0]
+        )
+        embed.add_field(
+            name="Owner",
+            value=transaction["players"]["0"]["player"][1]["transaction_data"][
+                0
+            ]["destination_team_name"],
+        )
+        return embed
+
+    def create_drop_embed(self, transaction):
+        embed = discord.Embed(title="Player Dropped")
+        self.add_player_fields_to_embed(
+            embed, transaction["players"]["0"]["player"][0]
+        )
+        embed.add_field(
+            name="Owner",
+            value=transaction["players"]["0"]["player"][1]["transaction_data"][
+                "source_team_name"
+            ],
+        )
+        return embed
+
+    def create_add_drop_embed(self, transaction):
+        embed = discord.Embed(title="Player Added/ Player Dropped")
+        embed.add_field(
+            name="Player Added", value="=====================", inline=True
+        )
+        self.add_player_fields_to_embed(
+            embed, transaction["players"]["0"]["player"][0]
+        )
+        embed.add_field(
+            name="Player Dropped", value="=====================", inline=True
+        )
+        self.add_player_fields_to_embed(
+            embed, transaction["players"]["1"]["player"][0]
+        )
+        return embed
+
+    def add_player_fields_to_embed(self, embed, player):
+        embed.add_field(
+            name="Player", value=player[2]["name"]["full"], inline=True
+        )
+        embed.add_field(
+            name="Team", value=player[3]["editorial_team_abbr"], inline=True
+        )
+        embed.add_field(
+            name="Position", value=player[4]["display_position"], inline=True
+        )

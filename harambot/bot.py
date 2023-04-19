@@ -8,6 +8,7 @@ from harambot.cogs.misc import Misc
 from harambot.cogs.yahoo import YahooCog
 from harambot.config import settings
 from harambot.database.models import Guild
+from harambot.database.migrations import migrations
 
 # logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("harambot.py")
@@ -32,6 +33,8 @@ async def on_ready():
     await bot.add_cog(Misc(bot))
     if not Guild.table_exists():
         Guild.create_table()
+    if settings.run_migrations:
+        migrations[settings.version]()
     for guild in bot.guilds:
         bot.tree.copy_global_to(guild=guild)
         await bot.tree.sync(guild=guild)
@@ -50,9 +53,7 @@ async def on_guild_join(guild):
 
 
 def run():
-    bot.run(
-        settings.discord_token, reconnect=True
-    )  # Where 'TOKEN' is your bot token
+    bot.run(settings.discord_token, reconnect=True)
 
 
 run()
