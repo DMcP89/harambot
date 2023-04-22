@@ -52,6 +52,16 @@ class Meta(commands.Cog):
             value="Returns the current weeks matchups",
             inline=False,
         )
+        embed.add_field(
+            name="/wavier",
+            value="Returns the waiver wire transactions for the last 24 hours",
+            inline=False,
+        )
+        embed.add_field(
+            name="/configure",
+            value="Configure your guild for Harambot",
+            inline=False,
+        )
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(
@@ -68,7 +78,7 @@ class Meta(commands.Cog):
             """
             Lets setup your guild
             1. Login into Yahoo and copy you authentication token
-            2. Configure harambot with your league information
+2. Configure harambot with your league information
             """,
             view=ConfigView(),
             ephemeral=True,
