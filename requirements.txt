@@ -1,45 +1,56 @@
-aiohttp==3.7.4
-async-timeout==3.0.1
-attrs==19.2.0
-cachetools==4.1.1
-certifi==2019.6.16
-cffi==1.15.1
-chardet==3.0.4
-charset-normalizer==2.0.5
-discord.py==2.0.1
-docopt==0.6.2
-dynaconf==3.1.2
-flake8==3.8.4
-idna==2.8
-importlib-metadata==2.0.0
-iniconfig==1.1.1
-mccabe==0.6.1
-multidict==4.5.2
-mysql==0.0.3
-mysqlclient==2.1.1
-objectpath==0.6.1
-packaging==20.4
-peewee==3.15.1
-pluggy==0.13.1
-psycopg2==2.9.3
-py==1.10.0
-pyaml==19.4.1
-pycodestyle==2.6.0
-pycparser==2.19
-pyflakes==2.2.0
-PyNaCl==1.3.0
-pyparsing==2.4.7
-pytest==6.2.5
-pytz==2019.1
-PyYAML==5.4
-rauth==0.7.3
-requests==2.26.0
-six==1.12.0
-toml==0.10.2
-typing-extensions==4.3.0
-urllib3==1.26.6
-websockets==9.1
-yahoo-fantasy-api==2.5.1
-yahoo-oauth==2.0
-yarl==1.3.0
-zipp==3.4.0
+aiohttp==3.8.3 ; python_version >= "3.8" and python_version < "4.0"
+aiosignal==1.3.1 ; python_version >= "3.8" and python_version < "4.0"
+async-timeout==4.0.2 ; python_version >= "3.8" and python_version < "4.0"
+attrs==22.1.0 ; python_version >= "3.8" and python_version < "4.0"
+black==22.10.0 ; python_version >= "3.8" and python_version < "4.0"
+cachetools==5.2.0 ; python_version >= "3.8" and python_version < "4.0"
+certifi==2022.12.7 ; python_version >= "3.8" and python_version < "4"
+cfgv==3.3.1 ; python_version >= "3.8" and python_version < "4.0"
+charset-normalizer==2.1.1 ; python_version >= "3.8" and python_version < "4.0"
+click==8.1.3 ; python_version >= "3.8" and python_version < "4.0"
+colorama==0.4.6 ; python_version >= "3.8" and python_version < "4.0" and sys_platform == "win32" or python_version >= "3.8" and python_version < "4.0" and platform_system == "Windows"
+coverage[toml]==6.5.0 ; python_version >= "3.8" and python_version < "4.0"
+discord-py==2.1.0 ; python_version >= "3.8" and python_version < "4.0"
+discord==2.1.0 ; python_version >= "3.8" and python_version < "4.0"
+distlib==0.3.6 ; python_version >= "3.8" and python_version < "4.0"
+docopt==0.6.2 ; python_version >= "3.8" and python_version < "4.0"
+dynaconf==3.1.11 ; python_version >= "3.8" and python_version < "4.0"
+exceptiongroup==1.0.4 ; python_version >= "3.8" and python_version < "3.11"
+filelock==3.8.0 ; python_version >= "3.8" and python_version < "4.0"
+flake8==5.0.4 ; python_version >= "3.8" and python_version < "4.0"
+frozenlist==1.3.3 ; python_version >= "3.8" and python_version < "4.0"
+identify==2.5.8 ; python_version >= "3.8" and python_version < "4.0"
+idna==3.4 ; python_version >= "3.8" and python_version < "4.0"
+iniconfig==1.1.1 ; python_version >= "3.8" and python_version < "4.0"
+mccabe==0.7.0 ; python_version >= "3.8" and python_version < "4.0"
+multidict==6.0.2 ; python_version >= "3.8" and python_version < "4.0"
+mypy-extensions==0.4.3 ; python_version >= "3.8" and python_version < "4.0"
+mysqlclient==2.1.1 ; python_version >= "3.8" and python_version < "4.0"
+nodeenv==1.7.0 ; python_version >= "3.8" and python_version < "4.0"
+objectpath==0.6.1 ; python_version >= "3.8" and python_version < "4.0"
+packaging==21.3 ; python_version >= "3.8" and python_version < "4.0"
+pathspec==0.10.2 ; python_version >= "3.8" and python_version < "4.0"
+peewee==3.15.4 ; python_version >= "3.8" and python_version < "4.0"
+platformdirs==2.5.4 ; python_version >= "3.8" and python_version < "4.0"
+pluggy==1.0.0 ; python_version >= "3.8" and python_version < "4.0"
+pre-commit==2.20.0 ; python_version >= "3.8" and python_version < "4.0"
+psycopg2==2.9.5 ; python_version >= "3.8" and python_version < "4.0"
+pyaml==21.10.1 ; python_version >= "3.8" and python_version < "4.0"
+pycodestyle==2.9.1 ; python_version >= "3.8" and python_version < "4.0"
+pyflakes==2.5.0 ; python_version >= "3.8" and python_version < "4.0"
+pyparsing==3.0.9 ; python_version >= "3.8" and python_version < "4.0"
+pytest-cov==4.0.0 ; python_version >= "3.8" and python_version < "4.0"
+pytest==7.2.0 ; python_version >= "3.8" and python_version < "4.0"
+pytz==2023.2 ; python_version >= "3.8" and python_version < "4.0"
+pyyaml==6.0 ; python_version >= "3.8" and python_version < "4.0"
+rauth==0.7.3 ; python_version >= "3.8" and python_version < "4.0"
+requests==2.28.2 ; python_version >= "3.8" and python_version < "4"
+setuptools==65.5.1 ; python_version >= "3.8" and python_version < "4.0"
+toml==0.10.2 ; python_version >= "3.8" and python_version < "4.0"
+tomli==2.0.1 ; python_version >= "3.8" and python_full_version < "3.11.0a7"
+typing-extensions==4.4.0 ; python_version >= "3.8" and python_version < "3.10"
+urllib3==1.26.15 ; python_version >= "3.8" and python_version < "4"
+virtualenv==20.16.7 ; python_version >= "3.8" and python_version < "4.0"
+yahoo-fantasy-api==2.7.0 ; python_version >= "3.8" and python_version < "4.0"
+yahoo-oauth==2.0 ; python_version >= "3.8" and python_version < "4.0"
+yarl==1.8.1 ; python_version >= "3.8" and python_version < "4.0"
