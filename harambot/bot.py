@@ -33,7 +33,7 @@ async def on_ready():
     await bot.add_cog(Misc(bot))
     if not Guild.table_exists():
         Guild.create_table()
-    if settings.run_migrations:
+    if "RUN_MIGRATIONS" in settings and settings.run_migrations:
         migrations[settings.version]()
     for guild in bot.guilds:
         bot.tree.copy_global_to(guild=guild)

@@ -1,5 +1,5 @@
 # Harambot
-![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/workflow/status/DMcP89/harambot/Pytest) ![Version](https://img.shields.io/badge/version-0.2.1--Beta-red)
+![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/pytest.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.3.0--Beta-red)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -7,13 +7,15 @@
 A Yahoo Fantasy sports bot for Discord.
 
 ## Commands
-    $ping                           - Gives the latency of harambot
-    $RIP                            - Pay respects
-    $standings                      - Returns the current standings of the current league
-    $roster "Team name"             - Returns the roster of the given team
-    $stats "Player Name"            - Returns the details of the given player
-    $trade                          - Create poll for latest trade for league approval
-    $matchups                       - Returns the current weeks matchups
+    /ping                           - Gives the latency of harambot
+    /RIP                            - Pay respects
+    /standings                      - Returns the current standings of the current league
+    /roster "Team name"             - Returns the roster of the given team
+    /stats "Player Name"            - Returns the details of the given player
+    /trade                          - Create poll for latest trade for league approval
+    /matchups                       - Returns the current weeks matchups
+    /waiver                         - Returns the waiver wire tranasactions from the previous 24 hours
+    /configure                      - Configure the bot for your guild
 
 ## Prerequisites
 
@@ -62,13 +64,41 @@ Once the deployment is complete enable the dyno
 
 ![heroku-dyno](/assests/heroku-dyno.png)
 
-### Local deployment
+### Install package from PIP
+
+1. Install the harambot package using pip
+
+        pip install harambot
+
+2. Export the following environment variables
+
+   ```
+   export DISCORD_TOKEN='[YOUR DISCORD TOKEN]'
+   export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
+   export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
+   export DATABASE_URL='[YOUR DATABASE URL]'
+   ```
+
+3. Run the bot
+
+        harambot
+
+### Run from source
 1. Clone this repository
 
         git clone git@github.com:DMcP89/harambot.git
         cd harambot
 
-2. Run the bot.
+2. Export the following environment variables
+
+   ```
+   export DISCORD_TOKEN='[YOUR DISCORD TOKEN]'
+   export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
+   export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
+   export DATABASE_URL='[YOUR DATABASE URL]'
+   ```
+
+3. Run the bot.
 
     ### On local machine
         make run
@@ -109,13 +139,27 @@ In order for the bot to work properly it requires the following intents:
 
 ### Configure your guild
 
-* When the bot joins your guild for the first time it will DM you to complete the guild setup
+* Once your bot is added to your guild you can configure it by sending a direct message to the bot with the following command:
 
-![discord-config-dm](/assests/discord-config-dm.png)
 
-* You can reconfigure your guild by running the configure slash command from your guild
+![discord-config-commnd](/assests/harambot_configure_1.png)
 
-![discord-config-command](/assests/discord-config-command.png)
+* Use the Login with Yahoo button to authenticate with Yahoo and get your Yahoo token
+
+
+![discord-config-yahoo](/assests/harambot_configure_4.png)
+
+* Use the Configure Guild button to configure your guild for the bot
+
+
+![discord-config-guild](/assests/harambot_configure_2.png)
+
+
+* You can reconfigure your guild by running the configure command and clicking the Configure Guild button.
+
+
+![discord-config-guild](/assests/harambot_configure_3.png)
+
 
 ## Command Examples
 
