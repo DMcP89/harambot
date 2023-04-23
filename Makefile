@@ -29,4 +29,10 @@ run-docker:
 	@echo "${BLUE}Running docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker run --name ${MODULE} -d ${MODULE}:${TAG} 
+	@docker run --name ${MODULE}\
+	 -e DISCORD_TOKEN=${DISCORD_TOKEN}\
+	 -e YAHOO_KEY=${YAHOO_KEY}\
+	 -e YAHOO_SECRET=${YAHOO_SECRET}\
+	 -e DATABASE_URL=${DATABASE_URL}\
+	 -e RUN_MIGRATIONS=${RUN_MIGRATIONS}\
+	  --rm ${MODULE}:${TAG}

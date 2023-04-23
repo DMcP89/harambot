@@ -1,0 +1,78 @@
+[tool.poetry]
+name = "harambot"
+version = "0.3.0"
+description = "A Yahoo Fantasy Sports bot for Discord"
+authors = ["DMcP89 <davemcpherson@wochstudios.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/DMcP89/harambot"
+repository = "https://github.com/DMcP89/harambot"
+keywords = [
+    "yahoo",
+    "yahoo fantasy sports",
+    "fantasy football",
+    "fantasy basketball",
+    "fantasy baseball",
+    "fantasy hockey",
+    "discord",
+    "bot"
+]
+
+include = [
+    "LICENSE.md",
+    "assests"
+]
+
+packages = [
+    {include = "harambot"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+discord = "^2.1.0"
+dynaconf = "^3.1.11"
+peewee = "^3.15.4"
+cachetools = "^5.2.0"
+psycopg2 = "^2.9.5"
+mysqlclient = "^2.1.1"
+yahoo_fantasy_api = "2.7.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+pre-commit = "^2.20.0"
+flake8 = "^5.0.4"
+black = "^22.10.0"
+
+[tool.poetry.scripts]
+harambot = "harambot.bot:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 79
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
