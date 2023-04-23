@@ -64,7 +64,26 @@ Once the deployment is complete enable the dyno
 
 ![heroku-dyno](/assests/heroku-dyno.png)
 
-### Local deployment
+### Install package from PIP
+
+1. Install the harambot package using pip
+
+        pip install harambot
+
+2. Export the following environment variables
+
+   ```
+   export DISCORD_TOKEN='[YOUR DISCORD TOKEN]'
+   export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
+   export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
+   export DATABASE_URL='[YOUR DATABASE URL]'
+   ```
+
+3. Run the bot
+
+        harambot
+
+### Run from source
 1. Clone this repository
 
         git clone git@github.com:DMcP89/harambot.git
