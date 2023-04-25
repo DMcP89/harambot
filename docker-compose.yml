@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: harambot
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: harambot_db
+
+  harambot:
+    image: dmcp89/harambot
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DISCORD_TOKEN: '[DISCORD_TOKEN]'
+      YAHOO_KEY: '[YAHOO_KEY]'
+      YAHOO_SECRET: '[YAHOO_SECRET]'
+      DATABASE_URL: postgresql://harambot:mypassword@db:5432/harambot_db
