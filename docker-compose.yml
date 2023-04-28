@@ -14,7 +14,7 @@ services:
     depends_on:
       - db
     environment:
-      DISCORD_TOKEN: '[DISCORD_TOKEN]'
-      YAHOO_KEY: '[YAHOO_KEY]'
-      YAHOO_SECRET: '[YAHOO_SECRET]'
+      DISCORD_TOKEN: "${DISCORD_TOKEN}"
+      YAHOO_KEY: "${YAHOO_KEY}"
+      YAHOO_SECRET: "${YAHOO_SECRET}"
       DATABASE_URL: postgresql://harambot:mypassword@db:5432/harambot_db
