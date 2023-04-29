@@ -4,7 +4,7 @@
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 
-A Yahoo Fantasy sports bot for Discord.
+An interactive Yahoo Fantasy sports bot for Discord.
 
 ## Commands
     /ping                           - Gives the latency of harambot
@@ -17,52 +17,19 @@ A Yahoo Fantasy sports bot for Discord.
     /waiver                         - Returns the waiver wire tranasactions from the previous 24 hours
     /configure                      - Configure the bot for your guild
 
+You can find example output of these commands [here](https://github.com/DMcP89/harambot/wiki#command-examples)
+
 ## Prerequisites
 
 In order to properly configure your bot you will need the following:
 
-* Discord API Token
-* Yahoo API Client Id & Secret
-* Yahoo League ID
+* [Discord API Token](https://github.com/DMcP89/harambot/wiki/Prerequisites#discord-api-token)
+* [Yahoo API Client Id & Secret](https://github.com/DMcP89/harambot/wiki/Prerequisites#yahoo-api-client-id--secret)
+* [Yahoo League ID](https://github.com/DMcP89/harambot/wiki/Prerequisites#yahoo-league-id)
 
-### Discord API Token
+_Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step guide on how to obtain these values._
 
-1. Navigate to https://discord.com/developers/applications and click the "New Application" button
-   ![discord-new-application](/assests/discord-new-application.png)
-2. Give your bot a name
-3. Navigate to the bot section of your application and click the "Add Bot" button
-   ![discord-add-bot](/assests/discord-add-bot.png)
-4. Click the "Copy" button under token to copy your bots API token to your clipboard
-   ![discord-copy-token](/assests/discord-copy-token.png)
-
-
-### Yahoo API Client ID & Secret
-
-1. Navigate to https://developer.yahoo.com/apps/ and click the "Create an App" button
-   ![yahoo-create-app](/assests/yahoo-create-app.png)
-2. Fill out the form as shown below, you can provide your own values for Application Name,  Description, and Homepage URL. Once complete click the "Create App" button
-   ![yahoo-app-details](/assests/yahoo-app-details.png)
-3. Copy the Client ID and Client Secret values
-   ![yahoo-app-secrets](/assests/yahoo-app-secrets.png)
-
-### Yahoo League ID
-
-You can find your league's ID under the settings page of your league
-![yahoo-league-id](/assests/yahoo-league-id.png)
-
-## Deployment
-
-### Heroku
-
-Harambot now supports heroku deployments!
-
-Click the button at the top and fill out the form with your discord token and yahoo api client key and and secret.
-
-![heroku-deployment](/assests/heroku-deployment.png)
-
-Once the deployment is complete enable the dyno
-
-![heroku-dyno](/assests/heroku-dyno.png)
+## Quick Start
 
 ### Install package from PIP
 
@@ -82,29 +49,6 @@ Once the deployment is complete enable the dyno
 3. Run the bot
 
         harambot
-
-### Run from source
-1. Clone this repository
-
-        git clone git@github.com:DMcP89/harambot.git
-        cd harambot
-
-2. Export the following environment variables
-
-   ```
-   export DISCORD_TOKEN='[YOUR DISCORD TOKEN]'
-   export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
-   export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
-   export DATABASE_URL='[YOUR DATABASE URL]'
-   ```
-
-3. Run the bot.
-
-    ### On local machine
-        make run
-    ### With Docker
-        make build-image
-        make run-docker
 
 ## Setup
 
@@ -159,35 +103,3 @@ In order for the bot to work properly it requires the following intents:
 
 
 ![discord-config-guild](/assests/harambot_configure_3.png)
-
-
-## Command Examples
-
-### $stats Rashaad Penny
-
-![player-details](/assests/player_details.PNG)
-
-
-### $roster Lamb Chop's Play-Along
-
-![roster](/assests/roster.PNG)
-
-
-### $standings
-
-![standings](/assests/standings.PNG)
-
-
-### $matchups
-
-![matchups](/assests/matchups.PNG)
-
-
-### $trade
-
-![trade](/assests/trade.PNG)
-
-
-### $RIP "My Season"
-
-![rip](/assests/rip.PNG)
