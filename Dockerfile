@@ -12,4 +12,6 @@ RUN pip install -U pip
 
 RUN pip install harambot
 
+EXPOSE  10000
+
 CMD ["harambot"]
