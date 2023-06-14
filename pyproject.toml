@@ -29,7 +29,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-discord = "^2.1.0"
+"discord.py" = "^2.1.0"
 dynaconf = "^3.1.11"
 peewee = "^3.15.4"
 cachetools = "^5.2.0"

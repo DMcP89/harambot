@@ -14,10 +14,17 @@ class WebServer(commands.Cog):
 
     async def webserver(self):
         async def handler(request):
-            return web.Response(text=f"Harambot v{settings.version}")
+            status = f"""
+            Harambot
+            Harambot v{settings.version} is running!
+            Bot status: {request.config_dict["bot"].status}
+            Latency: {round(request.config_dict["bot"].latency * 1000)}ms
+            """
+            return web.Response(text=status)
 
         app = web.Application()
         app.router.add_get("/", handler)
+        app["bot"] = self.bot
         runner = web.AppRunner(app)
         await runner.setup()
         site = web.TCPSite(runner, "0.0.0.0", settings.port)
