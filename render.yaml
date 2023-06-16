@@ -21,3 +21,4 @@ databases:
 - name: harambot-database-blueprint
   databaseName: harambot
   user: harambot
+  plan: free
