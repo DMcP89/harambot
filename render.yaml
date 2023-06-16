@@ -1,26 +1,7 @@
 services:
 - type: web
-  name: django-quick-start
-  env: python
-  plan: starter
-  buildCommand: ./build.sh
-  startCommand: gunicorn config.wsgi:application
-  autoDeploy: false
-  envVars:
-    - key: WEB_CONCURRENCY
-      value: 4
-    - key: DATABASE_URL
-      fromDatabase:
-        name: django-quick-start
-        property: connectionString
-    - key: DJANGO_SECRET_KEY
-      generateValue: true
-    - key: DJANGO_ADMIN_URL
-      generateValue: true
-    - key: DJANGO_SETTINGS_MODULE
-      value: config.settings.production
-
-databases:
-- name: django-quick-start
-  databaseName: django
-  user: django
+  name: harambot-service-blueprint
+  runtime: image
+  image:
+    url: docker.io/dmcp89/harambot:latest
+  plan: free
