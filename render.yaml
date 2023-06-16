@@ -1,6 +1,6 @@
 services:
 - type: web
-  name: harambot-service-blueprint
+  name: harambot-servicet
   runtime: image
   image:
       url: docker.io/dmcp89/harambot:latest
@@ -18,7 +18,7 @@ services:
             property: connectionString
 
 databases:
-- name: harambot-database-blueprint
+- name: harambot-database
   databaseName: harambot
   user: harambot
   plan: free
