@@ -19,5 +19,5 @@ services:
 
 databases:
 - name: harambot-database-blueprint
-  database: harambot
+  databaseName: harambot
   user: harambot
