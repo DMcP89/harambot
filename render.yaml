@@ -1,16 +1,7 @@
 services:
-  - type: web
-    name: harambot-service-blueprint
-    runtime: docker
-    image:
-      url: docker.io/dmcp89/harambot:latest
-    plan: free
-    envVars:
-      - key: DISCORD_TOKEN
-        sync: false
-      - key: YAHOO_KEY
-        sync: false
-      - key: YAHOO_SECRET
-        sync: false
-      - key: DATABASE_URL
-        sync: false
+- type: web
+  name: harambot-service-blueprint
+  runtime: docker
+  image:
+    url: docker.io/dmcp89/harambot:latest
+  plan: free
