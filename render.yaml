@@ -1,0 +1,24 @@
+services:
+- type: web
+  name: harambot-servicet
+  runtime: image
+  image:
+      url: docker.io/dmcp89/harambot:latest
+  plan: free
+  envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: YAHOO_KEY
+        sync: false
+      - key: YAHOO_SECRET
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+            name: harambot-database
+            property: connectionString
+
+databases:
+- name: harambot-database
+  databaseName: harambot
+  user: harambot
+  plan: free
