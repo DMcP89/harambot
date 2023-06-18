@@ -1,6 +1,6 @@
 services:
 - type: web
-  name: harambot-servicet
+  name: harambot-service
   runtime: image
   image:
       url: docker.io/dmcp89/harambot:latest
