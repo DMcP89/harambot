@@ -16,6 +16,8 @@ services:
         fromDatabase:
             name: harambot-database
             property: connectionString
+      - key: VERSION
+        value: "0.3.1-Beta"
 
 databases:
 - name: harambot-database
