@@ -86,7 +86,7 @@ In order for the bot to work properly it requires the following intents:
 
 ### Configure your guild
 
-* Once your bot is added to your guild you can configure it by sending a direct message to the bot with the following command:
+* Once your bot is added to your guild you can configure it by using the /configure command:
 
 
 ![discord-config-commnd](/assests/harambot_configure_1.png)
