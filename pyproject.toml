@@ -5,7 +5,7 @@ description = "A Yahoo Fantasy Sports bot for Discord"
 authors = ["DMcP89 <davemcpherson@wochstudios.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/DMcP89/harambot"
+homepage = "http://harambot.io"
 repository = "https://github.com/DMcP89/harambot"
 keywords = [
     "yahoo",
