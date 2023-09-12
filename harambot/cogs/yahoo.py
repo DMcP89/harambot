@@ -1,6 +1,7 @@
 import discord
 import logging
 import urllib3
+import functools
 
 from discord.ext import commands
 from discord import app_commands
@@ -39,23 +40,31 @@ class YahooCog(commands.Cog):
         )
         return
 
-    async def set_yahoo_from_interaction(
-        self, interaction: discord.Interaction
-    ):
-        guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
-        self.yahoo_api = Yahoo(
-            OAuth2(
-                self.KEY, self.SECRET, store_file=False, **model_to_dict(guild)
-            ),
-            guild.league_id,
-            guild.league_type,
-        )
-        return
+    def set_yahoo(f):
+        @functools.wraps(f)
+        async def wrapper(
+            self, interaction: discord.Interaction, *args, **kwargs
+        ):
+            guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
+            self.yahoo_api = Yahoo(
+                OAuth2(
+                    self.KEY,
+                    self.SECRET,
+                    store_file=False,
+                    **model_to_dict(guild),
+                ),
+                guild.league_id,
+                guild.league_type,
+            )
+            await f(self, interaction, *args, **kwargs)
+
+        return wrapper
 
     @app_commands.command(
         name="standings",
         description="Returns the current standings of your league",
     )
+    @set_yahoo
     async def standings(self, interaction: discord.Interaction):
         logger.info("standings called")
         embed = discord.Embed(
@@ -63,7 +72,6 @@ class YahooCog(commands.Cog):
             description="Team Name\n W-L-T",
             color=0xEEE657,
         )
-        await self.set_yahoo_from_interaction(interaction)
         for team in self.yahoo_api.get_standings():
             embed.add_field(
                 name=team["place"],
@@ -78,9 +86,9 @@ class YahooCog(commands.Cog):
     @app_commands.command(
         name="roster", description="Returns the roster of the given team"
     )
+    @set_yahoo
     async def roster(self, interaction: discord.Interaction, team_name: str):
         logger.info("roster called")
-        await self.set_yahoo_from_interaction(interaction)
         embed = discord.Embed(
             title="{}'s Roster".format(team_name),
             description="",
@@ -102,9 +110,9 @@ class YahooCog(commands.Cog):
         name="trade",
         description="Create poll for latest trade for league approval",
     )
+    @set_yahoo
     async def trade(self, interaction: discord.Interaction):
         logger.info("trade called")
-        await self.set_yahoo_from_interaction(interaction)
         latest_trade = self.yahoo_api.get_latest_trade()
 
         if latest_trade is None:
@@ -191,9 +199,9 @@ class YahooCog(commands.Cog):
     @app_commands.command(
         name="stats", description="Returns the details of the given player"
     )
+    @set_yahoo
     async def stats(self, interaction: discord.Interaction, player_name: str):
         logger.info("player_details called")
-        await self.set_yahoo_from_interaction(interaction)
         player = self.yahoo_api.get_player_details(player_name)
         if player:
             embed = self.get_player_embed(player)
@@ -259,8 +267,8 @@ class YahooCog(commands.Cog):
     @app_commands.command(
         name="matchups", description="Returns the current weeks matchups"
     )
+    @set_yahoo
     async def matchups(self, interaction: discord.Interaction):
-        await self.set_yahoo_from_interaction(interaction)
         week, details = self.yahoo_api.get_matchups()
         if details:
             embed = discord.Embed(
@@ -280,9 +288,9 @@ class YahooCog(commands.Cog):
         name="waviers",
         description="Returns the wavier transactions from the last 24 hours",
     )
+    @set_yahoo
     async def waviers(self, interaction: discord.Interaction):
         await self.set_yahoo_from_interaction(interaction)
-        await interaction.response.defer(thinking=True)
         embed_functions_dict = {
             "add/drop": self.create_add_drop_embed,
             "add": self.create_add_embed,
