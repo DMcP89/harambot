@@ -23,7 +23,7 @@ build-image:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker build -t ${MODULE}:${TAG} .
+	@docker build --no-cache -t ${MODULE}:${TAG} .
 
 run-docker:
 	@echo "${BLUE}Running docker image.."
@@ -35,4 +35,5 @@ run-docker:
 	 -e YAHOO_SECRET=${YAHOO_SECRET}\
 	 -e DATABASE_URL=${DATABASE_URL}\
 	 -e RUN_MIGRATIONS=${RUN_MIGRATIONS}\
+	 -e PORT=10000\
 	  --rm ${MODULE}:${TAG}

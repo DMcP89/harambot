@@ -41,9 +41,7 @@ async def on_ready():
         Guild.create_table()
     if "RUN_MIGRATIONS" in settings and settings.run_migrations:
         migrations[settings.version]()
-    for guild in bot.guilds:
-        bot.tree.copy_global_to(guild=guild)
-        await bot.tree.sync(guild=guild)
+    await bot.tree.sync()
     logger.info("Everything's all ready to go~")
 
 
