@@ -53,7 +53,7 @@ class Meta(commands.Cog):
             inline=False,
         )
         embed.add_field(
-            name="/wavier",
+            name="/waivers",
             value="Returns the waiver wire transactions for the last 24 hours",
             inline=False,
         )

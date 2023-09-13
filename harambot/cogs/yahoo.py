@@ -285,11 +285,11 @@ class YahooCog(commands.Cog):
             await interaction.response.send_message(self.error_message)
 
     @app_commands.command(
-        name="waviers",
-        description="Returns the wavier transactions from the last 24 hours",
+        name="waivers",
+        description="Returns the waiver transactions from the last 24 hours",
     )
     @set_yahoo
-    async def waviers(self, interaction: discord.Interaction):
+    async def waivers(self, interaction: discord.Interaction):
         await self.set_yahoo_from_interaction(interaction)
         embed_functions_dict = {
             "add/drop": self.create_add_drop_embed,

@@ -93,7 +93,7 @@ class Yahoo:
             else:
                 ownership_map = {
                     "freeagents": "Free Agent",
-                    "waivers": "On Waviers",
+                    "waivers": "On Waivers",
                 }
                 return ownership_map.get(
                     player_ownership["ownership_type"], ""
