@@ -56,6 +56,15 @@ async def on_guild_join(guild):
         )
 
 
+@bot.event
+async def on_guild_remove(guild):
+    # remove the guild from the database
+    logger.info("Left {}".format(guild.name))
+    if Guild.select().where(Guild.guild_id == str(guild.id)).exists():
+        guild = Guild.get(Guild.guild_id == str(guild.id))
+        guild.delete_instance()
+
+
 def run():
     bot.run(settings.discord_token, reconnect=True)
 
