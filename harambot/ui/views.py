@@ -3,6 +3,7 @@ import discord
 from harambot.config import settings
 from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI
 from harambot.ui.modals import ConfigModal
+from harambot.database.models import Guild
 
 
 class YahooAuthButton(discord.ui.Button):
@@ -32,6 +33,25 @@ class ConfigGuildButton(discord.ui.Button):
         )
 
 
+class ResetButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(style=discord.ButtonStyle.danger, label="Reset")
+
+    async def callback(self, interaction: discord.Interaction):
+        if (
+            Guild.select()
+            .where(Guild.guild_id == str(interaction.guild.id))
+            .exists()
+        ):
+            guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
+            guild.delete_instance()
+            await interaction.response.send_message(
+                "Guild configuration reset!"
+            )
+        else:
+            await interaction.response.send_message("Guild not configured!")
+
+
 class ConfigView(discord.ui.View):
     def __init__(
         self,
@@ -39,3 +59,4 @@ class ConfigView(discord.ui.View):
         super().__init__()
         self.add_item(YahooAuthButton())
         self.add_item(ConfigGuildButton(parent_view=self))
+        self.add_item(ResetButton())
