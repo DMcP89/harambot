@@ -290,7 +290,6 @@ class YahooCog(commands.Cog):
     )
     @set_yahoo
     async def waivers(self, interaction: discord.Interaction):
-        await self.set_yahoo_from_interaction(interaction)
         embed_functions_dict = {
             "add/drop": self.create_add_drop_embed,
             "add": self.create_add_embed,
@@ -329,6 +328,12 @@ class YahooCog(commands.Cog):
 
     def create_add_drop_embed(self, transaction):
         embed = discord.Embed(title="Player Added/ Player Dropped")
+        embed.add_field(
+            name="Owner",
+            value=transaction["players"]["0"]["player"][1]["transaction_data"][
+                0
+            ]["destination_team_name"],
+        )
         embed.add_field(
             name="Player Added", value="=====================", inline=True
         )
