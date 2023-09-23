@@ -290,15 +290,22 @@ class YahooCog(commands.Cog):
     )
     @set_yahoo
     async def waivers(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         embed_functions_dict = {
             "add/drop": self.create_add_drop_embed,
             "add": self.create_add_embed,
             "drop": self.create_drop_embed,
         }
-        for transaction in self.yahoo_api.get_latest_waiver_transactions():
-            await interaction.followup.send(
-                embed=embed_functions_dict[transaction["type"]](transaction)
-            )
+        transactions = self.yahoo_api.get_latest_waiver_transactions()
+        if transactions:
+            for transaction in self.yahoo_api.get_latest_waiver_transactions():
+                await interaction.followup.send(
+                    embed=embed_functions_dict[transaction["type"]](
+                        transaction
+                    )
+                )
+        else:
+            await interaction.response.send_message("No transactions found")
 
     def create_add_embed(self, transaction):
         embed = discord.Embed(title="Player Added")
