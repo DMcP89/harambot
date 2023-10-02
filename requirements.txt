@@ -48,7 +48,7 @@ setuptools==65.5.1
 toml==0.10.2
 tomli==2.0.1
 typing-extensions==4.4.0
-urllib3==1.26.15
+urllib3==1.26.17
 virtualenv==20.16.7
 yahoo-fantasy-api==2.7.0
 yahoo-oauth==2.0
