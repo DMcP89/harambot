@@ -405,13 +405,13 @@ toml = ["tomli"]
 
 [[package]]
 name = "discord-py"
-version = "2.3.0"
+version = "2.3.2"
 description = "A Python wrapper for the Discord API"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "discord.py-2.3.0-py3-none-any.whl", hash = "sha256:3e9498967822ad4499f8f72deb9173f942d9827d92b6e4e4e7732d24f78f300c"},
-    {file = "discord.py-2.3.0.tar.gz", hash = "sha256:c71066a30f037d069218e59092505c3e8945fd175e396a80748056d989756806"},
+    {file = "discord.py-2.3.2-py3-none-any.whl", hash = "sha256:9da4679fc3cb10c64b388284700dc998663e0e57328283bbfcfc2525ec5960a6"},
+    {file = "discord.py-2.3.2.tar.gz", hash = "sha256:4560f70f2eddba7e83370ecebd237ac09fbb4980dc66507482b0c0e5b8f76b9c"},
 ]
 
 [package.dependencies]
@@ -1246,4 +1246,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "861751ee5a184900567c49b303b997c3ef4afb76b440eb7a7cf2c8bde6605715"
+content-hash = "7ebc620478dbb6db40c18c3b3d6998164fdcec7013d264706021f97fbdde9a97"

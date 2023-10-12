@@ -20,9 +20,9 @@ else:
     logger.setLevel("INFO")
 
 intents = discord.Intents.default()
-intents.members = True
-intents.messages = True
-intents.message_content = True
+# intents.members = True
+# intents.messages = True
+# intents.message_content = True
 
 bot = commands.Bot(command_prefix="$", description="", intents=intents)
 bot.remove_command("help")
@@ -50,10 +50,10 @@ async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
     if not Guild.select().where(Guild.guild_id == str(guild.id)).exists():
         logger.info("Guild not configured!")
-        await guild.owner.send(
-            """Thank you for adding Harambot to your server!
-        Please complete your setup by running the /configure command!"""
-        )
+        # await guild.owner.send(
+        #     """Thank you for adding Harambot to your server!
+        # Please complete your setup by running the /configure command!"""
+        # )
 
 
 def run():
