@@ -35,7 +35,8 @@ peewee = "^3.15.4"
 cachetools = "^5.2.0"
 psycopg2 = "^2.9.5"
 mysqlclient = "^2.1.1"
-yahoo_fantasy_api = "2.7.0"
+yahoo_fantasy_api = "^2.8.0"
+yahoo-oauth = "^2.0"
 
 
 [tool.poetry.group.dev.dependencies]
