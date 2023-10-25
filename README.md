@@ -45,6 +45,25 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
+### Prerequsits 
+if installing on osx you will need to
+1. install java
+
+```
+brew install java
+```
+
+2. Install mysql
+
+```
+brew install mysql-client
+```
+
+3. Install postgres
+
+```
+brew install postgres
+```
 
 ### Run the bot locally using pip package
 
