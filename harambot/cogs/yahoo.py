@@ -318,6 +318,10 @@ class YahooCog(commands.Cog):
                 0
             ]["destination_team_name"],
         )
+        if "faab_bid" in transaction:
+            embed.add_field(
+                name="Bid", value=transaction["faab_bid"], inline=False
+            )
         return embed
 
     def create_drop_embed(self, transaction):
@@ -341,6 +345,10 @@ class YahooCog(commands.Cog):
                 0
             ]["destination_team_name"],
         )
+        if "faab_bid" in transaction:
+            embed.add_field(
+                name="Bid", value=transaction["faab_bid"], inline=False
+            )
         embed.add_field(
             name="Player Added", value="=====================", inline=True
         )
