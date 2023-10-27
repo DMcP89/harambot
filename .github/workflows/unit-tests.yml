@@ -55,4 +55,3 @@ jobs:
         run: |
           source .venv/bin/activate
           pytest --disable-warnings
-          coverage report
