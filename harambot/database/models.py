@@ -1,6 +1,7 @@
 from peewee import SqliteDatabase
 from peewee import Model
 from peewee import TextField, IntegerField, BigIntegerField, TimestampField
+from peewee_encrypted_field import EncryptedField
 from playhouse.db_url import connect
 from harambot.config import settings
 
@@ -17,7 +18,7 @@ class BaseModel(Model):
 
 class Guild(BaseModel):
     guild_id = TextField(unique=True)
-    access_token = TextField()
+    access_token = EncryptedField()
     refresh_token = TextField()
     expires_in = IntegerField()
     token_type = TextField()
