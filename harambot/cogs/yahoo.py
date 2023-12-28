@@ -224,7 +224,7 @@ class YahooCog(commands.Cog):
                 name="Total Points", value=player["player_points"]["total"]
             )
         embed.add_field(name="Owner", value=player["owner"])
-        embed.set_image(url=player["image_url"])
+        embed.set_thumbnail(url=player["image_url"])
         return embed
 
     def get_player_text(self, player):
@@ -350,13 +350,13 @@ class YahooCog(commands.Cog):
                 name="Bid", value=transaction["faab_bid"], inline=False
             )
         embed.add_field(
-            name="Player Added", value="=====================", inline=True
+            name="Player Added", value="=====================", inline=False
         )
         self.add_player_fields_to_embed(
             embed, transaction["players"]["0"]["player"][0]
         )
         embed.add_field(
-            name="Player Dropped", value="=====================", inline=True
+            name="Player Dropped", value="=====================", inline=False
         )
         self.add_player_fields_to_embed(
             embed, transaction["players"]["1"]["player"][0]
