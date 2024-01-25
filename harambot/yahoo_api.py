@@ -35,7 +35,9 @@ class Yahoo:
         self.scoring_type = league.settings()["scoring_type"]
         return league
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    def get_teams(self):
+        return self.league().teams()
+
     def get_standings(self):
         try:
             standings = []

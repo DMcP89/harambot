@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
+from typing import List
 
 from harambot.yahoo_api import Yahoo
 from harambot.database.models import Guild
@@ -29,34 +30,29 @@ class YahooCog(commands.Cog):
         self.SECRET = SECRET
         self.yahoo_api = None
 
-    async def cog_before_invoke(self, ctx):
-        guild = Guild.get(Guild.guild_id == str(ctx.guild.id))
-        self.yahoo_api = Yahoo(
-            OAuth2(
-                self.KEY, self.SECRET, store_file=False, **model_to_dict(guild)
-            ),
-            guild.league_id,
-            guild.league_type,
-        )
-        return
-
     def set_yahoo(f):
         @functools.wraps(f)
         async def wrapper(
             self, interaction: discord.Interaction, *args, **kwargs
         ):
             guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
-            self.yahoo_api = Yahoo(
-                OAuth2(
-                    self.KEY,
-                    self.SECRET,
-                    store_file=False,
-                    **model_to_dict(guild),
-                ),
-                guild.league_id,
-                guild.league_type,
-            )
-            await f(self, interaction, *args, **kwargs)
+
+            if (
+                not self.yahoo_api
+                or self.yahoo_api.league_id != guild.league_id
+            ):
+                self.yahoo_api = Yahoo(
+                    OAuth2(
+                        self.KEY,
+                        self.SECRET,
+                        store_file=False,
+                        **model_to_dict(guild),
+                    ),
+                    guild.league_id,
+                    guild.league_type,
+                )
+
+            return await f(self, interaction, *args, **kwargs)
 
         return wrapper
 
@@ -83,9 +79,27 @@ class YahooCog(commands.Cog):
         else:
             await interaction.response.send_message(self.error_message)
 
+    @set_yahoo
+    async def roster_autocomplete(
+        self,
+        interaction: discord.Interaction,
+        current: str,
+    ) -> List[app_commands.Choice[str]]:
+        teams = self.yahoo_api.get_teams()
+        options = list(
+            map(
+                lambda x: app_commands.Choice(
+                    name=teams[x]["name"], value=teams[x]["name"]
+                ),
+                teams,
+            )
+        )
+        return options
+
     @app_commands.command(
         name="roster", description="Returns the roster of the given team"
     )
+    @app_commands.autocomplete(team_name=roster_autocomplete)
     @set_yahoo
     async def roster(self, interaction: discord.Interaction, team_name: str):
         logger.info("roster called")
