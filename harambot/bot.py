@@ -17,12 +17,11 @@ logger = logging.getLogger("harambot.py")
 if "LOGLEVEL" in settings:
     logger.setLevel(settings.loglevel)
 else:
-    logger.setLevel("INFO")
+    logger.setLevel("DEBUG")
+
 
 intents = discord.Intents.default()
-# intents.members = True
-# intents.messages = True
-# intents.message_content = True
+
 
 bot = commands.Bot(command_prefix="$", description="", intents=intents)
 bot.remove_command("help")
