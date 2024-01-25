@@ -14,6 +14,7 @@ logging.disable(logging.DEBUG)
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+cache = TTLCache(maxsize=1024, ttl=600)
 
 
 class Yahoo:
@@ -26,7 +27,6 @@ class Yahoo:
         self.league_id = league_id
         self.league_type = league_type
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def league(self):
         if not self.oauth.token_is_valid():
             self.oauth.refresh_access_token()
@@ -59,7 +59,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    @cached(cache)
     def get_roster(self, team_name):
         team_details = self.league().get_team(team_name)
         if team_details:
@@ -67,7 +67,7 @@ class Yahoo:
         else:
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    @cached(cache)
     def get_player_details(self, player_name):
         try:
             player = self.league().player_details(player_name)[0]
@@ -82,7 +82,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    @cached(cache)
     def get_player_owner(self, player_id):
         try:
             player_ownership = self.league().ownership([player_id])[
@@ -107,7 +107,6 @@ class Yahoo:
             )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_matchups(self):
         try:
             matchups = objectpath.Tree(self.league().matchups()).execute(
@@ -137,6 +136,7 @@ class Yahoo:
                 )
             )
 
+    @cached(cache)
     def get_matchup_details(self, team):
         team_name = team[0][2]["name"]
         team_details = ""
@@ -175,7 +175,6 @@ class Yahoo:
             )
         return {"name": team_name, "text": team_details}
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_latest_trade(self):
         try:
             for key, values in self.league().teams().items():
@@ -193,7 +192,6 @@ class Yahoo:
         except Exception:
             logger.exception("Error while fetching latest trade")
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_latest_waiver_transactions(self):
         ts = datetime.now() - timedelta(days=1)
         transactions = self.league().transactions("add,drop", "")
