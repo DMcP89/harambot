@@ -210,9 +210,31 @@ class YahooCog(commands.Cog):
             await response_message.add_reaction(yes_emoji)
             await response_message.add_reaction(no_emoji)
 
+    @set_yahoo
+    async def stats_autocomplete(
+        self,
+        interaction: discord.Interaction,
+        current: str,
+    ) -> List[app_commands.Choice[str]]:
+        players = self.yahoo_api.league().player_details(current)
+        if players:
+            options = list(
+                map(
+                    lambda x: app_commands.Choice(
+                        name=x["name"]["full"],
+                        value=x["name"]["full"],
+                    ),
+                    players,
+                )
+            )
+        else:
+            options = []
+        return options
+
     @app_commands.command(
         name="stats", description="Returns the details of the given player"
     )
+    @app_commands.autocomplete(player_name=stats_autocomplete)
     @set_yahoo
     async def stats(self, interaction: discord.Interaction, player_name: str):
         logger.info("player_details called")
