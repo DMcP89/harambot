@@ -131,14 +131,14 @@ class Yahoo:
                     }
                 )
             return str(self.league().current_week()), details
-        except Exception:
+        except Exception as e:
             logger.exception(
                 "Error while fetching matchups for league: {}".format(
                     self.league_id
-                )
+                ),
+                e,
             )
 
-    @cached(cache)
     def get_matchup_details(self, team):
         team_name = team[0][2]["name"]
         team_details = ""
