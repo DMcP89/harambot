@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
-from typing import List
+from typing import List, Optional
 
 from harambot.yahoo_api import Yahoo
 from harambot.database.models import Guild
@@ -304,8 +304,10 @@ class YahooCog(commands.Cog):
         name="matchups", description="Returns the current weeks matchups"
     )
     @set_yahoo
-    async def matchups(self, interaction: discord.Interaction):
-        week, details = self.yahoo_api.get_matchups()
+    async def matchups(
+        self, interaction: discord.Interaction, week: Optional[int] = None
+    ):
+        week, details = self.yahoo_api.get_matchups(week)
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
