@@ -109,11 +109,13 @@ class Yahoo:
             )
             return None
 
-    def get_matchups(self):
+    def get_matchups(self, week=None):
         try:
-            matchups = objectpath.Tree(self.league().matchups()).execute(
-                "$..scoreboard..matchups..matchup..teams"
-            )
+            if not week:
+                week = self.league().current_week()
+            matchups = objectpath.Tree(
+                self.league().matchups(week=week)
+            ).execute("$..scoreboard..matchups..matchup..teams")
 
             details = []
             divider = "--------------------------------------"
@@ -130,7 +132,7 @@ class Yahoo:
                         + divider,
                     }
                 )
-            return str(self.league().current_week()), details
+            return str(week), details
         except Exception as e:
             logger.exception(
                 "Error while fetching matchups for league: {}".format(
@@ -141,40 +143,31 @@ class Yahoo:
 
     def get_matchup_details(self, team):
         team_name = team[0][2]["name"]
-        team_details = ""
-        if self.scoring_type == "head":
-            # handle data for head to head scoring
-            team1_actual_points = team[1]["team_points"]["total"]
-            team1_projected_points = team[1]["team_projected_points"]["total"]
-            if "win_probability" in team[1]:
-                team1_win_probability = "{:.0%}".format(
-                    team[1]["win_probability"]
-                )
-                team_details = "***{}*** \n Projected Score: {} \n  \
-                            Actual Score: {} \n Win Probability: {} \n".format(
-                    team_name,
-                    team1_projected_points,
-                    team1_actual_points,
-                    team1_win_probability,
-                )
-            else:
-                team_details = "***{}*** \n Projected Score: {} \n  \
-                            Actual Score: {} \n".format(
-                    team_name,
-                    team1_projected_points,
-                    team1_actual_points,
-                )
-        else:
-            team_details = "***{}*** \n Score: {} \n  \
-                            Remaining Games: {} \n \
-                                Live Games: {} \n \
-                                    Completed Games: {} \n".format(
-                team_name,
-                team[1]["team_points"]["total"],
-                team[1]["team_remaining_games"]["total"]["remaining_games"],
-                team[1]["team_remaining_games"]["total"]["live_games"],
-                team[1]["team_remaining_games"]["total"]["completed_games"],
-            )
+        team_details = "***{}*** \n".format(team_name)
+
+        actual_points = team[1]["team_points"]["total"]
+        team_details += "Score: {} \n".format(actual_points)
+
+        if "team_projected_points" in team[1]:
+            projected_points = team[1]["team_projected_points"]["total"]
+            team_details += "Projected Score: {} \n".format(projected_points)
+
+        if "win_probability" in team[1]:
+            win_probability = "{:.0%}".format(team[1]["win_probability"])
+            team_details += "Win Probability: {} \n".format(win_probability)
+
+        if "team_remaining_games" in team[1]:
+            remaining_games = team[1]["team_remaining_games"]["total"][
+                "remaining_games"
+            ]
+            live_games = team[1]["team_remaining_games"]["total"]["live_games"]
+            completed_games = team[1]["team_remaining_games"]["total"][
+                "completed_games"
+            ]
+            team_details += "Remaining Games: {} \n".format(remaining_games)
+            team_details += "Live Games: {} \n".format(live_games)
+            team_details += "Completed Games: {} \n".format(completed_games)
+
         return {"name": team_name, "text": team_details}
 
     def get_latest_trade(self):
