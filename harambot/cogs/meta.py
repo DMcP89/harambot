@@ -6,7 +6,7 @@ import logging
 
 from harambot.ui.views import ConfigView
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger("discord.harambot.cogs.meta")
 logger.setLevel(logging.INFO)
 
 

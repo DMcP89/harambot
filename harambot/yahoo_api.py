@@ -3,14 +3,12 @@ import os
 import objectpath
 
 
-from yahoo_fantasy_api import game
+from yahoo_fantasy_api import game, oauth2_logger
 from cachetools import cached, TTLCache
 from datetime import datetime, timedelta
 
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-logging.disable(logging.DEBUG)
+oauth2_logger.cleanup()
+logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))

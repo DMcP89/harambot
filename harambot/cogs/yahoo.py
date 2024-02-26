@@ -2,6 +2,7 @@ import discord
 import logging
 import urllib3
 import functools
+import yahoo_oauth
 
 from discord.ext import commands
 from discord import app_commands
@@ -11,10 +12,13 @@ from typing import List, Optional
 
 from harambot.yahoo_api import Yahoo
 from harambot.database.models import Guild
+from harambot.config import settings
 
+logging.setLoggerClass(logging.Logger)
+yahoo_oauth.logger = logging.getLogger("yahoo_oauth")
+logging.getLogger("yahoo_oauth").setLevel(settings.LOGLEVEL)
 
-logger = logging.getLogger(__file__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("discord.harambot.cogs.yahoo")
 
 
 class YahooCog(commands.Cog):

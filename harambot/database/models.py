@@ -1,3 +1,5 @@
+import logging
+
 from peewee import SqliteDatabase
 from peewee import Model
 from peewee import TextField, IntegerField, BigIntegerField, TimestampField
@@ -8,6 +10,8 @@ if "DATABASE_URL" in settings:
     database = connect(settings.database_url)
 else:
     database = SqliteDatabase(":memory:")
+
+logging.getLogger("peewee").setLevel(settings.loglevel)
 
 
 class BaseModel(Model):
