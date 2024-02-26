@@ -21,7 +21,7 @@ listener.start()
 
 logger = logging.getLogger("discord.harambot")
 if "LOGLEVEL" in settings:
-    logger.setLevel(settings.loglevel)
+    logger.setLevel(settings.LOGLEVEL)
 else:
     logger.setLevel("DEBUG")
 

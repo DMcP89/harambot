@@ -3,11 +3,10 @@ import os
 import objectpath
 
 
-from yahoo_fantasy_api import game, oauth2_logger
+from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
 from datetime import datetime, timedelta
 
-oauth2_logger.cleanup()
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
 

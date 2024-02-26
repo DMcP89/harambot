@@ -66,7 +66,7 @@ class YahooCog(commands.Cog):
     )
     @set_yahoo
     async def standings(self, interaction: discord.Interaction):
-        logger.info("standings called")
+        logger.info("Command:Standings called in %i", interaction.guild_id)
         embed = discord.Embed(
             title="Standings",
             description="Team Name\n W-L-T",
@@ -106,7 +106,11 @@ class YahooCog(commands.Cog):
     @app_commands.autocomplete(team_name=roster_autocomplete)
     @set_yahoo
     async def roster(self, interaction: discord.Interaction, team_name: str):
-        logger.info("roster called")
+        logger.info(
+            "Command:Roster called in %i with team_name:%s",
+            interaction.guild_id,
+            team_name,
+        )
         embed = discord.Embed(
             title="{}'s Roster".format(team_name),
             description="",
@@ -130,7 +134,7 @@ class YahooCog(commands.Cog):
     )
     @set_yahoo
     async def trade(self, interaction: discord.Interaction):
-        logger.info("trade called")
+        logger.info("Command:Trade called in %i", interaction.guild_id)
         latest_trade = self.yahoo_api.get_latest_trade()
 
         if latest_trade is None:
@@ -241,7 +245,11 @@ class YahooCog(commands.Cog):
     @app_commands.autocomplete(player_name=stats_autocomplete)
     @set_yahoo
     async def stats(self, interaction: discord.Interaction, player_name: str):
-        logger.info("player_details called")
+        logger.info(
+            "Command:Stats called in %i with player_name:%s",
+            interaction.guild_id,
+            player_name,
+        )
         player = self.yahoo_api.get_player_details(player_name)
         if player:
             embed = self.get_player_embed(player)
@@ -311,6 +319,11 @@ class YahooCog(commands.Cog):
     async def matchups(
         self, interaction: discord.Interaction, week: Optional[int] = None
     ):
+        logger.info(
+            "Command:Matchups called in %i with week: %i",
+            interaction.guild_id,
+            week,
+        )
         week, details = self.yahoo_api.get_matchups(week)
         if details:
             embed = discord.Embed(
@@ -332,6 +345,7 @@ class YahooCog(commands.Cog):
     )
     @set_yahoo
     async def waivers(self, interaction: discord.Interaction):
+        logger.info("Command:Waivers called in %i", interaction.guild_id)
         await interaction.response.defer()
         embed_functions_dict = {
             "add/drop": self.create_add_drop_embed,

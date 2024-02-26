@@ -11,7 +11,7 @@ if "DATABASE_URL" in settings:
 else:
     database = SqliteDatabase(":memory:")
 
-logging.getLogger("peewee").setLevel(settings.loglevel)
+logging.getLogger("peewee").setLevel(settings.LOGLEVEL)
 
 
 class BaseModel(Model):
