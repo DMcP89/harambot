@@ -25,14 +25,17 @@ class Yahoo:
         self.league_type = league_type
 
     def league(self):
+        # TODO: Handle oauth failures
         if not self.oauth.token_is_valid():
             self.oauth.refresh_access_token()
+        # TODO: Handle yahoo api failures
         gm = game.Game(self.oauth, self.league_type)
         league = gm.to_league("{}.l.{}".format(gm.game_id(), self.league_id))
         self.scoring_type = league.settings()["scoring_type"]
         return league
 
     def get_teams(self):
+        # TODO: Handle yahoo api failures
         return self.league().teams()
 
     def get_standings(self):
@@ -60,6 +63,7 @@ class Yahoo:
 
     @cached(cache)
     def get_roster(self, team_name):
+        # TODO: Handle yahoo api failures
         team_details = self.league().get_team(team_name)
         if team_details:
             return team_details[team_name].roster(self.league().current_week())
@@ -186,6 +190,7 @@ class Yahoo:
 
     def get_latest_waiver_transactions(self):
         ts = datetime.now() - timedelta(days=1)
+        # TODO: Handle yahoo api failures
         transactions = self.league().transactions("add,drop", "")
         filtered_transactions = [
             t for t in transactions if int(t["timestamp"]) > ts.timestamp()

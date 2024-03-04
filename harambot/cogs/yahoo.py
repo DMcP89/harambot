@@ -39,8 +39,16 @@ class YahooCog(commands.Cog):
         async def wrapper(
             self, interaction: discord.Interaction, *args, **kwargs
         ):
-            guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
-
+            try:
+                guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
+            except Exception:
+                logger.error(
+                    "Guild with id %i does not exist in the database",
+                    interaction.guild_id,
+                )
+                return await interaction.response.send_message(
+                    "I'm not set up for this server yet please run /config"
+                )
             if (
                 not self.yahoo_api
                 or self.yahoo_api.league_id != guild.league_id
@@ -72,16 +80,16 @@ class YahooCog(commands.Cog):
             description="Team Name\n W-L-T",
             color=0xEEE657,
         )
-        for team in self.yahoo_api.get_standings():
-            embed.add_field(
-                name=team["place"],
-                value=team["record"],
-                inline=False,
-            )
-        if embed:
+        standings = self.yahoo_api.get_standings()
+        if standings:
+            for team in standings:
+                embed.add_field(
+                    name=team["place"],
+                    value=team["record"],
+                    inline=False,
+                )
             await interaction.response.send_message(embed=embed)
-        else:
-            await interaction.response.send_message(self.error_message)
+        await interaction.response.send_message(self.error_message)
 
     @set_yahoo
     async def roster_autocomplete(
@@ -89,16 +97,19 @@ class YahooCog(commands.Cog):
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
+
         teams = self.yahoo_api.get_teams()
-        options = list(
-            map(
-                lambda x: app_commands.Choice(
-                    name=teams[x]["name"], value=teams[x]["name"]
-                ),
-                teams,
+        if teams:
+            options = list(
+                map(
+                    lambda x: app_commands.Choice(
+                        name=teams[x]["name"], value=teams[x]["name"]
+                    ),
+                    teams,
+                )
             )
-        )
-        return options
+            return options
+        return []
 
     @app_commands.command(
         name="roster", description="Returns the roster of the given team"
@@ -116,6 +127,7 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
+        # TODO: Handle unable to pull roster
         roster = self.yahoo_api.get_roster(team_name)
         if roster:
             for player in roster:
@@ -135,6 +147,7 @@ class YahooCog(commands.Cog):
     @set_yahoo
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
+        # TODO: Handle unable to pull trade
         latest_trade = self.yahoo_api.get_latest_trade()
 
         if latest_trade is None:
@@ -142,7 +155,7 @@ class YahooCog(commands.Cog):
                 "No trades up for approval at this time"
             )
             return
-
+        # TODO: Handle unable to pull teams
         teams = self.yahoo_api.league().teams()
 
         trader = teams[latest_trade["trader_team_key"]]
@@ -156,6 +169,7 @@ class YahooCog(commands.Cog):
                 player_set0.append(player["name"])
                 api_details = (
                     self.get_player_text(
+                        # TODO: Handle unable to pull player details
                         self.yahoo_api.get_player_details(player["name"])
                     )
                     + "\n"
@@ -172,6 +186,7 @@ class YahooCog(commands.Cog):
             player_set1.append(player["name"])
             api_details = (
                 self.get_player_text(
+                    # TODO: Handle unable to pull player details
                     self.yahoo_api.get_player_details(player["name"])
                 )
                 + "\n"
@@ -224,6 +239,7 @@ class YahooCog(commands.Cog):
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
+        # TODO: Handle unable to pull player details
         players = self.yahoo_api.league().player_details(current)
         if players:
             options = list(
@@ -250,6 +266,7 @@ class YahooCog(commands.Cog):
             interaction.guild_id,
             player_name,
         )
+        # TODO: Handle unable to pull player details
         player = self.yahoo_api.get_player_details(player_name)
         if player:
             embed = self.get_player_embed(player)
@@ -308,6 +325,7 @@ class YahooCog(commands.Cog):
         player_details_text = (
             player_details_text
             + "Owner: "
+            # TODO: Handle unable to pull player owner
             + self.yahoo_api.get_player_owner(player["player_id"])
         )
         return player_details_text
@@ -324,6 +342,7 @@ class YahooCog(commands.Cog):
             interaction.guild_id,
             week,
         )
+        # TODO: Handle unable to pull matchups
         week, details = self.yahoo_api.get_matchups(week)
         if details:
             embed = discord.Embed(
@@ -352,6 +371,7 @@ class YahooCog(commands.Cog):
             "add": self.create_add_embed,
             "drop": self.create_drop_embed,
         }
+        # TODO: Handle unable to pull waiver transactions
         transactions = self.yahoo_api.get_latest_waiver_transactions()
         if transactions:
             for transaction in self.yahoo_api.get_latest_waiver_transactions():
