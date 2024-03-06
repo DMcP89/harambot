@@ -127,7 +127,6 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
-        # TODO: Handle unable to pull roster
         roster = self.yahoo_api.get_roster(team_name)
         if roster:
             for player in roster:
@@ -147,17 +146,17 @@ class YahooCog(commands.Cog):
     @set_yahoo
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
-        # TODO: Handle unable to pull trade
         latest_trade = self.yahoo_api.get_latest_trade()
-
         if latest_trade is None:
             await interaction.response.send_message(
                 "No trades up for approval at this time"
             )
             return
-        # TODO: Handle unable to pull teams
-        teams = self.yahoo_api.league().teams()
 
+        teams = self.yahoo_api.get_teams()
+        if teams is None:
+            await interaction.response.send_message(self.error_message)
+            return
         trader = teams[latest_trade["trader_team_key"]]
         tradee = teams[latest_trade["tradee_team_key"]]
         managers = [trader["name"], tradee["name"]]
@@ -169,7 +168,6 @@ class YahooCog(commands.Cog):
                 player_set0.append(player["name"])
                 api_details = (
                     self.get_player_text(
-                        # TODO: Handle unable to pull player details
                         self.yahoo_api.get_player_details(player["name"])
                     )
                     + "\n"
@@ -184,13 +182,11 @@ class YahooCog(commands.Cog):
         player_set1_details = ""
         for player in latest_trade["tradee_players"]:
             player_set1.append(player["name"])
-            api_details = (
-                self.get_player_text(
-                    # TODO: Handle unable to pull player details
-                    self.yahoo_api.get_player_details(player["name"])
-                )
-                + "\n"
-            )
+            player_details = self.yahoo_api.get_player_details(player["name"])
+            if player_details is None:
+                await interaction.send(self.error_message)
+                return
+            api_details = self.get_player_text(player_details) + "\n"
             if api_details:
                 player_set1_details = player_set1_details + api_details
             else:
@@ -239,8 +235,7 @@ class YahooCog(commands.Cog):
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
-        # TODO: Handle unable to pull player details
-        players = self.yahoo_api.league().player_details(current)
+        players = self.yahoo_api.get_players(current)
         if players:
             options = list(
                 map(
@@ -266,7 +261,6 @@ class YahooCog(commands.Cog):
             interaction.guild_id,
             player_name,
         )
-        # TODO: Handle unable to pull player details
         player = self.yahoo_api.get_player_details(player_name)
         if player:
             embed = self.get_player_embed(player)
@@ -322,12 +316,11 @@ class YahooCog(commands.Cog):
                 + player["player_points"]["total"]
                 + "\n"
             )
-        player_details_text = (
-            player_details_text
-            + "Owner: "
-            # TODO: Handle unable to pull player owner
-            + self.yahoo_api.get_player_owner(player["player_id"])
-        )
+        player_owner = self.yahoo_api.get_player_owner(player["player_id"])
+        if player_owner:
+            player_details_text = (
+                player_details_text + "Owner: " + player_owner
+            )
         return player_details_text
 
     @app_commands.command(
@@ -342,7 +335,7 @@ class YahooCog(commands.Cog):
             interaction.guild_id,
             week,
         )
-        # TODO: Handle unable to pull matchups
+
         week, details = self.yahoo_api.get_matchups(week)
         if details:
             embed = discord.Embed(
@@ -371,7 +364,7 @@ class YahooCog(commands.Cog):
             "add": self.create_add_embed,
             "drop": self.create_drop_embed,
         }
-        # TODO: Handle unable to pull waiver transactions
+
         transactions = self.yahoo_api.get_latest_waiver_transactions()
         if transactions:
             for transaction in self.yahoo_api.get_latest_waiver_transactions():

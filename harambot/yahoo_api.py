@@ -63,6 +63,17 @@ class Yahoo:
             )
             return None
 
+    def get_players(self, player):
+        try:
+            return self.league().players(player)
+        except Exception:
+            logger.exception(
+                "Error while fetching players for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
     def get_standings(self):
         try:
             standings = []
@@ -218,13 +229,14 @@ class Yahoo:
                     )
                     if accepted_trades:
                         return accepted_trades[0]
-            return
+            return None
         except Exception:
             logger.exception(
                 "Error fetching latest trades for league: {}".format(
                     self.league_id
                 )
             )
+            return None
 
     def get_latest_waiver_transactions(self):
         ts = datetime.now() - timedelta(days=1)
