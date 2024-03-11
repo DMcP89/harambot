@@ -7,10 +7,7 @@ from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
 from datetime import datetime, timedelta
 
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-logging.disable(logging.DEBUG)
+logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -28,15 +25,54 @@ class Yahoo:
         self.league_type = league_type
 
     def league(self):
-        if not self.oauth.token_is_valid():
-            self.oauth.refresh_access_token()
-        gm = game.Game(self.oauth, self.league_type)
-        league = gm.to_league("{}.l.{}".format(gm.game_id(), self.league_id))
-        self.scoring_type = league.settings()["scoring_type"]
-        return league
+
+        try:
+            if not self.oauth.token_is_valid():
+                self.oauth.refresh_access_token()
+        except Exception:
+            logger.exception(
+                "Error while refreshing access token for league: {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            league = gm.to_league(
+                "{}.l.{}".format(gm.game_id(), self.league_id)
+            )
+            self.scoring_type = league.settings()["scoring_type"]
+            return league
+        except Exception:
+            logger.exception(
+                "Error while fetching league details for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
 
     def get_teams(self):
-        return self.league().teams()
+        try:
+            return self.league().teams()
+        except Exception:
+            logger.exception(
+                "Error while fetching teams for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
+    def get_players(self, player):
+        try:
+            return self.league().players(player)
+        except Exception:
+            logger.exception(
+                "Error while fetching players for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
 
     def get_standings(self):
         try:
@@ -63,10 +99,20 @@ class Yahoo:
 
     @cached(cache)
     def get_roster(self, team_name):
-        team_details = self.league().get_team(team_name)
-        if team_details:
-            return team_details[team_name].roster(self.league().current_week())
-        else:
+        try:
+            team_details = self.league().get_team(team_name)
+            if team_details:
+                return team_details[team_name].roster(
+                    self.league().current_week()
+                )
+            else:
+                return None
+        except Exception:
+            logger.exception(
+                "Error while fetching roster for team: {} in league {}".format(
+                    team_name, self.league_id
+                )
+            )
             return None
 
     @cached(cache)
@@ -183,14 +229,27 @@ class Yahoo:
                     )
                     if accepted_trades:
                         return accepted_trades[0]
-            return
+            return None
         except Exception:
-            logger.exception("Error while fetching latest trade")
+            logger.exception(
+                "Error fetching latest trades for league: {}".format(
+                    self.league_id
+                )
+            )
+            return None
 
     def get_latest_waiver_transactions(self):
         ts = datetime.now() - timedelta(days=1)
-        transactions = self.league().transactions("add,drop", "")
-        filtered_transactions = [
-            t for t in transactions if int(t["timestamp"]) > ts.timestamp()
-        ]
-        return filtered_transactions
+        try:
+            transactions = self.league().transactions("add,drop", "")
+            filtered_transactions = [
+                t for t in transactions if int(t["timestamp"]) > ts.timestamp()
+            ]
+            return filtered_transactions
+        except Exception:
+            logger.exception(
+                "Error fetching latest waivers for league: {}".format(
+                    self.league_id
+                )
+            )
+            return None

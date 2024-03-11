@@ -6,7 +6,7 @@ from discord import app_commands
 from typing import Optional
 from harambot.database.models import Guild
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger("discord.harambot.cogs.misc")
 logger.setLevel(logging.INFO)
 
 
