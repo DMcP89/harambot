@@ -15,8 +15,9 @@ showenv:
 test:
 	@python -m pytest -v
 
+# TODO: Fix this
 run:
-	@pip install -r requirements.txt
+	@poetry install
 	@python ${MODULE}/bot.py
 
 build-image:
