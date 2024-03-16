@@ -40,12 +40,9 @@ In order to properly configure your bot you will need the following:
 
 _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step guide on how to obtain these values._
 
-### Run the bot in the cloud
+### Run the bot on [Render](https://render.com/)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/DMcP89/harambot)
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
 
 ### Run the bot locally using pip package
 
