@@ -1,9 +1,10 @@
+![harambot-banner](./assests/harambot_banner.png)
 # Harambot
 _An interactive Yahoo Fantasy sports bot for Discord._
 
-![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/pytest.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.3.3--Beta-red)
+![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/pytest.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.4.0--Beta-red)
 
-![harambot-logo](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot-1.jpg)
+
 
 
 
@@ -39,31 +40,9 @@ In order to properly configure your bot you will need the following:
 
 _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step guide on how to obtain these values._
 
-### Run the bot in the cloud
+### Run the bot on [Render](https://render.com/)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/DMcP89/harambot)
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-### Prerequsits 
-if installing on osx you will need to
-1. install java
-
-```
-brew install java
-```
-
-2. Install mysql
-
-```
-brew install mysql-client
-```
-
-3. Install postgres
-
-```
-brew install postgres
-```
 
 ### Run the bot locally using pip package
 
