@@ -7,13 +7,11 @@ from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
 from datetime import datetime, timedelta
 
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-logging.disable(logging.DEBUG)
+logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+cache = TTLCache(maxsize=1024, ttl=600)
 
 
 class Yahoo:
@@ -26,16 +24,56 @@ class Yahoo:
         self.league_id = league_id
         self.league_type = league_type
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def league(self):
-        if not self.oauth.token_is_valid():
-            self.oauth.refresh_access_token()
-        gm = game.Game(self.oauth, self.league_type)
-        league = gm.to_league("{}.l.{}".format(gm.game_id(), self.league_id))
-        self.scoring_type = league.settings()["scoring_type"]
-        return league
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+        try:
+            if not self.oauth.token_is_valid():
+                self.oauth.refresh_access_token()
+        except Exception:
+            logger.exception(
+                "Error while refreshing access token for league: {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            league = gm.to_league(
+                "{}.l.{}".format(gm.game_id(), self.league_id)
+            )
+            self.scoring_type = league.settings()["scoring_type"]
+            return league
+        except Exception:
+            logger.exception(
+                "Error while fetching league details for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
+    def get_teams(self):
+        try:
+            return self.league().teams()
+        except Exception:
+            logger.exception(
+                "Error while fetching teams for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
+    def get_players(self, player):
+        try:
+            return self.league().players(player)
+        except Exception:
+            logger.exception(
+                "Error while fetching players for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
     def get_standings(self):
         try:
             standings = []
@@ -59,15 +97,25 @@ class Yahoo:
             )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    @cached(cache)
     def get_roster(self, team_name):
-        team_details = self.league().get_team(team_name)
-        if team_details:
-            return team_details[team_name].roster(self.league().current_week())
-        else:
+        try:
+            team_details = self.league().get_team(team_name)
+            if team_details:
+                return team_details[team_name].roster(
+                    self.league().current_week()
+                )
+            else:
+                return None
+        except Exception:
+            logger.exception(
+                "Error while fetching roster for team: {} in league {}".format(
+                    team_name, self.league_id
+                )
+            )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    @cached(cache)
     def get_player_details(self, player_name):
         try:
             player = self.league().player_details(player_name)[0]
@@ -82,7 +130,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
+    @cached(cache)
     def get_player_owner(self, player_id):
         try:
             player_ownership = self.league().ownership([player_id])[
@@ -93,7 +141,7 @@ class Yahoo:
             else:
                 ownership_map = {
                     "freeagents": "Free Agent",
-                    "waivers": "On Waviers",
+                    "waivers": "On Waivers",
                 }
                 return ownership_map.get(
                     player_ownership["ownership_type"], ""
@@ -107,12 +155,13 @@ class Yahoo:
             )
             return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
-    def get_matchups(self):
+    def get_matchups(self, week=None):
         try:
-            matchups = objectpath.Tree(self.league().matchups()).execute(
-                "$..scoreboard..matchups..matchup..teams"
-            )
+            if not week:
+                week = self.league().current_week()
+            matchups = objectpath.Tree(
+                self.league().matchups(week=week)
+            ).execute("$..scoreboard..matchups..matchup..teams")
 
             details = []
             divider = "--------------------------------------"
@@ -129,53 +178,44 @@ class Yahoo:
                         + divider,
                     }
                 )
-            return str(self.league().current_week()), details
-        except Exception:
+            return str(week), details
+        except Exception as e:
             logger.exception(
                 "Error while fetching matchups for league: {}".format(
                     self.league_id
-                )
+                ),
+                e,
             )
 
     def get_matchup_details(self, team):
         team_name = team[0][2]["name"]
-        team_details = ""
-        if self.scoring_type == "head":
-            # handle data for head to head scoring
-            team1_actual_points = team[1]["team_points"]["total"]
-            team1_projected_points = team[1]["team_projected_points"]["total"]
-            if "win_probability" in team[1]:
-                team1_win_probability = "{:.0%}".format(
-                    team[1]["win_probability"]
-                )
-                team_details = "***{}*** \n Projected Score: {} \n  \
-                            Actual Score: {} \n Win Probability: {} \n".format(
-                    team_name,
-                    team1_projected_points,
-                    team1_actual_points,
-                    team1_win_probability,
-                )
-            else:
-                team_details = "***{}*** \n Projected Score: {} \n  \
-                            Actual Score: {} \n".format(
-                    team_name,
-                    team1_projected_points,
-                    team1_actual_points,
-                )
-        else:
-            team_details = "***{}*** \n Score: {} \n  \
-                            Remaining Games: {} \n \
-                                Live Games: {} \n \
-                                    Completed Games: {} \n".format(
-                team_name,
-                team[1]["team_points"]["total"],
-                team[1]["team_remaining_games"]["total"]["remaining_games"],
-                team[1]["team_remaining_games"]["total"]["live_games"],
-                team[1]["team_remaining_games"]["total"]["completed_games"],
-            )
+        team_details = "***{}*** \n".format(team_name)
+
+        actual_points = team[1]["team_points"]["total"]
+        team_details += "Score: {} \n".format(actual_points)
+
+        if "team_projected_points" in team[1]:
+            projected_points = team[1]["team_projected_points"]["total"]
+            team_details += "Projected Score: {} \n".format(projected_points)
+
+        if "win_probability" in team[1]:
+            win_probability = "{:.0%}".format(team[1]["win_probability"])
+            team_details += "Win Probability: {} \n".format(win_probability)
+
+        if "team_remaining_games" in team[1]:
+            remaining_games = team[1]["team_remaining_games"]["total"][
+                "remaining_games"
+            ]
+            live_games = team[1]["team_remaining_games"]["total"]["live_games"]
+            completed_games = team[1]["team_remaining_games"]["total"][
+                "completed_games"
+            ]
+            team_details += "Remaining Games: {} \n".format(remaining_games)
+            team_details += "Live Games: {} \n".format(live_games)
+            team_details += "Completed Games: {} \n".format(completed_games)
+
         return {"name": team_name, "text": team_details}
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_latest_trade(self):
         try:
             for key, values in self.league().teams().items():
@@ -189,15 +229,27 @@ class Yahoo:
                     )
                     if accepted_trades:
                         return accepted_trades[0]
-            return
+            return None
         except Exception:
-            logger.exception("Error while fetching latest trade")
+            logger.exception(
+                "Error fetching latest trades for league: {}".format(
+                    self.league_id
+                )
+            )
+            return None
 
-    @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_latest_waiver_transactions(self):
         ts = datetime.now() - timedelta(days=1)
-        transactions = self.league().transactions("add,drop", "")
-        filtered_transactions = [
-            t for t in transactions if int(t["timestamp"]) > ts.timestamp()
-        ]
-        return filtered_transactions
+        try:
+            transactions = self.league().transactions("add,drop", "")
+            filtered_transactions = [
+                t for t in transactions if int(t["timestamp"]) > ts.timestamp()
+            ]
+            return filtered_transactions
+        except Exception:
+            logger.exception(
+                "Error fetching latest waivers for league: {}".format(
+                    self.league_id
+                )
+            )
+            return None

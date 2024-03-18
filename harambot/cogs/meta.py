@@ -6,7 +6,7 @@ import logging
 
 from harambot.ui.views import ConfigView
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger("discord.harambot.cogs.meta")
 logger.setLevel(logging.INFO)
 
 
@@ -53,7 +53,7 @@ class Meta(commands.Cog):
             inline=False,
         )
         embed.add_field(
-            name="/wavier",
+            name="/waivers",
             value="Returns the waiver wire transactions for the last 24 hours",
             inline=False,
         )

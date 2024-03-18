@@ -1,10 +1,13 @@
 from aiohttp import web
 from discord.ext import commands
+from yahoo_fantasy_api import oauth2_logger
 from harambot.config import settings
 
 import logging
 
-logger = logging.getLogger(__file__)
+oauth2_logger.cleanup()
+
+logger = logging.getLogger("discord.harambot.cogs.webserver")
 logger.setLevel(logging.INFO)
 
 
