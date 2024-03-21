@@ -38,6 +38,7 @@ psycopg2 = "^2.9.5"
 mysqlclient = "^2.1.1"
 yahoo_fantasy_api = "^2.8.0"
 yahoo-oauth = "^2.0"
+cryptography = "^42.0.5"
 
 
 [tool.poetry.group.dev.dependencies]

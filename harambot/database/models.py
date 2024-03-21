@@ -3,9 +3,9 @@ import logging
 from peewee import SqliteDatabase
 from peewee import Model
 from peewee import TextField, IntegerField, BigIntegerField, TimestampField
-from peewee_encrypted_field import EncryptedField
 from playhouse.db_url import connect
 from harambot.config import settings
+from harambot.database.fields import EncryptedField
 
 if "DATABASE_URL" in settings:
     database = connect(settings.database_url)
@@ -22,7 +22,7 @@ class BaseModel(Model):
 
 class Guild(BaseModel):
     guild_id = TextField(unique=True)
-    access_token = EncryptedField()
+    access_token = EncryptedField(key=settings.HARAMBOT_KEY)
     refresh_token = TextField()
     expires_in = IntegerField()
     token_type = TextField()
