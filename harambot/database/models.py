@@ -23,7 +23,7 @@ class BaseModel(Model):
 class Guild(BaseModel):
     guild_id = TextField(unique=True)
     access_token = EncryptedField(key=settings.HARAMBOT_KEY)
-    refresh_token = TextField()
+    refresh_token = EncryptedField(key=settings.HARAMBOT_KEY)
     expires_in = IntegerField()
     token_type = TextField()
     xoauth_yahoo_guid = TextField(null=True)
