@@ -39,9 +39,11 @@ class Yahoo:
 
         try:
             gm = game.Game(self.oauth, self.league_type)
-            league = gm.to_league(
-                "{}.l.{}".format(gm.game_id(), self.league_id)
-            )
+            for id in gm.league_ids():
+                if self.league_id in id:
+                    self.league_id = id
+                    break
+            league = gm.to_league(self.league_id)
             self.scoring_type = league.settings()["scoring_type"]
             return league
         except Exception:
