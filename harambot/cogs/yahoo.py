@@ -89,7 +89,8 @@ class YahooCog(commands.Cog):
                     inline=False,
                 )
             await interaction.response.send_message(embed=embed)
-        await interaction.response.send_message(self.error_message)
+        else:
+            await interaction.response.send_message(self.error_message)
 
     @set_yahoo
     async def roster_autocomplete(

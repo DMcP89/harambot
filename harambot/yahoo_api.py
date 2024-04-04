@@ -65,7 +65,7 @@ class Yahoo:
 
     def get_players(self, player):
         try:
-            return self.league().players(player)
+            return self.league().player_details(player)
         except Exception:
             logger.exception(
                 "Error while fetching players for league {}".format(
