@@ -30,7 +30,7 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     )
     RIP_image_url = discord.ui.TextInput(
         label="RIP Image",
-        placeholder="Enter image url to use with $RIP command",
+        placeholder="Enter comma separated list of urls for $RIP command",
     )
 
     guild = None
