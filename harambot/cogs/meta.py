@@ -71,8 +71,10 @@ class Meta(commands.Cog):
         await interaction.response.send_message(self.bot.latency)
 
     @app_commands.command(
-        name="configure", description="Configure your guild for Harambot"
+        name="configure",
+        description="Configure your guild for Harambot",
     )
+    @app_commands.checks.has_permissions(administrator=True)
     async def configure(self, interaction: discord.Interaction):
         await interaction.response.send_message(
             """
@@ -83,3 +85,12 @@ class Meta(commands.Cog):
             view=ConfigView(),
             ephemeral=True,
         )
+
+    @configure.error
+    async def configure_check_error(
+        self, interaction: discord.Interaction, error
+    ):
+        if isinstance(error, app_commands.MissingPermissions):
+            await interaction.response.send_message(
+                "You do not have the required permissions to run this command."
+            )
