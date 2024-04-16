@@ -15,7 +15,6 @@ showenv:
 test:
 	@python -m pytest -v
 
-# TODO: Fix this
 run:
 	@poetry install
 	@python ${MODULE}/bot.py
