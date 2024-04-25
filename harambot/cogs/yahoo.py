@@ -368,7 +368,7 @@ class YahooCog(commands.Cog):
 
         transactions = self.yahoo_api.get_latest_waiver_transactions()
         if transactions:
-            for transaction in self.yahoo_api.get_latest_waiver_transactions():
+            for transaction in transactions:
                 await interaction.followup.send(
                     embed=embed_functions_dict[transaction["type"]](
                         transaction
