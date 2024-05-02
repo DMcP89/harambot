@@ -3,6 +3,7 @@ import requests
 import time
 
 from harambot.config import settings
+from discord import Embed
 
 YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"
 YAHOO_AUTH_URI = "request_auth?redirect_uri=oob&response_type=code&client_id="
@@ -29,3 +30,68 @@ def yahoo_auth(code):
 
     details["token_time"] = time.time()
     return details
+
+
+def create_add_embed(transaction):
+    embed = Embed(title="Player Added")
+    add_player_fields_to_embed(embed, transaction["players"]["0"]["player"][0])
+    embed.add_field(
+        name="Owner",
+        value=transaction["players"]["0"]["player"][1]["transaction_data"][0][
+            "destination_team_name"
+        ],
+    )
+    if "faab_bid" in transaction:
+        embed.add_field(
+            name="Bid", value=transaction["faab_bid"], inline=False
+        )
+    return embed
+
+
+def create_drop_embed(self, transaction):
+    embed = Embed(title="Player Dropped")
+    self.add_player_fields_to_embed(
+        embed, transaction["players"]["0"]["player"][0]
+    )
+    embed.add_field(
+        name="Owner",
+        value=transaction["players"]["0"]["player"][1]["transaction_data"][
+            "source_team_name"
+        ],
+    )
+    return embed
+
+
+def create_add_drop_embed(transaction):
+    embed = Embed(title="Player Added/ Player Dropped")
+    embed.add_field(
+        name="Owner",
+        value=transaction["players"]["0"]["player"][1]["transaction_data"][0][
+            "destination_team_name"
+        ],
+    )
+    if "faab_bid" in transaction:
+        embed.add_field(
+            name="Bid", value=transaction["faab_bid"], inline=False
+        )
+    embed.add_field(
+        name="Player Added", value="=====================", inline=False
+    )
+    add_player_fields_to_embed(embed, transaction["players"]["0"]["player"][0])
+    embed.add_field(
+        name="Player Dropped", value="=====================", inline=False
+    )
+    add_player_fields_to_embed(embed, transaction["players"]["1"]["player"][0])
+    return embed
+
+
+def add_player_fields_to_embed(embed, player):
+    embed.add_field(
+        name="Player", value=player[2]["name"]["full"], inline=True
+    )
+    embed.add_field(
+        name="Team", value=player[3]["editorial_team_abbr"], inline=True
+    )
+    embed.add_field(
+        name="Position", value=player[4]["display_position"], inline=True
+    )
