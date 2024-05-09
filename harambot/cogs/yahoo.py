@@ -358,17 +358,18 @@ class YahooCog(commands.Cog):
         description="Returns the waiver transactions from the last 24 hours",
     )
     @set_yahoo
-    async def waivers(self, interaction: discord.Interaction):
+    async def waivers(self, interaction: discord.Interaction, days: int = 1):
         logger.info("Command:Waivers called in %i", interaction.guild_id)
-        await interaction.response.defer()
+
         embed_functions_dict = {
             "add/drop": utils.create_add_drop_embed,
             "add": utils.create_add_embed,
             "drop": utils.create_drop_embed,
         }
 
-        transactions = self.yahoo_api.get_latest_waiver_transactions()
+        transactions = self.yahoo_api.get_transactions(days=days)
         if transactions:
+            await interaction.response.defer()
             for transaction in transactions:
                 await interaction.followup.send(
                     embed=embed_functions_dict[transaction["type"]](

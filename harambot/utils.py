@@ -48,11 +48,9 @@ def create_add_embed(transaction):
     return embed
 
 
-def create_drop_embed(self, transaction):
+def create_drop_embed(transaction):
     embed = Embed(title="Player Dropped")
-    self.add_player_fields_to_embed(
-        embed, transaction["players"]["0"]["player"][0]
-    )
+    add_player_fields_to_embed(embed, transaction["players"]["0"]["player"][0])
     embed.add_field(
         name="Owner",
         value=transaction["players"]["0"]["player"][1]["transaction_data"][

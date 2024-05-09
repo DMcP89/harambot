@@ -240,8 +240,8 @@ class Yahoo:
             )
             return None
 
-    def get_latest_waiver_transactions(self):
-        ts = datetime.now() - timedelta(days=1)
+    def get_transactions(self, days=1):
+        ts = datetime.now() - timedelta(days=days)
         try:
             transactions = self.league().transactions("add,drop", "")
             filtered_transactions = [
@@ -254,4 +254,4 @@ class Yahoo:
                     self.league_id
                 )
             )
-            return None
+            return []
