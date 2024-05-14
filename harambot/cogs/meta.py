@@ -94,3 +94,28 @@ class Meta(commands.Cog):
             await interaction.response.send_message(
                 "You do not have the required permissions to run this command."
             )
+
+    def webhook_permissions(interaction: discord.Interaction):
+        return interaction.guild.me.guild_permissions.manage_webhooks
+
+    @app_commands.command(
+        name="reports",
+        description="Configure automatic transaction and matchup reporting",
+    )
+    @app_commands.check(webhook_permissions)
+    async def reports(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            """
+            Configure automatic reports
+            1. Configure transaction reports
+            2. Configure matchup reports
+            """
+        )
+
+    @reports.error
+    async def reports_check_error(
+        self, interaction: discord.Interaction, error
+    ):
+        await interaction.response.send_message(
+            "Grant Harambot the Manage Webhooks permission to use this command"
+        )
