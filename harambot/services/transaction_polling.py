@@ -1,4 +1,4 @@
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 from playhouse.shortcuts import model_to_dict
 from yahoo_oauth import OAuth2
 from discord import SyncWebhook
@@ -40,15 +40,21 @@ def poll_transactions(guild: Guild):
         guild.league_id,
         guild.league_type,
     )
-    transactions = YahooAPI.get_latest_waiver_transactions()
+    transactions = YahooAPI.get_transactions()
     if transactions:
         for transaction in transactions:
             embed = embed_functions_dict[transaction["type"]](transaction)
-            webhook = SyncWebhook.from_url(guild.webhook_url)
+            webhook = SyncWebhook.from_url(guild.transaction_polling_webhook)
             webhook.send(embed=embed)
     time.sleep(random_int)
-    print(len(transactions))
 
 
-with ThreadPoolExecutor(max_workers=5) as executor:
-    results = list(executor.map(poll_transactions, Guild.select()))
+with Pool(5) as executor:
+    results = list(
+        executor.map(
+            poll_transactions,
+            Guild.select().where(
+                Guild.transaction_polling_service_enabled == 1
+            ),
+        )
+    )
