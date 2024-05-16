@@ -60,3 +60,20 @@ class ConfigView(discord.ui.View):
         self.add_item(YahooAuthButton())
         self.add_item(ConfigGuildButton(parent_view=self))
         self.add_item(ResetButton())
+
+
+class ReportConfigView(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+
+    @discord.ui.select(
+        cls=discord.ui.ChannelSelect, channel_types=[discord.ChannelType.text]
+    )
+    async def select_channels(
+        self,
+        interaction: discord.Interaction,
+        select: discord.ui.ChannelSelect,
+    ):
+        return await interaction.response.send_message(
+            f"You selected {select.values[0].mention}"
+        )

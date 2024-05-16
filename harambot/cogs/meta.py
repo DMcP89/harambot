@@ -4,7 +4,7 @@ from discord import app_commands
 import discord
 import logging
 
-from harambot.ui.views import ConfigView
+from harambot.ui.views import ConfigView, ReportConfigView
 
 logger = logging.getLogger("discord.harambot.cogs.meta")
 logger.setLevel(logging.INFO)
@@ -105,11 +105,7 @@ class Meta(commands.Cog):
     @app_commands.check(webhook_permissions)
     async def reports(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            """
-            Configure automatic reports
-            1. Configure transaction reports
-            2. Configure matchup reports
-            """
+            view=ReportConfigView(), ephemeral=True
         )
 
     @reports.error
