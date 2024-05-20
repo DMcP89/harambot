@@ -103,9 +103,15 @@ class Meta(commands.Cog):
         description="Configure automatic transaction and matchup reporting",
     )
     @app_commands.check(webhook_permissions)
-    async def reports(self, interaction: discord.Interaction):
+    async def reports(
+        self,
+        interaction: discord.Interaction,
+    ):
+        message = (
+            "Set what channel transaction & matchup reports should be sent to."
+        )
         await interaction.response.send_message(
-            view=ReportConfigView(), ephemeral=True
+            message, view=ReportConfigView(), ephemeral=True
         )
 
     @reports.error
