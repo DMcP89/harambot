@@ -1,7 +1,7 @@
 import discord
 
 from harambot.config import settings
-from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI
+from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes
 from harambot.ui.modals import ConfigModal
 from harambot.database.models import Guild
 
@@ -74,6 +74,37 @@ class ReportConfigView(discord.ui.View):
         interaction: discord.Interaction,
         select: discord.ui.ChannelSelect,
     ):
+
+        guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
+
+        channel = select.values[0].resolve()
+        if not channel:
+            channel = select.values[0].fetch()
+
+        for webhook in await channel.webhooks():
+            if webhook.user == interaction.guild.me:
+                guild.transaction_polling_webhook = webhook.url
+                return await interaction.response.send_message(
+                    f"Reports have been configure to go to {select.values[0].mention}"
+                )
+
+        if guild.transaction_polling_service_enabled == 0:
+            guild.transaction_polling_service_enabled = 1
+        else:
+            webhook = discord.SyncWebhook.from_url(
+                guild.transaction_polling_webhook
+            )
+            webhook.delete()
+            guild.transaction_polling_webhook = None
+
+        if not guild.transaction_polling_webhook:
+            webhook = await channel.create_webhook(
+                name="Harambot Reports", avatar=get_avatar_bytes()
+            )
+            guild.transaction_polling_webhook = webhook.url
+
+        guild.save()
+
         return await interaction.response.send_message(
-            f"You selected {select.values[0].mention}"
+            f"Reports have been configure to go to {select.values[0].mention}"
         )

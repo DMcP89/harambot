@@ -93,3 +93,8 @@ def add_player_fields_to_embed(embed, player):
     embed.add_field(
         name="Position", value=player[4]["display_position"], inline=True
     )
+
+
+def get_avatar_bytes():
+    # return the image from the settings.webhook_avatar_url variable as bytes
+    return requests.get(settings.webhook_avatar_url).content

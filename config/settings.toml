@@ -3,3 +3,4 @@ LOGLEVEL = "DEBUG"
 VERSION = "0.4.0-Beta"
 RUN_MIGRATIONS = false
 PORT = 10000
+WEBHOOK_AVATAR_URL = "https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot-1.jpg"

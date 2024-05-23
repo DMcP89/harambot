@@ -40,9 +40,10 @@ class YahooCog(commands.Cog):
         async def wrapper(
             self, interaction: discord.Interaction, *args, **kwargs
         ):
-            try:
-                guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
-            except Exception:
+            guild = Guild.get_or_none(
+                Guild.guild_id == str(interaction.guild_id)
+            )
+            if guild is None:
                 logger.error(
                     "Guild with id %i does not exist in the database",
                     interaction.guild_id,
