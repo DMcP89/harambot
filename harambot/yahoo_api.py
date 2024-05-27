@@ -5,7 +5,7 @@ import objectpath
 
 from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
-from datetime import datetime, timedelta
+
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
@@ -240,12 +240,11 @@ class Yahoo:
             )
             return None
 
-    def get_transactions(self, days=1):
-        ts = datetime.now() - timedelta(days=days)
+    def get_transactions(self, timestamp=0.0):
         try:
             transactions = self.league().transactions("add,drop", "")
             filtered_transactions = [
-                t for t in transactions if int(t["timestamp"]) > ts.timestamp()
+                t for t in transactions if float(t["timestamp"]) > timestamp
             ]
             return filtered_transactions
         except Exception:

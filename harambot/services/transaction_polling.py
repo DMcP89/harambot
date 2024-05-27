@@ -9,8 +9,7 @@ from harambot.yahoo_api import Yahoo
 from harambot import utils
 
 import logging
-import random
-import time
+from datetime import datetime, timedelta
 
 
 logger = logging.getLogger("harambot.transaction_polling")
@@ -29,7 +28,7 @@ embed_functions_dict = {
 
 
 def poll_transactions(guild: Guild):
-    random_int = random.randint(1, 20)
+    logger.info("Polling transactions for {}".format(guild.guild_id))
     YahooAPI = Yahoo(
         OAuth2(
             settings.yahoo_key,
@@ -40,21 +39,25 @@ def poll_transactions(guild: Guild):
         guild.league_id,
         guild.league_type,
     )
-    transactions = YahooAPI.get_transactions()
+    ts = datetime.now() - timedelta(days=160)
+    transactions = YahooAPI.get_transactions(timestamp=ts.timestamp())
     if transactions:
         for transaction in transactions:
             embed = embed_functions_dict[transaction["type"]](transaction)
             webhook = SyncWebhook.from_url(guild.transaction_polling_webhook)
             webhook.send(embed=embed)
-    time.sleep(random_int)
 
 
-with Pool(5) as executor:
-    results = list(
+def report_service():
+    logger.info("Starting transaction polling service")
+    with Pool(5) as executor:
         executor.map(
             poll_transactions,
             Guild.select().where(
                 Guild.transaction_polling_service_enabled == 1
             ),
         )
-    )
+
+
+if __name__ == "__main__":
+    report_service()

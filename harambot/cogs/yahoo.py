@@ -9,6 +9,7 @@ from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
 from typing import List, Optional
+from datetime import datetime, timedelta
 
 from harambot.yahoo_api import Yahoo
 from harambot.database.models import Guild
@@ -367,8 +368,10 @@ class YahooCog(commands.Cog):
             "add": utils.create_add_embed,
             "drop": utils.create_drop_embed,
         }
-
-        transactions = self.yahoo_api.get_transactions(days=days)
+        ts = datetime.now() - timedelta(days=days)
+        transactions = self.yahoo_api.get_transactions(
+            timestamp=ts.timestamp()
+        )
         if transactions:
             await interaction.response.defer()
             for transaction in transactions:
