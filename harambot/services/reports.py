@@ -15,10 +15,13 @@ from datetime import datetime, timedelta
 logger = logging.getLogger("harambot.transaction_polling")
 if "LOGLEVEL" in settings:
     logger.setLevel(settings.LOGLEVEL)
+    logging.getLogger("discord").setLevel(settings.LOGLEVEL)
 else:
     logger.setLevel("DEBUG")
+    logging.getLogger("discord").setLevel("DEBUG")
 
 logging.getLogger("yahoo_oauth").disabled = True
+
 
 embed_functions_dict = {
     "add/drop": utils.create_add_drop_embed,
@@ -50,7 +53,7 @@ def poll_transactions(guild: Guild):
 
 def report_service():
     logger.info("Starting transaction polling service")
-    with Pool(5) as executor:
+    with Pool(settings.REPORT_EXECUTORS) as executor:
         executor.map(
             poll_transactions,
             Guild.select().where(

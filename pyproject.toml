@@ -50,6 +50,7 @@ black = "^22.10.0"
 
 [tool.poetry.scripts]
 harambot = "harambot.bot:run"
+harambot_reports = "harambot.services.reports:report_service"
 
 [build-system]
 requires = ["poetry-core"]
