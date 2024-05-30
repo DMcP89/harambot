@@ -1,9 +1,13 @@
 import discord
+import logging
 
 from harambot.config import settings
 from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes
 from harambot.ui.modals import ConfigModal
 from harambot.database.models import Guild
+
+logger = logging.getLogger("discord.harambot.views")
+logger.setLevel(logging.INFO)
 
 
 class YahooAuthButton(discord.ui.Button):
@@ -84,6 +88,7 @@ class ReportConfigView(discord.ui.View):
         for webhook in await channel.webhooks():
             if webhook.user == interaction.guild.me:
                 guild.transaction_polling_webhook = webhook.url
+                guild.save()
                 return await interaction.response.send_message(
                     f"Reports have been configure to go to {select.values[0].mention}"
                 )
@@ -91,10 +96,13 @@ class ReportConfigView(discord.ui.View):
         if guild.transaction_polling_service_enabled == 0:
             guild.transaction_polling_service_enabled = 1
         else:
-            webhook = discord.SyncWebhook.from_url(
-                guild.transaction_polling_webhook
-            )
-            webhook.delete()
+            try:
+                webhook = discord.SyncWebhook.from_url(
+                    guild.transaction_polling_webhook
+                )
+                webhook.delete()
+            except discord.errors.NotFound:
+                logger.info("Webhook not found")
             guild.transaction_polling_webhook = None
 
         if not guild.transaction_polling_webhook:
