@@ -19,6 +19,12 @@ run:
 	@poetry install
 	@python ${MODULE}/bot.py
 
+build-image-dev:
+	@echo "${BLUE}Building docker image.."
+	@echo "name: ${MODULE}"
+	@echo "tag: ${MODULE}:${TAG}${NC}\n"
+	@docker buildx debug build --no-cache -t ${MODULE}-dev:${TAG} -f ./Dockerfile.dev .
+
 build-image-bot:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
@@ -56,3 +62,16 @@ run-docker-reports:
 	 -e RUN_MIGRATIONS=${RUN_MIGRATIONS}\
 	 -e PORT=10000\
 	  --rm ${MODULE}-reports:${TAG}
+
+run-docker-dev:
+	@echo "${BLUE}Running docker image.."
+	@echo "name: ${MODULE}"
+	@echo "tag: ${MODULE}:${TAG}${NC}\n"
+	@docker run --name ${MODULE}\
+	 -e DISCORD_TOKEN=${DISCORD_TOKEN}\
+	 -e YAHOO_KEY=${YAHOO_KEY}\
+	 -e YAHOO_SECRET=${YAHOO_SECRET}\
+	 -e DATABASE_URL=${DATABASE_URL}\
+	 -e RUN_MIGRATIONS=${RUN_MIGRATIONS}\
+	 -e PORT=10000\
+	   ${MODULE}-dev:${TAG}
