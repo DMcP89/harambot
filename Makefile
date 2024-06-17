@@ -67,11 +67,12 @@ run-docker-dev:
 	@echo "${BLUE}Running docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker run --name ${MODULE}\
+	@docker run  --rm --name ${MODULE}-dev\
 	 -e DISCORD_TOKEN=${DISCORD_TOKEN}\
 	 -e YAHOO_KEY=${YAHOO_KEY}\
 	 -e YAHOO_SECRET=${YAHOO_SECRET}\
-	 -e DATABASE_URL=${DATABASE_URL}\
+	 -e DATABASE_URL="sqlite:///dev.harambot.db"\
 	 -e RUN_MIGRATIONS=${RUN_MIGRATIONS}\
+	 -e HARAMBOT_KEY=${HARAMBOT_KEY}\
 	 -e PORT=10000\
-	   ${MODULE}-dev:${TAG}
+	 --cpu-period=50000 --cpu-quota=25000 --memory=512m  ${MODULE}-dev:${TAG}
