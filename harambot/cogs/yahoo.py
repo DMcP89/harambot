@@ -9,10 +9,12 @@ from discord import app_commands
 from yahoo_oauth import OAuth2
 from playhouse.shortcuts import model_to_dict
 from typing import List, Optional
+from datetime import datetime, timedelta
 
 from harambot.yahoo_api import Yahoo
 from harambot.database.models import Guild
 from harambot.config import settings
+from harambot import utils
 
 logging.setLoggerClass(logging.Logger)
 yahoo_oauth.logger = logging.getLogger("yahoo_oauth")
@@ -39,9 +41,10 @@ class YahooCog(commands.Cog):
         async def wrapper(
             self, interaction: discord.Interaction, *args, **kwargs
         ):
-            try:
-                guild = Guild.get(Guild.guild_id == str(interaction.guild_id))
-            except Exception:
+            guild = Guild.get_or_none(
+                Guild.guild_id == str(interaction.guild_id)
+            )
+            if guild is None:
                 logger.error(
                     "Guild with id %i does not exist in the database",
                     interaction.guild_id,
@@ -357,17 +360,20 @@ class YahooCog(commands.Cog):
         description="Returns the waiver transactions from the last 24 hours",
     )
     @set_yahoo
-    async def waivers(self, interaction: discord.Interaction):
+    async def waivers(self, interaction: discord.Interaction, days: int = 1):
         logger.info("Command:Waivers called in %i", interaction.guild_id)
-        await interaction.response.defer()
-        embed_functions_dict = {
-            "add/drop": self.create_add_drop_embed,
-            "add": self.create_add_embed,
-            "drop": self.create_drop_embed,
-        }
 
-        transactions = self.yahoo_api.get_latest_waiver_transactions()
+        embed_functions_dict = {
+            "add/drop": utils.create_add_drop_embed,
+            "add": utils.create_add_embed,
+            "drop": utils.create_drop_embed,
+        }
+        ts = datetime.now() - timedelta(days=days)
+        transactions = self.yahoo_api.get_transactions(
+            timestamp=ts.timestamp()
+        )
         if transactions:
+            await interaction.response.defer()
             for transaction in transactions:
                 await interaction.followup.send(
                     embed=embed_functions_dict[transaction["type"]](
@@ -376,70 +382,3 @@ class YahooCog(commands.Cog):
                 )
         else:
             await interaction.response.send_message("No transactions found")
-
-    def create_add_embed(self, transaction):
-        embed = discord.Embed(title="Player Added")
-        self.add_player_fields_to_embed(
-            embed, transaction["players"]["0"]["player"][0]
-        )
-        embed.add_field(
-            name="Owner",
-            value=transaction["players"]["0"]["player"][1]["transaction_data"][
-                0
-            ]["destination_team_name"],
-        )
-        if "faab_bid" in transaction:
-            embed.add_field(
-                name="Bid", value=transaction["faab_bid"], inline=False
-            )
-        return embed
-
-    def create_drop_embed(self, transaction):
-        embed = discord.Embed(title="Player Dropped")
-        self.add_player_fields_to_embed(
-            embed, transaction["players"]["0"]["player"][0]
-        )
-        embed.add_field(
-            name="Owner",
-            value=transaction["players"]["0"]["player"][1]["transaction_data"][
-                "source_team_name"
-            ],
-        )
-        return embed
-
-    def create_add_drop_embed(self, transaction):
-        embed = discord.Embed(title="Player Added/ Player Dropped")
-        embed.add_field(
-            name="Owner",
-            value=transaction["players"]["0"]["player"][1]["transaction_data"][
-                0
-            ]["destination_team_name"],
-        )
-        if "faab_bid" in transaction:
-            embed.add_field(
-                name="Bid", value=transaction["faab_bid"], inline=False
-            )
-        embed.add_field(
-            name="Player Added", value="=====================", inline=False
-        )
-        self.add_player_fields_to_embed(
-            embed, transaction["players"]["0"]["player"][0]
-        )
-        embed.add_field(
-            name="Player Dropped", value="=====================", inline=False
-        )
-        self.add_player_fields_to_embed(
-            embed, transaction["players"]["1"]["player"][0]
-        )
-        return embed
-
-    def add_player_fields_to_embed(self, embed, player):
-        embed.add_field(
-            name="Player", value=player[2]["name"]["full"], inline=True
-        )
-        embed.add_field(
-            name="Team", value=player[3]["editorial_team_abbr"], inline=True
-        )
-        embed.add_field(
-            name="Position", value=player[4]["display_position"], inline=True
-        )

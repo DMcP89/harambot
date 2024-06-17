@@ -4,7 +4,9 @@ from discord import app_commands
 import discord
 import logging
 
-from harambot.ui.views import ConfigView
+from harambot.ui.views import ConfigView, ReportConfigView
+from harambot.database.models import Guild
+
 
 logger = logging.getLogger("discord.harambot.cogs.meta")
 logger.setLevel(logging.INFO)
@@ -94,3 +96,38 @@ class Meta(commands.Cog):
             await interaction.response.send_message(
                 "You do not have the required permissions to run this command."
             )
+
+    def webhook_permissions(interaction: discord.Interaction):
+        return interaction.guild.me.guild_permissions.manage_webhooks
+
+    def guild_is_configured(interaction: discord.Interaction):
+        return (
+            Guild.select()
+            .where(Guild.guild_id == str(interaction.guild_id))
+            .exists()
+        )
+
+    @app_commands.command(
+        name="reports",
+        description="Configure automatic transaction and matchup reporting",
+    )
+    @app_commands.check(webhook_permissions)
+    @app_commands.check(guild_is_configured)
+    async def reports(
+        self,
+        interaction: discord.Interaction,
+    ):
+        message = (
+            "Set what channel transaction & matchup reports should be sent to."
+        )
+        await interaction.response.send_message(
+            message, view=ReportConfigView(), ephemeral=True
+        )
+
+    @reports.error
+    async def reports_check_error(
+        self, interaction: discord.Interaction, error
+    ):
+        await interaction.response.send_message(
+            "Grant Harambot the Manage Webhooks permission to use this command"
+        )

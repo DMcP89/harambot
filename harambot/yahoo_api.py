@@ -5,7 +5,7 @@ import objectpath
 
 from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
-from datetime import datetime, timedelta
+
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
@@ -240,12 +240,11 @@ class Yahoo:
             )
             return None
 
-    def get_latest_waiver_transactions(self):
-        ts = datetime.now() - timedelta(days=1)
+    def get_transactions(self, timestamp=0.0):
         try:
             transactions = self.league().transactions("add,drop", "")
             filtered_transactions = [
-                t for t in transactions if int(t["timestamp"]) > ts.timestamp()
+                t for t in transactions if float(t["timestamp"]) > timestamp
             ]
             return filtered_transactions
         except Exception:
@@ -254,4 +253,4 @@ class Yahoo:
                     self.league_id
                 )
             )
-            return None
+            return []
