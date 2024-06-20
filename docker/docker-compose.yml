@@ -9,9 +9,7 @@ services:
       POSTGRES_DB: harambot_db
 
   harambot:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.bot
+    image: dmcp89/harambot
     restart: always
     depends_on:
       - db

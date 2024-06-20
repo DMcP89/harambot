@@ -23,19 +23,19 @@ build-image-dev:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker buildx debug build --no-cache -t ${MODULE}-dev:${TAG} -f ./Dockerfile.dev .
+	@docker buildx debug build --no-cache -t ${MODULE}-dev:${TAG} -f ./docker/Dockerfile.dev .
 
 build-image-bot:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker build --no-cache -t ${MODULE}:${TAG} -f ./Dockerfile.bot .
+	@docker build --no-cache -t ${MODULE}:${TAG} -f ./docker/Dockerfile.bot .
 
 build-image-reports:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker build --no-cache -t ${MODULE}-reports:${TAG} -f ./Dockerfile.reports .
+	@docker build --no-cache -t ${MODULE}-reports:${TAG} -f ./docker/Dockerfile.reports .
 
 run-docker-bot:
 	@echo "${BLUE}Running docker image.."
