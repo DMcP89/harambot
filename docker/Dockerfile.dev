@@ -31,5 +31,4 @@ RUN poetry install
 
 FROM poetry as runtime
 WORKDIR /app
-COPY ./dev.harambot.db /app/dev.harambot.db
 CMD ["harambot"]
