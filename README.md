@@ -24,6 +24,7 @@ _An interactive Yahoo Fantasy sports bot for Discord._
     /matchups                       - Returns the current weeks matchups
     /waiver                         - Returns the waiver wire tranasactions from the previous 24 hours
     /configure                      - Configure the bot for your guild
+    /reports                        - Set what channel transaction reports should be sent to.
 
 You can find example output of these commands [here](https://github.com/DMcP89/harambot/wiki#command-examples)
 
@@ -57,6 +58,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
    export DATABASE_URL='[YOUR DATABASE URL]'
+   export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
 3. Run the bot
@@ -76,6 +78,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
    export DATABASE_URL='[YOUR DATABASE URL]'
+   export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
 3. Run the bot
@@ -85,6 +88,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
         -e YAHOO_KEY=$YAHOO_KEY \
         -e YAHOO_SECRET=$YAHOO_SECRET \
         -e DATABASE_URL=$DATABASE_URL \
+        -e HARAMBOT_KEY=$HARAMBOT_KEY \
         --rm dmcp89/harambot
 
 

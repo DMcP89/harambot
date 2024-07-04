@@ -117,9 +117,7 @@ class Meta(commands.Cog):
         self,
         interaction: discord.Interaction,
     ):
-        message = (
-            "Set what channel transaction & matchup reports should be sent to."
-        )
+        message = "Set what channel transaction reports should be sent to."
         await interaction.response.send_message(
             message, view=ReportConfigView(), ephemeral=True
         )
