@@ -106,20 +106,11 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
 * Use Slash Commands
 * Manage WebHooks
 
-The permission value should be 277025507392
+The permission value should be 277562378304
 
 ![discord-oauth](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-generator.png)
 
-2. Set the gateway intents
-
-In order for the bot to work properly it requires the following intents:
-
-* Sever Members Intent
-* Message Content Intent
-
-![discord-intents](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-intents.png)
-
-3. Navigate to the generated url in a web browser and authorize the bot for your guild
+2. Navigate to the generated url in a web browser and authorize the bot for your guild
 
 ![discord-oauth-url-1](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-url-authorize-1.png)
 ![discord-oauth-url-2](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-url-authorize-2.png)
