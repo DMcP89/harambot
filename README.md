@@ -104,6 +104,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
 * Read Message History
 * Add Reactions
 * Use Slash Commands
+* Manage WebHooks
 
 The permission value should be 277025507392
 
