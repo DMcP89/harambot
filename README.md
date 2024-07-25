@@ -22,7 +22,7 @@ _An interactive Yahoo Fantasy sports bot for Discord._
     /stats "Player Name"            - Returns the details of the given player
     /trade                          - Create poll for latest trade for league approval
     /matchups                       - Returns the current weeks matchups
-    /waiver                         - Returns the waiver wire tranasactions from the previous 24 hours
+    /waiver days                    - Returns the waiver wire tranasactions from the previous number of days
     /configure                      - Configure the bot for your guild
     /reports                        - Set what channel transaction reports should be sent to.
 

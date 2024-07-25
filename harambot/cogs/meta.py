@@ -55,8 +55,8 @@ class Meta(commands.Cog):
             inline=False,
         )
         embed.add_field(
-            name="/waivers",
-            value="Returns the waiver wire transactions for the last 24 hours",
+            name="/waivers days",
+            value="Returns the waiver wire transactions for the previous number of days",
             inline=False,
         )
         embed.add_field(
