@@ -2,6 +2,7 @@ import logging
 import discord
 import queue
 
+from logging.handlers import QueueHandler, QueueListener
 from discord.ext import commands
 
 from harambot.cogs.meta import Meta
@@ -14,9 +15,9 @@ from harambot.database.migrations import migrations
 
 
 que = queue.Queue(-1)  # no limit on size
-queue_handler = logging.handlers.QueueHandler(que)
+queue_handler = QueueHandler(que)
 handler = logging.StreamHandler()
-listener = logging.handlers.QueueListener(que, handler)
+listener = QueueListener(que, handler)
 listener.start()
 
 logger = logging.getLogger("discord.harambot")

@@ -55,8 +55,8 @@ class Meta(commands.Cog):
             inline=False,
         )
         embed.add_field(
-            name="/waivers",
-            value="Returns the waiver wire transactions for the last 24 hours",
+            name="/waivers days",
+            value="Returns the waiver wire transactions for the previous number of days",
             inline=False,
         )
         embed.add_field(
@@ -117,9 +117,7 @@ class Meta(commands.Cog):
         self,
         interaction: discord.Interaction,
     ):
-        message = (
-            "Set what channel transaction & matchup reports should be sent to."
-        )
+        message = "Set what channel transaction reports should be sent to."
         await interaction.response.send_message(
             message, view=ReportConfigView(), ephemeral=True
         )

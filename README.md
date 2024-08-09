@@ -22,8 +22,9 @@ _An interactive Yahoo Fantasy sports bot for Discord._
     /stats "Player Name"            - Returns the details of the given player
     /trade                          - Create poll for latest trade for league approval
     /matchups                       - Returns the current weeks matchups
-    /waiver                         - Returns the waiver wire tranasactions from the previous 24 hours
+    /waiver days                    - Returns the waiver wire tranasactions from the previous number of days
     /configure                      - Configure the bot for your guild
+    /reports                        - Set what channel transaction reports should be sent to.
 
 You can find example output of these commands [here](https://github.com/DMcP89/harambot/wiki#command-examples)
 
@@ -57,6 +58,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
    export DATABASE_URL='[YOUR DATABASE URL]'
+   export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
 3. Run the bot
@@ -76,6 +78,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
    export DATABASE_URL='[YOUR DATABASE URL]'
+   export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
 3. Run the bot
@@ -85,6 +88,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
         -e YAHOO_KEY=$YAHOO_KEY \
         -e YAHOO_SECRET=$YAHOO_SECRET \
         -e DATABASE_URL=$DATABASE_URL \
+        -e HARAMBOT_KEY=$HARAMBOT_KEY \
         --rm dmcp89/harambot
 
 
@@ -100,21 +104,13 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
 * Read Message History
 * Add Reactions
 * Use Slash Commands
+* Manage WebHooks
 
-The permission value should be 277025507392
+The permission value should be 277562378304
 
 ![discord-oauth](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-generator.png)
 
-2. Set the gateway intents
-
-In order for the bot to work properly it requires the following intents:
-
-* Sever Members Intent
-* Message Content Intent
-
-![discord-intents](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-intents.png)
-
-3. Navigate to the generated url in a web browser and authorize the bot for your guild
+2. Navigate to the generated url in a web browser and authorize the bot for your guild
 
 ![discord-oauth-url-1](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-url-authorize-1.png)
 ![discord-oauth-url-2](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-url-authorize-2.png)

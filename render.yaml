@@ -1,10 +1,33 @@
 services:
+- type: cron
+  name: harambot-reports
+  runtime: image
+  image:
+    url: docker.io/dmcp89/harambot:latest
+  plan: starter
+  envVars:
+  - key: DISCORD_TOKEN
+    sync: false
+  - key: YAHOO_KEY
+    sync: false
+  - key: YAHOO_SECRET
+    sync: false
+  - key: DATABASE_URL
+    fromDatabase:
+        name: harambot-database
+        property: connectionString
+  - key: HARAMBOT_KEY
+    sync: false
+  region: oregon
+  schedule: '*/5 * * * *'
+  dockerCommand: harambot_reports
+
 - type: web
   name: harambot-service
   runtime: image
   image:
       url: docker.io/dmcp89/harambot:latest
-  plan: free
+  plan: starter
   envVars:
       - key: DISCORD_TOKEN
         sync: false
@@ -16,6 +39,10 @@ services:
         fromDatabase:
             name: harambot-database
             property: connectionString
+      - key: HARAMBOT_KEY
+        sync: false
+      - key: RUN_MIGRATIONS
+        sync: false
       - key: VERSION
         value: "0.4.0-Beta"
 
@@ -23,4 +50,6 @@ databases:
 - name: harambot-database
   databaseName: harambot
   user: harambot
-  plan: free
+  plan: starter
+
+version: "1"

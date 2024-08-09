@@ -56,6 +56,8 @@ harambot_reports = "harambot.services.reports:report_service"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+testpaths =["tests"]
 
 [tool.black]
 line-length = 79
