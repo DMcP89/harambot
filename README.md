@@ -18,11 +18,11 @@ _An interactive Yahoo Fantasy sports bot for Discord._
     /ping                           - Gives the latency of harambot
     /RIP                            - Pay respects
     /standings                      - Returns the current standings of the current league
-    /roster "Team name"             - Returns the roster of the given team
-    /stats "Player Name"            - Returns the details of the given player
-    /trade                          - Create poll for latest trade for league approval
-    /matchups                       - Returns the current weeks matchups
-    /waiver days                    - Returns the waiver wire tranasactions from the previous number of days
+    /roster Team                    - Returns the roster of the given team
+    /stats Player                   - Returns the details of the given player
+    /trade                          - Create a poll for latest trade for league approval
+    /matchups week                  - Returns the matchups for the given week, defaults to the current week
+    /waiver days                    - Returns the waiver wire transactions from the previous number of days
     /configure                      - Configure the bot for your guild
     /reports                        - Set what channel transaction reports should be sent to.
 
