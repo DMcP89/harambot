@@ -18,3 +18,4 @@ answers.txt
 .coverage
 
 dist/
+backups/
