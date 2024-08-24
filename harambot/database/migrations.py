@@ -1,3 +1,5 @@
+import logging
+
 from playhouse.migrate import SqliteMigrator, MySQLMigrator, PostgresqlMigrator
 from playhouse.migrate import migrate
 from playhouse.dataset import DataSet
@@ -8,6 +10,10 @@ from cryptography.fernet import Fernet
 
 
 from harambot.config import settings
+
+logger = logging.getLogger("discord")
+logger.setLevel(settings.LOGLEVEL)
+
 
 if "DATABASE_URL" in settings:
     database = connect(settings.database_url)
@@ -43,22 +49,28 @@ def beta040_migrations():
         dataSet = DataSet(":memory:")
     guilds = dataSet["guild"]
     for guild in guilds.all():
-        print(guild["id"])
-        dataSet.query(
-            sql="UPDATE guild SET access_token = ? WHERE id = ?",
-            params=[
-                f.encrypt(guild["access_token"].encode()).decode(),
-                guild["id"],
-            ],
+        logger.info(
+            "Encrypted token: "
+            + "'{}'".format(f.encrypt(guild["access_token"].encode()).decode())
         )
-        dataSet.query(
-            sql="UPDATE guild SET refresh_token = ? WHERE id = ?",
-            params=[
-                f.encrypt(guild["refresh_token"].encode()).decode(),
-                guild["id"],
-            ],
-        )
-
+        logger.info("Guild ID:")
+        logger.info(guild["id"])
+        with dataSet.transaction() as txn:
+            guilds.update(
+                id=guild["id"],
+                access_token=f.encrypt(
+                    guild["access_token"].encode()
+                ).decode(),
+                columns=["id"],
+            )
+            guilds.update(
+                id=guild["id"],
+                refresh_token=f.encrypt(
+                    guild["refresh_token"].encode()
+                ).decode(),
+                columns=["id"],
+            )
+            txn.commit()
     # Add new fields for transaction polling
     transaction_polling_service_enabled = IntegerField(default=0)
     transaction_polling_webhook = TextField(null=True)
