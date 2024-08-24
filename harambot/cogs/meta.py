@@ -4,9 +4,11 @@ from discord import app_commands
 import discord
 import logging
 
-from harambot.ui.views import ConfigView
+from harambot.ui.views import ConfigView, ReportConfigView
+from harambot.database.models import Guild
 
-logger = logging.getLogger(__file__)
+
+logger = logging.getLogger("discord.harambot.cogs.meta")
 logger.setLevel(logging.INFO)
 
 
@@ -53,8 +55,8 @@ class Meta(commands.Cog):
             inline=False,
         )
         embed.add_field(
-            name="/wavier",
-            value="Returns the waiver wire transactions for the last 24 hours",
+            name="/waivers days",
+            value="Returns the waiver wire transactions for the previous number of days",
             inline=False,
         )
         embed.add_field(
@@ -71,8 +73,10 @@ class Meta(commands.Cog):
         await interaction.response.send_message(self.bot.latency)
 
     @app_commands.command(
-        name="configure", description="Configure your guild for Harambot"
+        name="configure",
+        description="Configure your guild for Harambot",
     )
+    @app_commands.checks.has_permissions(administrator=True)
     async def configure(self, interaction: discord.Interaction):
         await interaction.response.send_message(
             """
@@ -82,4 +86,46 @@ class Meta(commands.Cog):
             """,
             view=ConfigView(),
             ephemeral=True,
+        )
+
+    @configure.error
+    async def configure_check_error(
+        self, interaction: discord.Interaction, error
+    ):
+        if isinstance(error, app_commands.MissingPermissions):
+            await interaction.response.send_message(
+                "You do not have the required permissions to run this command."
+            )
+
+    def webhook_permissions(interaction: discord.Interaction):
+        return interaction.guild.me.guild_permissions.manage_webhooks
+
+    def guild_is_configured(interaction: discord.Interaction):
+        return (
+            Guild.select()
+            .where(Guild.guild_id == str(interaction.guild_id))
+            .exists()
+        )
+
+    @app_commands.command(
+        name="reports",
+        description="Configure automatic transaction and matchup reporting",
+    )
+    @app_commands.check(webhook_permissions)
+    @app_commands.check(guild_is_configured)
+    async def reports(
+        self,
+        interaction: discord.Interaction,
+    ):
+        message = "Set what channel transaction reports should be sent to."
+        await interaction.response.send_message(
+            message, view=ReportConfigView(), ephemeral=True
+        )
+
+    @reports.error
+    async def reports_check_error(
+        self, interaction: discord.Interaction, error
+    ):
+        await interaction.response.send_message(
+            "Grant Harambot the Manage Webhooks permission to use this command"
         )

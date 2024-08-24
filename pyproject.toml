@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "harambot"
-version = "0.3.3"
+version = "0.4.0"
 description = "A Yahoo Fantasy Sports bot for Discord"
 authors = ["DMcP89 <davemcpherson@wochstudios.com>"]
 license = "MIT"
@@ -32,10 +32,13 @@ python = "^3.8"
 "discord.py" = "^2.3.2"
 dynaconf = "^3.1.11"
 peewee = "^3.15.4"
+peewee_encrypted_field = "0.0.2"
 cachetools = "^5.2.0"
 psycopg2 = "^2.9.5"
 mysqlclient = "^2.1.1"
-yahoo_fantasy_api = "2.7.0"
+yahoo_fantasy_api = "^2.8.0"
+yahoo-oauth = "^2.0"
+cryptography = "^42.0.5"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -47,11 +50,14 @@ black = "^22.10.0"
 
 [tool.poetry.scripts]
 harambot = "harambot.bot:run"
+harambot_reports = "harambot.services.reports:report_service"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+testpaths =["tests"]
 
 [tool.black]
 line-length = 79

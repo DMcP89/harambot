@@ -1,30 +1,40 @@
 import logging
 import discord
+import queue
 
-
+from logging.handlers import QueueHandler, QueueListener
 from discord.ext import commands
+
 from harambot.cogs.meta import Meta
 from harambot.cogs.misc import Misc
 from harambot.cogs.yahoo import YahooCog
-
 from harambot.cogs.webserver import WebServer
 from harambot.config import settings
 from harambot.database.models import Guild
 from harambot.database.migrations import migrations
 
-# logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("harambot.py")
+
+que = queue.Queue(-1)  # no limit on size
+queue_handler = QueueHandler(que)
+handler = logging.StreamHandler()
+listener = QueueListener(que, handler)
+listener.start()
+
+logger = logging.getLogger("discord.harambot")
 if "LOGLEVEL" in settings:
-    logger.setLevel(settings.loglevel)
+    logger.setLevel(settings.LOGLEVEL)
 else:
-    logger.setLevel("INFO")
+    logger.setLevel("DEBUG")
+
 
 intents = discord.Intents.default()
-# intents.members = True
-# intents.messages = True
-# intents.message_content = True
 
-bot = commands.Bot(command_prefix="$", description="", intents=intents)
+
+bot = commands.Bot(
+    command_prefix="$",
+    description="",
+    intents=intents,
+)
 bot.remove_command("help")
 
 
@@ -50,14 +60,10 @@ async def on_guild_join(guild):
     logger.info("Joined {}".format(guild.name))
     if not Guild.select().where(Guild.guild_id == str(guild.id)).exists():
         logger.info("Guild not configured!")
-        # await guild.owner.send(
-        #     """Thank you for adding Harambot to your server!
-        # Please complete your setup by running the /configure command!"""
-        # )
 
 
 def run():
-    bot.run(settings.discord_token, reconnect=True)
+    bot.run(settings.discord_token, reconnect=True, log_handler=queue_handler)
 
 
 run()

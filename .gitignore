@@ -4,7 +4,7 @@ oauth2.json
 oauth.json
 
 .vscode
-
+.vim
 secrets.json
 guilds.json
 # Ignore dynaconf secret files
@@ -18,3 +18,4 @@ answers.txt
 .coverage
 
 dist/
+backups/

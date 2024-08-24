@@ -1,9 +1,10 @@
+![harambot-banner](./assests/harambot_banner.png)
 # Harambot
 _An interactive Yahoo Fantasy sports bot for Discord._
 
-![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/pytest.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.3.3--Beta-red)
+![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/pytest.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.4.0--Beta-red)
 
-![harambot-logo](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot-1.jpg)
+
 
 
 
@@ -17,12 +18,13 @@ _An interactive Yahoo Fantasy sports bot for Discord._
     /ping                           - Gives the latency of harambot
     /RIP                            - Pay respects
     /standings                      - Returns the current standings of the current league
-    /roster "Team name"             - Returns the roster of the given team
-    /stats "Player Name"            - Returns the details of the given player
-    /trade                          - Create poll for latest trade for league approval
-    /matchups                       - Returns the current weeks matchups
-    /waiver                         - Returns the waiver wire tranasactions from the previous 24 hours
+    /roster Team                    - Returns the roster of the given team
+    /stats Player                   - Returns the details of the given player
+    /trade                          - Create a poll for latest trade for league approval
+    /matchups week                  - Returns the matchups for the given week, defaults to the current week
+    /waiver days                    - Returns the waiver wire transactions from the previous number of days
     /configure                      - Configure the bot for your guild
+    /reports                        - Set what channel transaction reports should be sent to.
 
 You can find example output of these commands [here](https://github.com/DMcP89/harambot/wiki#command-examples)
 
@@ -39,12 +41,9 @@ In order to properly configure your bot you will need the following:
 
 _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step guide on how to obtain these values._
 
-### Run the bot in the cloud
+### Run the bot on [Render](https://render.com/)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/DMcP89/harambot)
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
 
 ### Run the bot locally using pip package
 
@@ -59,6 +58,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
    export DATABASE_URL='[YOUR DATABASE URL]'
+   export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
 3. Run the bot
@@ -78,6 +78,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
    export DATABASE_URL='[YOUR DATABASE URL]'
+   export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
 3. Run the bot
@@ -87,6 +88,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
         -e YAHOO_KEY=$YAHOO_KEY \
         -e YAHOO_SECRET=$YAHOO_SECRET \
         -e DATABASE_URL=$DATABASE_URL \
+        -e HARAMBOT_KEY=$HARAMBOT_KEY \
         --rm dmcp89/harambot
 
 
@@ -102,21 +104,13 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
 * Read Message History
 * Add Reactions
 * Use Slash Commands
+* Manage WebHooks
 
-The permission value should be 277025507392
+The permission value should be 277562378304
 
 ![discord-oauth](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-generator.png)
 
-2. Set the gateway intents
-
-In order for the bot to work properly it requires the following intents:
-
-* Sever Members Intent
-* Message Content Intent
-
-![discord-intents](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-intents.png)
-
-3. Navigate to the generated url in a web browser and authorize the bot for your guild
+2. Navigate to the generated url in a web browser and authorize the bot for your guild
 
 ![discord-oauth-url-1](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-url-authorize-1.png)
 ![discord-oauth-url-2](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/discord-oauth-url-authorize-2.png)
