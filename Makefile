@@ -29,7 +29,7 @@ build-image:
 	@echo "${BLUE}Building docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
-	@docker build --no-cache -t ${MODULE}:${TAG} -f ./docker/Dockerfile.bot .
+	@docker build --no-cache -t ${MODULE}:${TAG} -f ./docker/Dockerfile .
 
 run-docker:
 	@echo "${BLUE}Running docker image.."
