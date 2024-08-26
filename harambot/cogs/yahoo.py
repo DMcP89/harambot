@@ -335,9 +335,9 @@ class YahooCog(commands.Cog):
         self, interaction: discord.Interaction, week: Optional[int] = None
     ):
         logger.info(
-            "Command:Matchups called in %i with week: %i",
-            interaction.guild_id,
-            week,
+            "Command:Matchups called in {} with week: {}".format(
+                interaction.guild_id, week
+            )
         )
 
         week, details = self.yahoo_api.get_matchups(week)
