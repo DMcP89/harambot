@@ -1,7 +1,7 @@
-from multiprocessing import Pool
 from playhouse.shortcuts import model_to_dict
 from yahoo_oauth import OAuth2
 from discord import SyncWebhook
+from discord.errors import NotFound
 
 from harambot.config import settings
 from harambot.database.models import Guild
@@ -11,7 +11,7 @@ from harambot import utils
 import logging
 from datetime import datetime, timedelta
 
-
+logging.basicConfig()
 logger = logging.getLogger("harambot.transaction_polling")
 if "LOGLEVEL" in settings:
     logger.setLevel(settings.LOGLEVEL)
@@ -43,24 +43,28 @@ def poll_transactions(guild: Guild):
         guild.league_type,
     )
     ts = datetime.now() - timedelta(days=160)
-    transactions = YahooAPI.get_transactions(timestamp=ts.timestamp())
-    if transactions:
-        for transaction in transactions:
-            embed = embed_functions_dict[transaction["type"]](transaction)
-            webhook = SyncWebhook.from_url(guild.transaction_polling_webhook)
-            webhook.send(embed=embed)
+    try:
+        transactions = YahooAPI.get_transactions(timestamp=ts.timestamp())
+        if transactions:
+            for transaction in transactions:
+                embed = embed_functions_dict[transaction["type"]](transaction)
+                webhook = SyncWebhook.from_url(guild.transaction_polling_webhook)
+                try:
+                    webhook.send(embed=embed)
+                except NotFound:
+                    logger.exception("Webhook not found for {}".format(guild.guild_id))
+    except Exception:
+        logger.info("Error fetching transactions for {}".format(guild.guild_id))
 
 
 def report_service():
     logger.info("Starting transaction polling service")
-    with Pool(settings.REPORT_EXECUTORS) as executor:
-        executor.map(
-            poll_transactions,
-            Guild.select().where(
-                Guild.transaction_polling_service_enabled == 1
-            ),
-        )
+    for guild in Guild.select().where(Guild.transaction_polling_service_enabled == 1):
+        poll_transactions(guild=guild)
 
 
 if __name__ == "__main__":
+    logger.info("Running Report Service")
     report_service()
+
+print(__name__)
