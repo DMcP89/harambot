@@ -2,7 +2,8 @@ import discord
 import logging
 import urllib3
 import functools
-import yahoo_oauth
+import time
+
 
 from discord.ext import commands
 from discord import app_commands
@@ -13,12 +14,10 @@ from datetime import datetime, timedelta
 
 from harambot.yahoo_api import Yahoo
 from harambot.database.models import Guild
-from harambot.config import settings
 from harambot import utils
 
 logging.setLoggerClass(logging.Logger)
-yahoo_oauth.logger = logging.getLogger("yahoo_oauth")
-logging.getLogger("yahoo_oauth").setLevel(settings.LOGLEVEL)
+logging.getLogger("yahoo_oauth").setLevel("INFO")
 
 logger = logging.getLogger("discord.harambot.cogs.yahoo")
 
@@ -31,7 +30,6 @@ class YahooCog(commands.Cog):
 
     def __init__(self, bot, KEY, SECRET):
         self.bot = bot
-        self.http = urllib3.PoolManager()
         self.KEY = KEY
         self.SECRET = SECRET
         self.yahoo_api = None
@@ -41,6 +39,8 @@ class YahooCog(commands.Cog):
         async def wrapper(
             self, interaction: discord.Interaction, *args, **kwargs
         ):
+            logger.info("SET YAHOO WRAPPER Interaction: {}".format(interaction.id))
+            await interaction.response.defer()
             guild = Guild.get_or_none(
                 Guild.guild_id == str(interaction.guild_id)
             )
@@ -101,8 +101,11 @@ class YahooCog(commands.Cog):
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
-
+        await interaction.response.defer()
+        logger.info("AUTOCOMPLETE Interaction {}".format(interaction.id))
+        logger.info("Interaction Details: {}".format(interaction))
         teams = self.yahoo_api.get_teams()
+        time.sleep(3)
         if teams:
             options = list(
                 map(
@@ -119,13 +122,15 @@ class YahooCog(commands.Cog):
         name="roster", description="Returns the roster of the given team"
     )
     @app_commands.autocomplete(team_name=roster_autocomplete)
-    @set_yahoo
     async def roster(self, interaction: discord.Interaction, team_name: str):
+        logger.info("COMMAND Interaction {}".format(interaction.id))
+        logger.info("Is Expired? {}".format(interaction.is_expired()))
         logger.info(
             "Command:Roster called in %i with team_name:%s",
             interaction.guild_id,
             team_name,
         )
+        await interaction.response.defer()
         embed = discord.Embed(
             title="{}'s Roster".format(team_name),
             description="",
@@ -139,9 +144,9 @@ class YahooCog(commands.Cog):
                     value=player["name"],
                     inline=False,
                 )
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
-            await interaction.response.send_message(self.error_message)
+            await interaction.followup.send(self.error_message)
 
     @app_commands.command(
         name="trade",
@@ -240,6 +245,7 @@ class YahooCog(commands.Cog):
         current: str,
     ) -> List[app_commands.Choice[str]]:
         players = self.yahoo_api.get_players(current)
+        time.sleep(3)
         if players:
             options = list(
                 map(

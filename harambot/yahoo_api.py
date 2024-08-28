@@ -1,17 +1,55 @@
 import logging
 import os
 import objectpath
-
+import functools
 
 from yahoo_fantasy_api import game
 from cachetools import cached, TTLCache
 
+from harambot.models import Guild
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 cache = TTLCache(maxsize=1024, ttl=600)
+
+def oauth(f):
+    @functools.wraps(f)
+    async def wrapper(
+        self, *args, **kwargs
+    ):
+        logger.info("SET YAHOO WRAPPER Interaction: {}".format(guild_id))
+        guild = Guild.get_or_none(
+            Guild.guild_id == str(guild_id)
+        )
+        if guild is None:
+            logger.error(
+                "Guild with id %i does not exist in the database",
+                guild_id,
+            )
+            # Will need to figure out how this should be handled
+            #return await interaction.response.send_message(
+            #    "I'm not set up for this server yet please run /config"
+            #)
+        if (
+            not self.yahoo_api
+            or self.yahoo_api.league_id != guild.league_id
+        ):
+            self.yahoo_api = Yahoo(
+                OAuth2(
+                    self.KEY,
+                    self.SECRET,
+                    store_file=False,
+                    **model_to_dict(guild),
+                ),
+                guild.league_id,
+                guild.league_type,
+            )
+
+        return await f(self, interaction, *args, **kwargs)
+
+    return wrapper
 
 
 class Yahoo:
