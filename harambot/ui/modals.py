@@ -81,7 +81,6 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     ) -> None:
         logger.exception(error)
         await interaction.response.send_message(
-            "Oops! Something went wrong with configuring your guild.\
-             Please try again",
+            "Oops! Something went wrong with configuring your guild. Please try again.",
             ephemeral=True,
         )
