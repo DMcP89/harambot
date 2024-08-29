@@ -158,6 +158,7 @@ class Yahoo:
             return None
 
     @cached(cache)
+    @handle_oauth
     def get_player_details(self, player_name, guild_id):
         try:
             player = self.league().player_details(player_name)[0]
