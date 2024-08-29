@@ -1,12 +1,15 @@
 import base64
 import requests
 import time
+import logging
 
 from harambot.config import settings
 from discord import Embed
 
 YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"
 YAHOO_AUTH_URI = "request_auth?redirect_uri=oob&response_type=code&client_id="
+
+logger = logging.getLogger("discord.harambot.utils")
 
 
 def yahoo_auth(code):
@@ -15,7 +18,7 @@ def yahoo_auth(code):
             "utf-8"
         )
     )
-    details = requests.post(
+    response = requests.post(
         url="{}get_token".format(YAHOO_API_URL),
         data={
             "code": code,
@@ -26,7 +29,13 @@ def yahoo_auth(code):
             "Authorization": "Basic {0}".format(encoded_creds.decode("utf-8")),
             "Content-Type": "application/x-www-form-urlencoded",
         },
-    ).json()
+    )
+    if response.status_code != 200:
+        logger.error(
+            "Failed to authenticate with Yahoo API: {}".format(response.json)
+        )
+        return {}
+    details = response.json()
 
     details["token_time"] = time.time()
     return details
