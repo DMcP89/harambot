@@ -19,6 +19,13 @@ else:
     logger.info("Using in-memory database")
     database = SqliteDatabase(":memory:")
 
+KEY = ""
+if "HARAMBOT_KEY" in settings:
+    KEY = settings.HARAMBOT_KEY
+else:
+    from cryptography.fernet import Fernet
+    fernet_key = Fernet.generate_key()
+    KEY = fernet_key.decode()
 
 class BaseModel(Model):
     class Meta:
@@ -27,8 +34,8 @@ class BaseModel(Model):
 
 class Guild(BaseModel):
     guild_id = TextField(unique=True)
-    access_token = EncryptedField(key=settings.HARAMBOT_KEY)
-    refresh_token = EncryptedField(key=settings.HARAMBOT_KEY)
+    access_token = EncryptedField(key=KEY)
+    refresh_token = EncryptedField(key=KEY)
     expires_in = IntegerField()
     token_type = TextField()
     xoauth_yahoo_guid = TextField(null=True)
