@@ -28,7 +28,6 @@ class Yahoo:
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
             guild_id = kwargs.get("guild_id")
-            logger.info("SET YAHOO WRAPPER Interaction: {}".format(guild_id))
             guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
             if guild is None:
                 logger.error(

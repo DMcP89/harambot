@@ -24,8 +24,10 @@ if "HARAMBOT_KEY" in settings:
     KEY = settings.HARAMBOT_KEY
 else:
     from cryptography.fernet import Fernet
+
     fernet_key = Fernet.generate_key()
     KEY = fernet_key.decode()
+
 
 class BaseModel(Model):
     class Meta:

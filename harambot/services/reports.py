@@ -41,7 +41,13 @@ def poll_transactions(guild: Guild):
         transactions = YahooAPI.get_transactions(
             timestamp=ts.timestamp(), guild_id=guild.guild_id
         )
+        logger.info(
+            "Found {} transactions for guild {}".format(
+                str(len(transactions)), guild.guild_id
+            )
+        )
         if transactions:
+
             for transaction in transactions:
                 embed = embed_functions_dict[transaction["type"]](transaction)
                 webhook = SyncWebhook.from_url(
