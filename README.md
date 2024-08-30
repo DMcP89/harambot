@@ -1,4 +1,4 @@
-![harambot-banner](./assests/harambot_banner.png)
+![harambot-banner](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot_banner.png)
 # Harambot
 _An interactive Yahoo Fantasy sports bot for Discord._
 
