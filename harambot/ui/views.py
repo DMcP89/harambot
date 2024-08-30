@@ -90,7 +90,7 @@ class ReportConfigView(discord.ui.View):
                 guild.transaction_polling_webhook = webhook.url
                 guild.save()
                 return await interaction.response.send_message(
-                    f"Reports have been configure to go to {select.values[0].mention}"
+                    f"Reports configured to go to {select.values[0].mention}"
                 )
 
         if guild.transaction_polling_service_enabled == 0:
@@ -114,5 +114,5 @@ class ReportConfigView(discord.ui.View):
         guild.save()
 
         return await interaction.response.send_message(
-            f"Reports have been configure to go to {select.values[0].mention}"
+            f"Reports configured to go to {select.values[0].mention}"
         )
