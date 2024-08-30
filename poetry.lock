@@ -656,19 +656,6 @@ files = [
 test = ["pytest (>=6)"]
 
 [[package]]
-name = "fernet"
-version = "1.0.1"
-description = "A simple python fernet implementation"
-optional = false
-python-versions = "*"
-files = [
-    {file = "fernet-1.0.1.tar.gz", hash = "sha256:c50a51c997e09199695b51761bdc090ccf4129917520681e69dcfff4355325c7"},
-]
-
-[package.dependencies]
-pyaes = "*"
-
-[[package]]
 name = "filelock"
 version = "3.15.4"
 description = "A platform independent file lock."
@@ -1016,20 +1003,6 @@ files = [
 ]
 
 [[package]]
-name = "peewee-encrypted-field"
-version = "0.0.2"
-description = "Field with encryption/decryption on save/read for use in Peewee ORM models"
-optional = false
-python-versions = "*"
-files = [
-    {file = "peewee_encrypted_field-0.0.2.tar.gz", hash = "sha256:a18ae1e2d87cf05b4c781210dbd4e56dec1b090d8f54547dbcf0fe3cfa799435"},
-]
-
-[package.dependencies]
-fernet = "*"
-peewee = "*"
-
-[[package]]
 name = "platformdirs"
 version = "4.2.2"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
@@ -1098,16 +1071,6 @@ files = [
     {file = "psycopg2-2.9.9-cp39-cp39-win32.whl", hash = "sha256:c92811b2d4c9b6ea0285942b2e7cac98a59e166d59c588fe5cfe1eda58e72d59"},
     {file = "psycopg2-2.9.9-cp39-cp39-win_amd64.whl", hash = "sha256:de80739447af31525feddeb8effd640782cf5998e1a4e9192ebdf829717e3913"},
     {file = "psycopg2-2.9.9.tar.gz", hash = "sha256:d1454bde93fb1e224166811694d600e746430c006fbb031ea06ecc2ea41bf156"},
-]
-
-[[package]]
-name = "pyaes"
-version = "1.6.1"
-description = "Pure-Python Implementation of the AES block-cipher and common modes of operation"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pyaes-1.6.1.tar.gz", hash = "sha256:02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f"},
 ]
 
 [[package]]
@@ -1503,4 +1466,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "7ff7593960f71ee32cd4864ab71468ed079703ca4af9a4ea6782f3b4803736b5"
+content-hash = "335f7500fca76813a6093683394a569a831a5a806779ea24b8c576c53f2982cf"
