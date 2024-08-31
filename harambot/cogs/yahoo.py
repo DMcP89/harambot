@@ -321,6 +321,7 @@ class YahooCog(commands.Cog):
     async def waivers(self, interaction: discord.Interaction, days: int = 1):
         logger.info("Command:Waivers called in %i", interaction.guild_id)
 
+        await interaction.response.defer()
         embed_functions_dict = {
             "add/drop": utils.create_add_drop_embed,
             "add": utils.create_add_embed,
@@ -331,7 +332,6 @@ class YahooCog(commands.Cog):
             guild_id=interaction.guild_id, timestamp=ts.timestamp()
         )
         if transactions:
-            await interaction.response.defer()
             for transaction in transactions:
                 await interaction.followup.send(
                     embed=embed_functions_dict[transaction["type"]](
@@ -339,4 +339,4 @@ class YahooCog(commands.Cog):
                     )
                 )
         else:
-            await interaction.response.send_message("No transactions found")
+            await interaction.followup.send("No transactions found")
