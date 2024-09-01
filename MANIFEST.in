@@ -1,0 +1,2 @@
+include config/settings.toml
+include config/example.secrets.toml

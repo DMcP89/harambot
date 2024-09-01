@@ -8,7 +8,10 @@ from harambot.config import settings
 from harambot.database.fields import EncryptedField
 
 logger = logging.getLogger("peewee")
-logger.setLevel(settings.LOGLEVEL)
+if "LOGLEVEL" in settings:
+    logger.setLevel(settings.LOGLEVEL)
+else:
+    logger.setLevel("DEBUG")
 
 if "DATABASE_URL" in settings:
     database = connect(settings.database_url)
