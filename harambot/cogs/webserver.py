@@ -30,7 +30,10 @@ class WebServer(commands.Cog):
         app["bot"] = self.bot
         runner = web.AppRunner(app)
         await runner.setup()
-        site = web.TCPSite(runner, "0.0.0.0", settings.port)
+        if "PORT" in settings:
+            site = web.TCPSite(runner, "0.0.0.0", settings.port)
+        else:
+            site = web.TCPSite(runner, "0.0.0.0", 10000)
         await self.bot.wait_until_ready()
         await site.start()
         logger.info("Webserver started on port {}".format(settings.port))

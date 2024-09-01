@@ -67,7 +67,7 @@ def api(
     mock_ownership,
     mock_matchups,
 ):
-    api = Yahoo(mock_oauth, "123456", "nfl")
+    api = Yahoo()
     api.scoring_type = "head"
     league = None
     with patch.object(game.Game, "game_id", return_value="319"):
@@ -94,7 +94,7 @@ def category_api(
     mock_ownership,
     mock_matchups_category,
 ):
-    api = Yahoo(mock_oauth, "123456", "nfl")
+    api = Yahoo()
     api.scoring_type = "headone"
     league = None
     with patch.object(game.Game, "game_id", return_value="319"):

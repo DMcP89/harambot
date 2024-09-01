@@ -1,24 +1,17 @@
 import discord
 import logging
-import urllib3
-import functools
-import yahoo_oauth
+
 
 from discord.ext import commands
 from discord import app_commands
-from yahoo_oauth import OAuth2
-from playhouse.shortcuts import model_to_dict
 from typing import List, Optional
 from datetime import datetime, timedelta
 
 from harambot.yahoo_api import Yahoo
-from harambot.database.models import Guild
-from harambot.config import settings
 from harambot import utils
 
 logging.setLoggerClass(logging.Logger)
-yahoo_oauth.logger = logging.getLogger("yahoo_oauth")
-logging.getLogger("yahoo_oauth").setLevel(settings.LOGLEVEL)
+logging.getLogger("yahoo_oauth").setLevel("INFO")
 
 logger = logging.getLogger("discord.harambot.cogs.yahoo")
 
@@ -31,51 +24,14 @@ class YahooCog(commands.Cog):
 
     def __init__(self, bot, KEY, SECRET):
         self.bot = bot
-        self.http = urllib3.PoolManager()
         self.KEY = KEY
         self.SECRET = SECRET
-        self.yahoo_api = None
-
-    def set_yahoo(f):
-        @functools.wraps(f)
-        async def wrapper(
-            self, interaction: discord.Interaction, *args, **kwargs
-        ):
-            guild = Guild.get_or_none(
-                Guild.guild_id == str(interaction.guild_id)
-            )
-            if guild is None:
-                logger.error(
-                    "Guild with id %i does not exist in the database",
-                    interaction.guild_id,
-                )
-                return await interaction.response.send_message(
-                    "I'm not set up for this server yet please run /config"
-                )
-            if (
-                not self.yahoo_api
-                or self.yahoo_api.league_id != guild.league_id
-            ):
-                self.yahoo_api = Yahoo(
-                    OAuth2(
-                        self.KEY,
-                        self.SECRET,
-                        store_file=False,
-                        **model_to_dict(guild),
-                    ),
-                    guild.league_id,
-                    guild.league_type,
-                )
-
-            return await f(self, interaction, *args, **kwargs)
-
-        return wrapper
+        self.yahoo_api = Yahoo()
 
     @app_commands.command(
         name="standings",
         description="Returns the current standings of your league",
     )
-    @set_yahoo
     async def standings(self, interaction: discord.Interaction):
         logger.info("Command:Standings called in %i", interaction.guild_id)
         embed = discord.Embed(
@@ -83,7 +39,7 @@ class YahooCog(commands.Cog):
             description="Team Name\n W-L-T",
             color=0xEEE657,
         )
-        standings = self.yahoo_api.get_standings()
+        standings = self.yahoo_api.get_standings(guild_id=interaction.guild_id)
         if standings:
             for team in standings:
                 embed.add_field(
@@ -95,14 +51,12 @@ class YahooCog(commands.Cog):
         else:
             await interaction.response.send_message(self.error_message)
 
-    @set_yahoo
     async def roster_autocomplete(
         self,
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
-
-        teams = self.yahoo_api.get_teams()
+        teams = self.yahoo_api.get_teams(guild_id=interaction.guild_id)
         if teams:
             options = list(
                 map(
@@ -119,7 +73,6 @@ class YahooCog(commands.Cog):
         name="roster", description="Returns the roster of the given team"
     )
     @app_commands.autocomplete(team_name=roster_autocomplete)
-    @set_yahoo
     async def roster(self, interaction: discord.Interaction, team_name: str):
         logger.info(
             "Command:Roster called in %i with team_name:%s",
@@ -131,7 +84,9 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
-        roster = self.yahoo_api.get_roster(team_name)
+        roster = self.yahoo_api.get_roster(
+            guild_id=interaction.guild_id, team_name=team_name
+        )
         if roster:
             for player in roster:
                 embed.add_field(
@@ -147,10 +102,11 @@ class YahooCog(commands.Cog):
         name="trade",
         description="Create poll for latest trade for league approval",
     )
-    @set_yahoo
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
-        latest_trade = self.yahoo_api.get_latest_trade()
+        latest_trade = self.yahoo_api.get_latest_trade(
+            guild_id=interaction.guild_id
+        )
         if latest_trade is None:
             await interaction.response.send_message(
                 "No trades up for approval at this time"
@@ -233,13 +189,14 @@ class YahooCog(commands.Cog):
             await response_message.add_reaction(yes_emoji)
             await response_message.add_reaction(no_emoji)
 
-    @set_yahoo
     async def stats_autocomplete(
         self,
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
-        players = self.yahoo_api.get_players(current)
+        players = self.yahoo_api.get_players(
+            current, guild_id=interaction.guild_id
+        )
         if players:
             options = list(
                 map(
@@ -258,14 +215,15 @@ class YahooCog(commands.Cog):
         name="stats", description="Returns the details of the given player"
     )
     @app_commands.autocomplete(player_name=stats_autocomplete)
-    @set_yahoo
     async def stats(self, interaction: discord.Interaction, player_name: str):
         logger.info(
             "Command:Stats called in %i with player_name:%s",
             interaction.guild_id,
             player_name,
         )
-        player = self.yahoo_api.get_player_details(player_name)
+        player = self.yahoo_api.get_player_details(
+            player_name, guild_id=interaction.guild_id
+        )
         if player:
             embed = self.get_player_embed(player)
             await interaction.response.send_message(embed=embed)
@@ -330,7 +288,6 @@ class YahooCog(commands.Cog):
     @app_commands.command(
         name="matchups", description="Returns the current weeks matchups"
     )
-    @set_yahoo
     async def matchups(
         self, interaction: discord.Interaction, week: Optional[int] = None
     ):
@@ -340,7 +297,9 @@ class YahooCog(commands.Cog):
             )
         )
 
-        week, details = self.yahoo_api.get_matchups(week)
+        week, details = self.yahoo_api.get_matchups(
+            guild_id=interaction.guild_id, week=week
+        )
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
@@ -359,10 +318,10 @@ class YahooCog(commands.Cog):
         name="waivers",
         description="Returns the waiver transactions from the last 24 hours",
     )
-    @set_yahoo
     async def waivers(self, interaction: discord.Interaction, days: int = 1):
         logger.info("Command:Waivers called in %i", interaction.guild_id)
 
+        await interaction.response.defer()
         embed_functions_dict = {
             "add/drop": utils.create_add_drop_embed,
             "add": utils.create_add_embed,
@@ -370,10 +329,9 @@ class YahooCog(commands.Cog):
         }
         ts = datetime.now() - timedelta(days=days)
         transactions = self.yahoo_api.get_transactions(
-            timestamp=ts.timestamp()
+            guild_id=interaction.guild_id, timestamp=ts.timestamp()
         )
         if transactions:
-            await interaction.response.defer()
             for transaction in transactions:
                 await interaction.followup.send(
                     embed=embed_functions_dict[transaction["type"]](
@@ -381,4 +339,4 @@ class YahooCog(commands.Cog):
                     )
                 )
         else:
-            await interaction.response.send_message("No transactions found")
+            await interaction.followup.send("No transactions found")

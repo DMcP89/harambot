@@ -1,4 +1,4 @@
-![harambot-banner](./assests/harambot_banner.png)
+![harambot-banner](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot_banner.png)
 # Harambot
 _An interactive Yahoo Fantasy sports bot for Discord._
 
@@ -41,6 +41,18 @@ In order to properly configure your bot you will need the following:
 
 _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step guide on how to obtain these values._
 
+#### Generate a key for your local database
+
+Parts of the database are encrypted, which means we need to generate a key. Using the python interactive interpreter, you can generate one by running these three lines inside the interpreter:
+
+```
+from cryptography.fernet import Fernet
+fernet_key = Fernet.generate_key()
+print(fernet_key.decode())
+```
+
+Your key will appear below.
+
 ### Run the bot on [Render](https://render.com/)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/DMcP89/harambot)
@@ -57,7 +69,7 @@ _Visit our [wiki](https://github.com/DMcP89/harambot/wiki) for a step by step gu
    export DISCORD_TOKEN='[YOUR DISCORD TOKEN]'
    export YAHOO_KEY='[YOUR YAHOO API CLIENT ID]'
    export YAHOO_SECRET='[YOUR YAHOO API CLIENT SECRET]'
-   export DATABASE_URL='[YOUR DATABASE URL]'
+   export DATABASE_URL='[YOUR DATABASE URL]' # which can be a pathway to a file, such as 'sqllite:///harambot.db'
    export HARAMBOT_KEY='[YOUR ENCRYPTION KEY]' # A URL-safe base64-encoded 32-byte key
    ```
 
@@ -122,7 +134,7 @@ The permission value should be 277562378304
 
 ![discord-config-commnd](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot_configure_1.png)
 
-* Use the Login with Yahoo button to authenticate with Yahoo and get your Yahoo token
+* Use the Login with Yahoo button to authenticate with Yahoo and get your Yahoo token (this is a one time token)
 
 
 ![discord-config-yahoo](https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot_configure_4.png)

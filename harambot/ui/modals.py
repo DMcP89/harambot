@@ -67,9 +67,19 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
                 Guild.guild_id == self.guild.guild_id
             ).execute()
         else:
-            details.update(yahoo_auth(self.yahoo_token.value))
-            self.guild = Guild(guild_id=str(interaction.guild_id), **details)
-            self.guild.save()
+            oauth_details = yahoo_auth(self.yahoo_token.value)
+            if not oauth_details:
+                await interaction.response.send_message(
+                    "Failed to authenticate with Yahoo API.\
+                     Please try again",
+                    ephemeral=True,
+                )
+            else:
+                details.update(oauth_details)
+                self.guild = Guild(
+                    guild_id=str(interaction.guild_id), **details
+                )
+                self.guild.save()
         await interaction.response.send_message(
             "Guild settings updated!",
             ephemeral=True,
@@ -81,7 +91,6 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     ) -> None:
         logger.exception(error)
         await interaction.response.send_message(
-            "Oops! Something went wrong with configuring your guild.\
-             Please try again",
+            "Oops! Something went wrong with configuring your guild. Please try again.",
             ephemeral=True,
         )
