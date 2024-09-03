@@ -69,7 +69,7 @@ class Yahoo:
                 league = gm.to_league(self.league_id)
                 self.scoring_type = league.settings()["scoring_type"]
                 return league
-            except RuntimeError:
+            except (RuntimeError, AssertionError):
                 logger.error(
                     "Error fetching league ids from Yahoo, trying with constructed league id"
                 )

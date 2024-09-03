@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "harambot"
-version = "0.4.1.post2"
+version = "0.4.1.post3"
 description = "A Yahoo Fantasy Sports bot for Discord"
 authors = ["DMcP89 <davemcpherson@wochstudios.com>"]
 license = "MIT"
