@@ -68,13 +68,14 @@ class Yahoo:
                         break
                 league = gm.to_league(self.league_id)
                 self.scoring_type = league.settings()["scoring_type"]
+                return league
             except RuntimeError:
                 logger.error(
                     "Error fetching league ids from Yahoo, trying with constructed league id"
                 )
-                league = gm.to_league(gm.game_id + ".l." + self.league_id)
+                league = gm.to_league(gm.game_id() + ".l." + self.league_id)
                 self.scoring_type = league.settings()["scoring_type"]
-            return league
+                return league
         except Exception:
             logger.exception(
                 "Error while fetching league details for league {}".format(
