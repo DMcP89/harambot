@@ -34,6 +34,7 @@ class YahooCog(commands.Cog):
     )
     async def standings(self, interaction: discord.Interaction):
         logger.info("Command:Standings called in %i", interaction.guild_id)
+        await interaction.response.defer()
         embed = discord.Embed(
             title="Standings",
             description="Team Name\n W-L-T",
@@ -47,9 +48,9 @@ class YahooCog(commands.Cog):
                     value=team["record"],
                     inline=False,
                 )
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
-            await interaction.response.send_message(self.error_message)
+            await interaction.followup.send(self.error_message)
 
     async def roster_autocomplete(
         self,
@@ -79,6 +80,7 @@ class YahooCog(commands.Cog):
             interaction.guild_id,
             team_name,
         )
+        await interaction.response.defer()
         embed = discord.Embed(
             title="{}'s Roster".format(team_name),
             description="",
@@ -94,9 +96,9 @@ class YahooCog(commands.Cog):
                     value=player["name"],
                     inline=False,
                 )
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
-            await interaction.response.send_message(self.error_message)
+            await interaction.followup.send(self.error_message)
 
     @app_commands.command(
         name="trade",
@@ -104,18 +106,19 @@ class YahooCog(commands.Cog):
     )
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
+        await interaction.response.defer()
         latest_trade = self.yahoo_api.get_latest_trade(
             guild_id=interaction.guild_id
         )
         if latest_trade is None:
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "No trades up for approval at this time"
             )
             return
 
         teams = self.yahoo_api.get_teams()
         if teams is None:
-            await interaction.response.send_message(self.error_message)
+            await interaction.followup.send(self.error_message)
             return
         trader = teams[latest_trade["trader_team_key"]]
         tradee = teams[latest_trade["tradee_team_key"]]
@@ -135,7 +138,7 @@ class YahooCog(commands.Cog):
                 if api_details:
                     player_set0_details = player_set0_details + api_details
                 else:
-                    await interaction.send(self.error_message)
+                    await interaction.followup.send(self.error_message)
                     return
 
         player_set1 = []
@@ -144,13 +147,13 @@ class YahooCog(commands.Cog):
             player_set1.append(player["name"])
             player_details = self.yahoo_api.get_player_details(player["name"])
             if player_details is None:
-                await interaction.send(self.error_message)
+                await interaction.followup.send(self.error_message)
                 return
             api_details = self.get_player_text(player_details) + "\n"
             if api_details:
                 player_set1_details = player_set1_details + api_details
             else:
-                await interaction.response.send_message(self.error_message)
+                await interaction.followup.send(self.error_message)
                 return
 
             confirm_trade_message = "{} sends {} to {} for {}".format(
@@ -180,10 +183,10 @@ class YahooCog(commands.Cog):
                 value=" Click :white_check_mark: for yes,\
                      :no_entry_sign: for no",
             )
-            await interaction.response.send_message(
+            response_message = await interaction.followup.send(
                 content=announcement, embed=embed
             )
-            response_message = await interaction.original_response()
+            #            response_message = await interaction.original_response()
             yes_emoji = "\U00002705"
             no_emoji = "\U0001F6AB"
             await response_message.add_reaction(yes_emoji)
@@ -221,14 +224,15 @@ class YahooCog(commands.Cog):
             interaction.guild_id,
             player_name,
         )
+        await interaction.response.defer()
         player = self.yahoo_api.get_player_details(
             player_name, guild_id=interaction.guild_id
         )
         if player:
             embed = self.get_player_embed(player)
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
-            await interaction.response.send_message("Player not found")
+            await interaction.followup.send("Player not found")
 
     def get_player_embed(self, player):
         embed = discord.Embed(
@@ -296,7 +300,7 @@ class YahooCog(commands.Cog):
                 interaction.guild_id, week
             )
         )
-
+        await interaction.response.defer()
         week, details = self.yahoo_api.get_matchups(
             guild_id=interaction.guild_id, week=week
         )
@@ -310,9 +314,9 @@ class YahooCog(commands.Cog):
                 embed.add_field(
                     name=detail["name"], value=detail["value"], inline=False
                 )
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
-            await interaction.response.send_message(self.error_message)
+            await interaction.followup.send(self.error_message)
 
     @app_commands.command(
         name="waivers",
