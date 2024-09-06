@@ -70,7 +70,7 @@ def create_drop_embed(transaction):
 
 
 def create_add_drop_embed(transaction):
-    embed = Embed(title="Player Added/ Player Dropped")
+    embed = Embed(title="Player Added / Player Dropped")
     embed.add_field(
         name="Owner",
         value=transaction["players"]["0"]["player"][1]["transaction_data"][0][
