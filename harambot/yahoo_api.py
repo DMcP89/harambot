@@ -23,6 +23,7 @@ class Yahoo:
     scoring_type = None
     league_id = None
     league_type = None
+    current_league = None
 
     def handle_oauth(f):
         @functools.wraps(f)
@@ -59,6 +60,11 @@ class Yahoo:
             )
             return None
 
+        if (
+            self.current_league
+            and self.league_id == self.current_league.league_id
+        ):
+            return self.current_league
         try:
             gm = game.Game(self.oauth, self.league_type)
             try:
@@ -66,16 +72,22 @@ class Yahoo:
                     if self.league_id in id:
                         self.league_id = id
                         break
-                league = gm.to_league(self.league_id)
-                self.scoring_type = league.settings()["scoring_type"]
-                return league
+                self.current_league = gm.to_league(self.league_id)
+                self.scoring_type = self.current_league.settings()[
+                    "scoring_type"
+                ]
+                return self.current_league
             except (RuntimeError, AssertionError):
                 logger.error(
                     "Error fetching league ids from Yahoo, trying with constructed league id"
                 )
-                league = gm.to_league(gm.game_id() + ".l." + self.league_id)
-                self.scoring_type = league.settings()["scoring_type"]
-                return league
+                self.current_league = gm.to_league(
+                    gm.game_id() + ".l." + self.league_id
+                )
+                self.scoring_type = self.current_league.settings()[
+                    "scoring_type"
+                ]
+                return self.current_league
         except Exception:
             logger.exception(
                 "Error while fetching league details for league {}".format(
