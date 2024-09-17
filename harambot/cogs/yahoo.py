@@ -235,6 +235,7 @@ class YahooCog(commands.Cog):
             await interaction.followup.send("Player not found")
 
     def get_player_embed(self, player):
+        logger.info(player)
         embed = discord.Embed(
             title=player["name"]["full"],
             description="#" + player["uniform_number"],
@@ -246,10 +247,14 @@ class YahooCog(commands.Cog):
             embed.add_field(name="Bye", value=player["bye_weeks"]["week"])
         if "player_points" in player:
             embed.add_field(
-                name="Total Points", value=player["player_points"]["total"]
+                name="Total Points", value=player["stats"]["total_points"]
             )
         embed.add_field(name="Owner", value=player["owner"])
         embed.set_thumbnail(url=player["image_url"])
+        for key, value in player["stats"].items():
+            if key == "total_points":
+                continue
+            embed.add_field(name=key, value=value)
         return embed
 
     def get_player_text(self, player):

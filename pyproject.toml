@@ -35,9 +35,9 @@ peewee = "^3.15.4"
 cachetools = "^5.2.0"
 psycopg2 = "^2.9.5"
 mysqlclient = "^2.1.1"
-yahoo_fantasy_api = "^2.8.0"
 yahoo-oauth = "^2.0"
 cryptography = ">=42.0.5,<44.0.0"
+yahoo-fantasy-api = {git = "git@github.com:DMcP89/yahoo_fantasy_api.git", branch = "enhancement/include-points-in-player-stats"}
 
 
 [tool.poetry.group.dev.dependencies]
