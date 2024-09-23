@@ -171,15 +171,21 @@ class Yahoo:
 
     # @cached(cache)
     @handle_oauth
-    def get_player_details(self, player_name, guild_id):
+    def get_player_details(self, player_name, guild_id, week=None):
         try:
             player = self.league().player_details(player_name)[0]
             player["owner"] = self.get_player_owner(player["player_id"])
-            player["stats"] = self.league().player_stats(
-                [player["player_id"]],
-                req_type="week",
-                week=self.league().current_week(),
-            )[0]
+            if week:
+                player["stats"] = self.league().player_stats(
+                    [player["player_id"]],
+                    req_type="week",
+                    week=week,
+                )[0]
+            else:
+                player["stats"] = self.league().player_stats(
+                    [player["player_id"]],
+                    req_type="season",
+                )[0]
             return player
         except Exception:
             logger.exception(

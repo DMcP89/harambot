@@ -218,7 +218,12 @@ class YahooCog(commands.Cog):
         name="stats", description="Returns the details of the given player"
     )
     @app_commands.autocomplete(player_name=stats_autocomplete)
-    async def stats(self, interaction: discord.Interaction, player_name: str):
+    async def stats(
+        self,
+        interaction: discord.Interaction,
+        player_name: str,
+        week: Optional[int] = None,
+    ):
         logger.info(
             "Command:Stats called in %i with player_name:%s",
             interaction.guild_id,
@@ -250,11 +255,11 @@ class YahooCog(commands.Cog):
             embed.add_field(
                 name="Total Points",
                 value=player["stats"]["total_points"],
-                inline=False
+                inline=False,
             )
-        del(player["stats"]["player_id"])
-        del(player["stats"]["name"])
-        del(player["stats"]["position_type"])
+        del player["stats"]["player_id"]
+        del player["stats"]["name"]
+        del player["stats"]["position_type"]
         for key, value in player["stats"].items():
             if key == "total_points":
                 continue
