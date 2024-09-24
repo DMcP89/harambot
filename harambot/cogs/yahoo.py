@@ -231,7 +231,7 @@ class YahooCog(commands.Cog):
         )
         await interaction.response.defer()
         player = self.yahoo_api.get_player_details(
-            player_name, guild_id=interaction.guild_id
+            player_name, guild_id=interaction.guild_id, week=week
         )
         if player:
             embed = self.get_player_embed(player)
