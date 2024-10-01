@@ -107,7 +107,12 @@ class YahooCog(commands.Cog):
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
         await interaction.response.defer()
-        if self.yahoo_api.get_settings()["trade_ratify_type"] != "vote":
+        if (
+            self.yahoo_api.get_settings(guild_id=interaction.guild_id)[
+                "trade_ratify_type"
+            ]
+            != "vote"
+        ):
             await interaction.followup.send(
                 "Trade command only available for leagues with vote ratification"
             )

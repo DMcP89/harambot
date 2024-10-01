@@ -37,7 +37,7 @@ psycopg2 = "^2.9.5"
 mysqlclient = "^2.1.1"
 yahoo-oauth = "^2.0"
 cryptography = ">=42.0.5,<44.0.0"
-yahoo-fantasy-api = ">=2.9.1" 
+yahoo-fantasy-api = ">=2.9.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -46,6 +46,7 @@ pytest-cov = "^4.0.0"
 pre-commit = "^2.20.0"
 flake8 = "^5.0.4"
 black = ">=22.10,<25.0"
+jedi = "^0.19.1"
 
 [tool.poetry.scripts]
 harambot = "harambot.bot:run"
