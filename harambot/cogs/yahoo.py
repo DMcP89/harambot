@@ -107,6 +107,16 @@ class YahooCog(commands.Cog):
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
         await interaction.response.defer()
+        if (
+            self.yahoo_api.get_settings(guild_id=interaction.guild_id)[
+                "trade_ratify_type"
+            ]
+            != "vote"
+        ):
+            await interaction.followup.send(
+                "Trade command only available for leagues with vote ratification"
+            )
+            return
         latest_trade = self.yahoo_api.get_latest_trade(
             guild_id=interaction.guild_id
         )
@@ -116,7 +126,7 @@ class YahooCog(commands.Cog):
             )
             return
 
-        teams = self.yahoo_api.get_teams()
+        teams = self.yahoo_api.get_teams(guild_id=interaction.guild_id)
         if teams is None:
             await interaction.followup.send(self.error_message)
             return
@@ -131,7 +141,7 @@ class YahooCog(commands.Cog):
                 player_set0.append(player["name"])
                 api_details = (
                     self.get_player_text(
-                        self.yahoo_api.get_player_details(player["name"])
+                        self.yahoo_api.get_player_details(player["name"], guild_id=interaction.guild_id)
                     )
                     + "\n"
                 )
@@ -145,7 +155,7 @@ class YahooCog(commands.Cog):
         player_set1_details = ""
         for player in latest_trade["tradee_players"]:
             player_set1.append(player["name"])
-            player_details = self.yahoo_api.get_player_details(player["name"])
+            player_details = self.yahoo_api.get_player_details(player["name"], guild_id=interaction.guild_id)
             if player_details is None:
                 await interaction.followup.send(self.error_message)
                 return
