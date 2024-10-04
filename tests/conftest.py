@@ -44,6 +44,11 @@ def mock_player_details():
 
 
 @pytest.fixture
+def mock_player_stats():
+    return [{"mock": "stats"}]
+
+
+@pytest.fixture
 def mock_ownership():
     return load_test_data("test-player-details.json")["ownership"]
 
@@ -64,6 +69,7 @@ def api(
     mock_standings,
     mock_teams,
     mock_player_details,
+    mock_player_stats,
     mock_ownership,
     mock_matchups,
 ):
@@ -76,6 +82,7 @@ def api(
         league.teams = MagicMock(return_value=mock_teams)
         league.current_week = MagicMock(return_value=1)
         league.player_details = MagicMock(return_value=mock_player_details)
+        league.player_stats = MagicMock(return_value=mock_player_stats)
         league.ownership = MagicMock(return_value=mock_ownership)
         league.matchups = MagicMock(return_value=mock_matchups)
         league.get_team = MagicMock(
@@ -91,6 +98,7 @@ def category_api(
     mock_standings,
     mock_teams,
     mock_player_details,
+    mock_player_stats,
     mock_ownership,
     mock_matchups_category,
 ):
@@ -103,6 +111,7 @@ def category_api(
         league.teams = MagicMock(return_value=mock_teams)
         league.current_week = MagicMock(return_value=1)
         league.player_details = MagicMock(return_value=mock_player_details)
+        league.player_stats = MagicMock(return_value=mock_player_stats)
         league.ownership = MagicMock(return_value=mock_ownership)
         league.matchups = MagicMock(return_value=mock_matchups_category)
     api.league = MagicMock(return_value=league)

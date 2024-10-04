@@ -19,8 +19,6 @@ cache = TTLCache(maxsize=1024, ttl=600)
 
 
 class Yahoo:
-
-    scoring_type = None
     league_id = None
     league_type = None
     current_league = None
@@ -29,6 +27,9 @@ class Yahoo:
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
             guild_id = kwargs.get("guild_id")
+            if guild_id is None:
+                logger.error("Guild id not provided to Yahoo API")
+                return None
             guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
             if guild is None:
                 logger.error(
@@ -73,9 +74,6 @@ class Yahoo:
                         self.league_id = id
                         break
                 self.current_league = gm.to_league(self.league_id)
-                self.scoring_type = self.current_league.settings()[
-                    "scoring_type"
-                ]
                 return self.current_league
             except (RuntimeError, AssertionError):
                 logger.error(
@@ -84,14 +82,25 @@ class Yahoo:
                 self.current_league = gm.to_league(
                     gm.game_id() + ".l." + self.league_id
                 )
-                self.scoring_type = self.current_league.settings()[
-                    "scoring_type"
-                ]
                 return self.current_league
         except Exception:
             logger.exception(
                 "Error while fetching league details for league {}".format(
                     self.league_id
+                )
+            )
+            return None
+
+    @cached(cache, key=functools.partial(keys.hashkey, "get_settings"))
+    @handle_oauth
+    def get_settings(self, guild_id):
+        try:
+            return self.league().settings()
+        except Exception:
+            logger.exception(
+                "Error while fetching settings for league {} in guild {}".format(
+                    self.league_id,
+                    guild_id,
                 )
             )
             return None
@@ -169,12 +178,23 @@ class Yahoo:
             )
             return None
 
-    @cached(cache)
+    # @cached(cache)
     @handle_oauth
-    def get_player_details(self, player_name, guild_id):
+    def get_player_details(self, player_name, guild_id, week=None):
         try:
             player = self.league().player_details(player_name)[0]
             player["owner"] = self.get_player_owner(player["player_id"])
+            if week:
+                player["stats"] = self.league().player_stats(
+                    [player["player_id"]],
+                    req_type="week",
+                    week=week,
+                )[0]
+            else:
+                player["stats"] = self.league().player_stats(
+                    [player["player_id"]],
+                    req_type="season",
+                )[0]
             return player
         except Exception:
             logger.exception(

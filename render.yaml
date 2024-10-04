@@ -44,7 +44,7 @@ services:
       - key: RUN_MIGRATIONS
         sync: false
       - key: VERSION
-        value: "0.4.1-Beta"
+        value: "0.4.3-Beta"
 
 databases:
 - name: harambot-database

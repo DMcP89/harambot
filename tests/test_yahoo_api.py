@@ -37,7 +37,9 @@ def test_get_player_details(api):
     get_player_details_func = api.get_player_details
     while hasattr(get_player_details_func, "__wrapped__"):
         get_player_details_func = get_player_details_func.__wrapped__
-    return_value = get_player_details_func(api, "Josh Allen", guild_id="mock")
+    return_value = get_player_details_func(
+        api, "Josh Allen", guild_id="mock", week=None
+    )
     assert isinstance(return_value, dict)
     assert return_value["player_key"] == "399.p.30977"
     assert return_value["owner"] == "Hide and Go Zeke"

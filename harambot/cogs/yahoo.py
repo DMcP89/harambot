@@ -107,6 +107,16 @@ class YahooCog(commands.Cog):
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
         await interaction.response.defer()
+        if (
+            self.yahoo_api.get_settings(guild_id=interaction.guild_id)[
+                "trade_ratify_type"
+            ]
+            != "vote"
+        ):
+            await interaction.followup.send(
+                "Trade command only available for leagues with vote ratification"
+            )
+            return
         latest_trade = self.yahoo_api.get_latest_trade(
             guild_id=interaction.guild_id
         )
@@ -116,7 +126,7 @@ class YahooCog(commands.Cog):
             )
             return
 
-        teams = self.yahoo_api.get_teams()
+        teams = self.yahoo_api.get_teams(guild_id=interaction.guild_id)
         if teams is None:
             await interaction.followup.send(self.error_message)
             return
@@ -131,7 +141,7 @@ class YahooCog(commands.Cog):
                 player_set0.append(player["name"])
                 api_details = (
                     self.get_player_text(
-                        self.yahoo_api.get_player_details(player["name"])
+                        self.yahoo_api.get_player_details(player["name"], guild_id=interaction.guild_id)
                     )
                     + "\n"
                 )
@@ -145,7 +155,7 @@ class YahooCog(commands.Cog):
         player_set1_details = ""
         for player in latest_trade["tradee_players"]:
             player_set1.append(player["name"])
-            player_details = self.yahoo_api.get_player_details(player["name"])
+            player_details = self.yahoo_api.get_player_details(player["name"], guild_id=interaction.guild_id)
             if player_details is None:
                 await interaction.followup.send(self.error_message)
                 return
@@ -218,7 +228,12 @@ class YahooCog(commands.Cog):
         name="stats", description="Returns the details of the given player"
     )
     @app_commands.autocomplete(player_name=stats_autocomplete)
-    async def stats(self, interaction: discord.Interaction, player_name: str):
+    async def stats(
+        self,
+        interaction: discord.Interaction,
+        player_name: str,
+        week: Optional[int] = None,
+    ):
         logger.info(
             "Command:Stats called in %i with player_name:%s",
             interaction.guild_id,
@@ -226,7 +241,7 @@ class YahooCog(commands.Cog):
         )
         await interaction.response.defer()
         player = self.yahoo_api.get_player_details(
-            player_name, guild_id=interaction.guild_id
+            player_name, guild_id=interaction.guild_id, week=week
         )
         if player:
             embed = self.get_player_embed(player)
@@ -244,12 +259,21 @@ class YahooCog(commands.Cog):
         embed.add_field(name="Team", value=player["editorial_team_abbr"])
         if "bye_weeks" in player:
             embed.add_field(name="Bye", value=player["bye_weeks"]["week"])
-        if "player_points" in player:
-            embed.add_field(
-                name="Total Points", value=player["player_points"]["total"]
-            )
         embed.add_field(name="Owner", value=player["owner"])
         embed.set_thumbnail(url=player["image_url"])
+        if "total_points" in player["stats"]:
+            embed.add_field(
+                name="Total Points",
+                value=player["stats"]["total_points"],
+                inline=False,
+            )
+        del player["stats"]["player_id"]
+        del player["stats"]["name"]
+        del player["stats"]["position_type"]
+        for key, value in player["stats"].items():
+            if key == "total_points":
+                continue
+            embed.add_field(name=key, value=value)
         return embed
 
     def get_player_text(self, player):
