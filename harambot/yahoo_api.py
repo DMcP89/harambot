@@ -190,15 +190,17 @@ class Yahoo:
                     req_type="week",
                     week=week,
                 )[0]
-                if len(stats) > 25:
-                    player["stats"] = stats[:20]
-                else:
-                    player["stats"] = stats
             else:
-                player["stats"] = self.league().player_stats(
+                stats = self.league().player_stats(
                     [player["player_id"]],
                     req_type="season",
                 )[0]
+            del stats["player_id"]
+            del stats["name"]
+            del stats["position_type"]
+            if len(stats) > 20:
+                stats = {k: v for k, v in stats.items() if v != 0.0}
+            player["stats"] = stats
             return player
         except Exception:
             logger.exception(
