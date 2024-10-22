@@ -45,7 +45,14 @@ def mock_player_details():
 
 @pytest.fixture
 def mock_player_stats():
-    return [{"mock": "stats"}]
+    return [
+        {
+            "mock": "stats",
+            "player_id": "39077",
+            "name": "Josh Allen",
+            "position_type": "o",
+        }
+    ]
 
 
 @pytest.fixture

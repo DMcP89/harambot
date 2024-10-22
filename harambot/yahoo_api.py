@@ -185,16 +185,22 @@ class Yahoo:
             player = self.league().player_details(player_name)[0]
             player["owner"] = self.get_player_owner(player["player_id"])
             if week:
-                player["stats"] = self.league().player_stats(
+                stats = self.league().player_stats(
                     [player["player_id"]],
                     req_type="week",
                     week=week,
                 )[0]
             else:
-                player["stats"] = self.league().player_stats(
+                stats = self.league().player_stats(
                     [player["player_id"]],
                     req_type="season",
                 )[0]
+            del stats["player_id"]
+            del stats["name"]
+            del stats["position_type"]
+            if len(stats) > 20:
+                stats = {k: v for k, v in stats.items() if v != 0.0}
+            player["stats"] = stats
             return player
         except Exception:
             logger.exception(

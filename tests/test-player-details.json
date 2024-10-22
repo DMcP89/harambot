@@ -34,7 +34,32 @@
                 "coverage_type": "season",
                 "season": "2020"
             },
-            "stats": [{
+            "stats": [
+                {
+                    "stat": {
+                        "stat_id": "0",
+                        "value": "396"
+                    }
+                },
+                {
+                    "stat": {
+                        "stat_id": "1",
+                        "value": "572"
+                    }
+                },
+                {
+                    "stat": {
+                        "stat_id": "2",
+                        "value": "4544"
+                    }
+                },
+                {
+                    "stat": {
+                        "stat_id": "3",
+                        "value": "37"
+                    }
+                },
+                {
                     "stat": {
                         "stat_id": "4",
                         "value": "2871"
