@@ -58,7 +58,7 @@ class ConfigModal(discord.ui.Modal, title="Configure Guild"):
     async def on_submit(self, interaction: discord.Interaction):
         details = {
             "league_id": self.league_id.value,
-            "league_type": self.league_type.value,
+            "league_type": self.league_type.value.lower(),
             "RIP_text": self.RIP_text.value,
             "RIP_image_url": self.RIP_image_url.value,
         }
