@@ -62,3 +62,13 @@ def test_get_matchups_category(category_api):
     assert isinstance(details, list)
     assert len(details) == 7
     assert week == "1"
+
+
+def test_get_latest_trade(api):
+    get_latest_trade_func = api.get_latest_trade
+    while hasattr(get_latest_trade_func, "__wrapped__"):
+        get_latest_trade_func = get_latest_trade_func.__wrapped__
+    return_value = get_latest_trade_func(api, guild_id="mock")
+    assert isinstance(return_value, dict)
+    assert return_value["team1"] == "Too Many Cooks"
+    assert return_value["team2"] == "Hide and Go Zeke"

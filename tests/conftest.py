@@ -69,6 +69,11 @@ def mock_matchups():
 def mock_matchups_category():
     return load_test_data("test-matchups-category.json")
 
+@pytest.fixture
+def mock_pending_trades():
+    return load_test_data("test-pending-trade.json")
+
+
 
 @pytest.fixture
 def api(
@@ -79,12 +84,15 @@ def api(
     mock_player_stats,
     mock_ownership,
     mock_matchups,
+    mock_pending_trades,
 ):
     api = Yahoo()
     api.scoring_type = "head"
     league = None
     with patch.object(game.Game, "game_id", return_value="319"):
         league = League(mock_oauth, 123456)
+        team = Team(mock_oauth, "")
+        team.proposed_trades = MagicMock(return_value=mock_pending_trades)
         league.standings = MagicMock(return_value=mock_standings)
         league.teams = MagicMock(return_value=mock_teams)
         league.current_week = MagicMock(return_value=1)
@@ -93,8 +101,12 @@ def api(
         league.ownership = MagicMock(return_value=mock_ownership)
         league.matchups = MagicMock(return_value=mock_matchups)
         league.get_team = MagicMock(
-            return_value={"Too Many Cooks": Team(mock_oauth, "")}
+            return_value={"Too Many Cooks": team}
         )
+        league.to_team = MagicMock(
+                return_value=team
+        )
+    
     api.league = MagicMock(return_value=league)
     return api
 
