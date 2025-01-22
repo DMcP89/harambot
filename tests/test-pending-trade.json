@@ -3,7 +3,7 @@
     "transaction": {
       "transaction_key": "257.l.193.pt.1",
       "type": "pending_trade",
-      "status": "proposed",
+      "status": "accepted",
       "trader_team_key": "257.l.193.t.2",
       "tradee_team_key": "257.l.193.t.1",
       "trade_proposed_time": 1310694832,

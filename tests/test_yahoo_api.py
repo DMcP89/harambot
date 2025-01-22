@@ -70,5 +70,5 @@ def test_get_latest_trade(api):
         get_latest_trade_func = get_latest_trade_func.__wrapped__
     return_value = get_latest_trade_func(api, guild_id="mock")
     assert isinstance(return_value, dict)
-    assert return_value["team1"] == "Too Many Cooks"
-    assert return_value["team2"] == "Hide and Go Zeke"
+    assert return_value["trader_team_key"] == "257.l.193.t.2"
+    assert return_value["tradee_team_key"] == "257.l.193.t.1"

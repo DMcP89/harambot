@@ -71,7 +71,9 @@ def mock_matchups_category():
 
 @pytest.fixture
 def mock_pending_trades():
-    return load_test_data("test-pending-trade.json")
+    raw_pending_trade_data = load_test_data("test-pending-trade.json")
+    return [raw_pending_trade_data["fantasy_content"]["transaction"]]
+    
 
 
 
