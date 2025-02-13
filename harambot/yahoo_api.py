@@ -313,7 +313,9 @@ class Yahoo:
                         )
                     )
                     if accepted_trades:
-                        return accepted_trades[0]
+                        # return the last accepted trade
+                        return accepted_trades[-1]
+                        
             return None
         except Exception:
             logger.exception(
