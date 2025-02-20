@@ -87,6 +87,9 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
+        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+            await interaction.followup.send("Rosters not available yet")
+            return
         roster = self.yahoo_api.get_roster(
             guild_id=interaction.guild_id, team_name=team_name
         )
@@ -276,9 +279,13 @@ class YahooCog(commands.Cog):
             )
         )
         await interaction.response.defer()
+        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+            await interaction.followup.send("Matchups not available yet")
+            return
         week, details = self.yahoo_api.get_matchups(
             guild_id=interaction.guild_id, week=week
         )
+            
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
