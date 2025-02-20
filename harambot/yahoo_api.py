@@ -139,16 +139,24 @@ class Yahoo:
         try:
             standings = []
             for idx, team in enumerate(self.league().standings()):
-                outcomes = team["outcome_totals"]
-                record = "{}-{}-{}".format(
-                    outcomes["wins"], outcomes["losses"], outcomes["ties"]
-                )
-                standings.append(
-                    {
-                        "place": str(idx + 1) + ". " + team["name"],
-                        "record": record,
-                    }
-                )
+                if "outcome_totals" in team:
+                    outcomes = team["outcome_totals"]
+                    record = "{}-{}-{}".format(
+                        outcomes["wins"], outcomes["losses"], outcomes["ties"]
+                    )
+                    standings.append(
+                        {
+                            "place": str(idx + 1) + ". " + team["name"],
+                            "record": record,
+                        }
+                    )
+                elif "points_for" in team:
+                    standings.append(
+                        {
+                            "place": str(idx + 1) + ". " + team["name"],
+                            "record": "{} - {}".format(team["points_for"],team["points_change"])
+                        }
+                    )
             return standings
         except Exception:
             logger.exception(

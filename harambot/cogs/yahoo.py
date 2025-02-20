@@ -35,9 +35,10 @@ class YahooCog(commands.Cog):
     async def standings(self, interaction: discord.Interaction):
         logger.info("Command:Standings called in %i", interaction.guild_id)
         await interaction.response.defer()
+        scoring_type = self.yahoo_api.get_settings(guild_id=interaction.guild_id)["scoring_type"]
         embed = discord.Embed(
             title="Standings",
-            description="Team Name\n W-L-T",
+            description="W-L-T" if scoring_type == "head" else "Team \nPoints For - Points Change",
             color=0xEEE657,
         )
         standings = self.yahoo_api.get_standings(guild_id=interaction.guild_id)
