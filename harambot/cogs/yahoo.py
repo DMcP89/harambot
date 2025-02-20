@@ -35,9 +35,10 @@ class YahooCog(commands.Cog):
     async def standings(self, interaction: discord.Interaction):
         logger.info("Command:Standings called in %i", interaction.guild_id)
         await interaction.response.defer()
+        scoring_type = self.yahoo_api.get_settings(guild_id=interaction.guild_id)["scoring_type"]
         embed = discord.Embed(
             title="Standings",
-            description="Team Name\n W-L-T",
+            description="W-L-T" if scoring_type == "head" else "Team \nPoints For - Points Change",
             color=0xEEE657,
         )
         standings = self.yahoo_api.get_standings(guild_id=interaction.guild_id)
@@ -86,6 +87,9 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
+        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+            await interaction.followup.send("Rosters not available yet")
+            return
         roster = self.yahoo_api.get_roster(
             guild_id=interaction.guild_id, team_name=team_name
         )
@@ -275,9 +279,13 @@ class YahooCog(commands.Cog):
             )
         )
         await interaction.response.defer()
+        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+            await interaction.followup.send("Matchups not available yet")
+            return
         week, details = self.yahoo_api.get_matchups(
             guild_id=interaction.guild_id, week=week
         )
+            
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
