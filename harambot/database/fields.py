@@ -1,8 +1,8 @@
 from cryptography.fernet import Fernet
-from peewee import Field
+from peewee import TextField
 
 
-class EncryptedField(Field):
+class EncryptedField(TextField):
     def __init__(self, key, *args, **kwargs):
         super(EncryptedField, self).__init__(*args, **kwargs)
         self.key = key
