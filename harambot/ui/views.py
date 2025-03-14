@@ -1,6 +1,7 @@
 import discord
 import logging
 
+from harambot import yahoo_api
 from harambot.config import settings
 from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes
 from harambot.ui.modals import ConfigModal
@@ -116,3 +117,39 @@ class ReportConfigView(discord.ui.View):
         return await interaction.response.send_message(
             f"Reports configured to go to {select.values[0].mention}"
         )
+
+class LeagueSelect(discord.ui.Select):
+    def __init__(self, guild_id):
+        leagues = yahoo_api.Yahoo().get_leagues(guild_id=guild_id)
+        options = []
+        for league in leagues:
+            league_details = yahoo_api.Yahoo().get_settings_for_league(league_id=league, guild_id=guild_id)
+            options.append(
+                discord.SelectOption(
+                    label=league_details['name'],
+                    value=league,
+                    description=league_details['game_code'] + " " + league_details['season']
+                )
+            )
+        super().__init__(placeholder="Select a league", min_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            f"League set to {self.values[0]}"
+        )
+
+class LeagueConfigView(discord.ui.View):
+    #leagues = yahoo_api.Yahoo().get_leagues()
+    #for league in leagues:
+    #    selectOptions.append(
+    #        discord.SelectOption(
+    #            label=league,
+    #            value=league,
+    #            description=league
+    #        )
+    #    )
+
+    def __init__(self):
+        logger.info("LeagueConfigView initialized")
+        super().__init__()
+

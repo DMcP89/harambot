@@ -4,7 +4,7 @@ from discord import app_commands
 import discord
 import logging
 
-from harambot.ui.views import ConfigView, ReportConfigView
+from harambot.ui.views import ConfigView, LeagueConfigView, LeagueSelect, ReportConfigView
 from harambot.database.models import Guild
 
 
@@ -129,3 +129,16 @@ class Meta(commands.Cog):
         await interaction.response.send_message(
             "Grant Harambot the Manage Webhooks permission to use this command"
         )
+    
+    @app_commands.command(
+            name="league",
+            description="Set which league harambot should use for commands"
+            )
+    @app_commands.check(guild_is_configured)
+    async def league(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        message = "Select which league you would like to use for commands"
+        view = LeagueConfigView()
+        view.add_item(LeagueSelect(interaction.guild_id))
+        await interaction.followup.send(message, view=view, ephemeral=True)
+

@@ -91,6 +91,38 @@ class Yahoo:
             )
             return None
 
+    @cached(cache, key=functools.partial(keys.hashkey, "get_leagues"))
+    @handle_oauth
+    def get_leagues(self, guild_id):
+        logger.info("Fetching leagues for guild: %s", guild_id)
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            leagues = gm.league_ids()
+            return leagues
+        except Exception:
+            logger.exception(
+                "Error while fetching leagues for guild {}".format(guild_id)
+                )
+            return None
+
+
+    @cached(cache, key=functools.partial(keys.hashkey, "get_settings_for_league"))
+    @handle_oauth
+    def get_settings_for_league(self, league_id, guild_id):
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            current_league = gm.to_league(league_id)
+            return current_league.settings()
+        except Exception:
+            logger.exception(
+                "Error while fetching settings for league {} in guild {}".format(
+                    league_id,
+                    guild_id,
+                )
+            )
+            return None
+
+
     @cached(cache, key=functools.partial(keys.hashkey, "get_settings"))
     @handle_oauth
     def get_settings(self, guild_id):
