@@ -3,7 +3,10 @@ import requests
 import time
 import logging
 
+from cachetools import keys
+
 from harambot.config import settings
+from harambot import yahoo_api
 from discord import Embed
 
 YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"
@@ -107,3 +110,23 @@ def add_player_fields_to_embed(embed, player):
 def get_avatar_bytes():
     # return the image from the settings.webhook_avatar_url variable as bytes
     return requests.get(settings.webhook_avatar_url).content
+
+
+def get_cache_key(*args, **kwargs):
+    function_name = args[0]
+    guild_id = str(kwargs.get("guild_id"))
+    return keys.hashkey(function_name, guild_id)
+
+def clear_guild_cache(guild_id):
+    guild_cache_keys = [
+        get_cache_key("get_settings", guild_id=guild_id),
+        get_cache_key("get_teams", guild_id=guild_id),
+        get_cache_key("get_players", guild_id=guild_id),
+        get_cache_key("get_standings", guild_id=guild_id),
+        get_cache_key("get_roster", guild_id=guild_id),
+        get_cache_key("get_matchups", guild_id=guild_id),
+        get_cache_key("get_latest_trade", guild_id=guild_id),
+        get_cache_key("get_transactions", guild_id=guild_id)
+    ]
+    for key in guild_cache_keys:
+        yahoo_api.cache.pop(key, None)

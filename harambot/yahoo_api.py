@@ -10,11 +10,11 @@ from yahoo_oauth import OAuth2
 
 from harambot.database.models import Guild
 from harambot.config import settings
+from harambot.utils import get_cache_key
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
 cache = TTLCache(maxsize=1024, ttl=600)
 
 
@@ -97,7 +97,7 @@ class Yahoo:
         logger.info("Fetching leagues for guild: %s", guild_id)
         try:
             gm = game.Game(self.oauth, self.league_type)
-            leagues = gm.league_ids()
+            leagues = gm.league_ids(is_available=True)
             return leagues
         except Exception:
             logger.exception(
@@ -165,7 +165,8 @@ class Yahoo:
             )
             return None
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_standings"))
+    # @cached(cache, key=functools.partial(keys.hashkey, "get_standings"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_standings"))
     @handle_oauth
     def get_standings(self, guild_id):
         try:
@@ -199,7 +200,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache)
+    @cached(cache, key=functools.partial(keys.hashkey, "get_roster"))
     @handle_oauth
     def get_roster(self, team_name, guild_id):
         try:
@@ -275,7 +276,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache)
+    @cached(cache, key=functools.partial(keys.hashkey, "get_matchups"))
     @handle_oauth
     def get_matchups(self, guild_id, week=None):
         try:

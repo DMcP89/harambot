@@ -3,7 +3,7 @@ import logging
 
 from harambot import yahoo_api
 from harambot.config import settings
-from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes
+from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes, clear_guild_cache
 from harambot.ui.modals import ConfigModal
 from harambot.database.models import Guild
 
@@ -127,28 +127,26 @@ class LeagueSelect(discord.ui.Select):
             options.append(
                 discord.SelectOption(
                     label=league_details['name'],
-                    value=league,
+                    value=league_details['league_id']+"-"+league_details['game_code']+"-"+league_details['name'],
                     description=league_details['game_code'] + " " + league_details['season']
                 )
             )
         super().__init__(placeholder="Select a league", min_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
+        logger.info(f"League selected: {self.values}")
+        guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
+        guild.league_id = self.values[0].split("-")[0]
+        guild.league_type = self.values[0].split("-")[1]
+        league_name = self.values[0].split("-")[2]
+        guild.save()
+        clear_guild_cache(guild.guild_id)
+
         await interaction.response.send_message(
-            f"League set to {self.values[0]}"
+            f"League set to {league_name}"
         )
 
 class LeagueConfigView(discord.ui.View):
-    #leagues = yahoo_api.Yahoo().get_leagues()
-    #for league in leagues:
-    #    selectOptions.append(
-    #        discord.SelectOption(
-    #            label=league,
-    #            value=league,
-    #            description=league
-    #        )
-    #    )
-
     def __init__(self):
         logger.info("LeagueConfigView initialized")
         super().__init__()
