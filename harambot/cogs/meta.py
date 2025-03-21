@@ -64,6 +64,16 @@ class Meta(commands.Cog):
             value="Configure your guild for Harambot",
             inline=False,
         )
+        embed.add_field(
+            name="/reports",
+            value="Configure automatic transaction and matchup reporting",
+            inline=False,
+        )
+        embed.add_field(
+            name="/league",
+            value="Set which league harambot should use for commands",
+            inline=False,
+        )
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(

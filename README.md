@@ -2,7 +2,7 @@
 # Harambot
 _An interactive Yahoo Fantasy sports bot for Discord._
 
-![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/unit-tests.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.4.4--Beta-red)
+![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Build](https://img.shields.io/github/actions/workflow/status/DMcP89/harambot/unit-tests.yml?branch=main) ![Version](https://img.shields.io/badge/version-0.5.0--Beta-red)
 
 
 
@@ -15,16 +15,17 @@ _An interactive Yahoo Fantasy sports bot for Discord._
 
 
 ## Commands
-    /ping                           - Gives the latency of harambot
-    /RIP                            - Pay respects
-    /standings                      - Returns the current standings of the current league
-    /roster Team                    - Returns the roster of the given team
-    /stats Player                   - Returns the details of the given player
-    /trade                          - Create a poll for latest trade for league approval
-    /matchups week                  - Returns the matchups for the given week, defaults to the current week
-    /waiver days                    - Returns the waiver wire transactions from the previous number of days
-    /configure                      - Configure the bot for your guild
+    /ping                           - Gives the latency of harambot.
+    /RIP                            - Pay respects.
+    /standings                      - Returns the current standings of the current league.
+    /roster Team                    - Returns the roster of the given team.
+    /stats Player                   - Returns the details of the given player.
+    /trade                          - Create a poll for latest trade for league approval.
+    /matchups week                  - Returns the matchups for the given week, defaults to the current week.
+    /waiver days                    - Returns the waiver wire transactions from the previous number of days.
+    /configure                      - Configure the bot for your guild.
     /reports                        - Set what channel transaction reports should be sent to.
+    /league                         - Set what league the bot should use for commands.
 
 You can find example output of these commands [here](https://github.com/DMcP89/harambot/wiki#command-examples)
 
