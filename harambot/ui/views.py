@@ -1,5 +1,6 @@
 import discord
 import logging
+import objectpath
 
 from harambot import yahoo_api
 from harambot.config import settings
@@ -120,15 +121,26 @@ class ReportConfigView(discord.ui.View):
 
 class LeagueSelect(discord.ui.Select):
     def __init__(self, guild_id):
-        leagues = yahoo_api.Yahoo().get_leagues(guild_id=guild_id)
+        # Uncomment this once this is merged and released - https://github.com/spilchen/yahoo_fantasy_api/pull/60
+        #leagues = yahoo_api.Yahoo().get_leagues(guild_id=guild_id)
+        
+        # This is a workaround until the above is merged and released
+        raw_api_json = yahoo_api.Yahoo().get_game(
+            guild_id=guild_id
+        ).yhandler.get(uri="users/games/leagues?use_login=1&is_available=1")
+        t = objectpath.Tree(raw_api_json)
+        leagues = list(t.execute('$..league'))
+
+
         options = []
         for league in leagues:
-            league_details = yahoo_api.Yahoo().get_settings_for_league(league_id=league, guild_id=guild_id)
+            # Uncomment this once this is merged and released - https://github.com/spilchen/yahoo_fantasy_api/pull/60
+            #league = yahoo_api.Yahoo().get_settings_for_league(league_id=league, guild_id=guild_id)
             options.append(
                 discord.SelectOption(
-                    label=league_details['name'],
-                    value=league_details['league_id']+"-"+league_details['game_code']+"-"+league_details['name'],
-                    description=league_details['game_code'] + " " + league_details['season']
+                    label=league['name'],
+                    value=league['league_id']+"-"+league['game_code']+"-"+league['name'],
+                    description=league['game_code'] + " " + league['season']
                 )
             )
         super().__init__(placeholder="Select a league", min_values=1, options=options)

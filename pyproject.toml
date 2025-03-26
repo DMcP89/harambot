@@ -37,7 +37,7 @@ psycopg2 = "^2.9.10"
 mysqlclient = "^2.2.7"
 yahoo-oauth = "^2.1.1"
 cryptography = ">=42.0.5,<44.0.0"
-yahoo-fantasy-api = {git = "https://github.com/DMcP89/yahoo_fantasy_api.git"}
+yahoo-fantasy-api = "^2.11.0"
 aiohttp = "^3.11.14"
 
 

@@ -1627,25 +1627,20 @@ docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2,!=7.3)", "s
 test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
 [[package]]
-name = "yahoo_fantasy_api"
-version = "2.12.0"
+name = "yahoo-fantasy-api"
+version = "2.11.0"
 description = "Python bindings to access the Yahoo! Fantasy APIs"
 optional = false
 python-versions = ">=3"
-files = []
-develop = false
+files = [
+    {file = "yahoo_fantasy_api-2.11.0.tar.gz", hash = "sha256:a4ddb2d1a107b16eab8a58cda9bc37f234aa9c725af53f6884a5a58d57b944ca"},
+]
 
 [package.dependencies]
 docopt = "*"
 objectpath = "*"
 pytz = "*"
 yahoo_oauth = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/DMcP89/yahoo_fantasy_api.git"
-reference = "HEAD"
-resolved_reference = "f9f9d8f30007b6948bb8797d9a98db73f8b9cf58"
 
 [[package]]
 name = "yahoo-oauth"
@@ -1762,4 +1757,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "2ff6d0b440d4d0c59a9073ac4c6bc6a528ff0d3334c3307b5fa3c15c57d339f7"
+content-hash = "09152e50f588e67e25d55c6c3d03d594bc88e9fa6bcfea47fbef524c44b9d6cd"
