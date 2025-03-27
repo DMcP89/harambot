@@ -36,7 +36,7 @@ cachetools = "^5.5.2"
 psycopg2 = "^2.9.10"
 mysqlclient = "^2.2.7"
 yahoo-oauth = "^2.1.1"
-cryptography = ">=42.0.5,<44.0.0"
+cryptography = ">=42.0.5,<45.0.0"
 yahoo-fantasy-api = "^2.11.0"
 aiohttp = "^3.11.14"
 
