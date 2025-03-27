@@ -10,11 +10,11 @@ from yahoo_oauth import OAuth2
 
 from harambot.database.models import Guild
 from harambot.config import settings
+from harambot.utils import get_cache_key
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
 cache = TTLCache(maxsize=1024, ttl=600)
 
 
@@ -90,6 +90,53 @@ class Yahoo:
                 )
             )
             return None
+    
+    @cached(cache, key=functools.partial(keys.hashkey, "get_game"))
+    @handle_oauth
+    def get_game(self, guild_id):
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            return gm
+        except Exception:
+            logger.exception(
+                "Error while fetching game details for league {}".format(
+                    self.league_id
+                )
+            )
+            return None
+
+
+    @cached(cache, key=functools.partial(keys.hashkey, "get_leagues"))
+    @handle_oauth
+    def get_leagues(self, guild_id):
+        logger.info("Fetching leagues for guild: %s", guild_id)
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            leagues = gm.league_ids(is_available=True)
+            return leagues
+        except Exception:
+            logger.exception(
+                "Error while fetching leagues for guild {}".format(guild_id)
+                )
+            return None
+
+
+    @cached(cache, key=functools.partial(keys.hashkey, "get_settings_for_league"))
+    @handle_oauth
+    def get_settings_for_league(self, league_id, guild_id):
+        try:
+            gm = game.Game(self.oauth, self.league_type)
+            current_league = gm.to_league(league_id)
+            return current_league.settings()
+        except Exception:
+            logger.exception(
+                "Error while fetching settings for league {} in guild {}".format(
+                    league_id,
+                    guild_id,
+                )
+            )
+            return None
+
 
     @cached(cache, key=functools.partial(keys.hashkey, "get_settings"))
     @handle_oauth
@@ -133,22 +180,31 @@ class Yahoo:
             )
             return None
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_standings"))
+    # @cached(cache, key=functools.partial(keys.hashkey, "get_standings"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_standings"))
     @handle_oauth
     def get_standings(self, guild_id):
         try:
             standings = []
             for idx, team in enumerate(self.league().standings()):
-                outcomes = team["outcome_totals"]
-                record = "{}-{}-{}".format(
-                    outcomes["wins"], outcomes["losses"], outcomes["ties"]
-                )
-                standings.append(
-                    {
-                        "place": str(idx + 1) + ". " + team["name"],
-                        "record": record,
-                    }
-                )
+                if "outcome_totals" in team:
+                    outcomes = team["outcome_totals"]
+                    record = "{}-{}-{}".format(
+                        outcomes["wins"], outcomes["losses"], outcomes["ties"]
+                    )
+                    standings.append(
+                        {
+                            "place": str(idx + 1) + ". " + team["name"],
+                            "record": record,
+                        }
+                    )
+                elif "points_for" in team:
+                    standings.append(
+                        {
+                            "place": str(idx + 1) + ". " + team["name"],
+                            "record": "{} - {}".format(team["points_for"],team["points_change"])
+                        }
+                    )
             return standings
         except Exception:
             logger.exception(
@@ -159,7 +215,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache)
+    @cached(cache, key=functools.partial(keys.hashkey, "get_roster"))
     @handle_oauth
     def get_roster(self, team_name, guild_id):
         try:
@@ -235,7 +291,7 @@ class Yahoo:
             )
             return None
 
-    @cached(cache)
+    @cached(cache, key=functools.partial(keys.hashkey, "get_matchups"))
     @handle_oauth
     def get_matchups(self, guild_id, week=None):
         try:
@@ -313,7 +369,9 @@ class Yahoo:
                         )
                     )
                     if accepted_trades:
-                        return accepted_trades[0]
+                        # return the last accepted trade
+                        return accepted_trades[-1]
+                        
             return None
         except Exception:
             logger.exception(

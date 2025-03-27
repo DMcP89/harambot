@@ -1,0 +1,53 @@
+{
+  "fantasy_content": {
+    "transaction": {
+      "transaction_key": "257.l.193.pt.1",
+      "type": "pending_trade",
+      "status": "accepted",
+      "trader_team_key": "257.l.193.t.2",
+      "tradee_team_key": "257.l.193.t.1",
+      "trade_proposed_time": 1310694832,
+      "trade_note": "This is a great trade, fo' shizzle.",
+      "players": {
+        "player": [
+          {
+            "player_key": "257.p.8261",
+            "player_id": 8261,
+            "name": {
+              "full": "Adrian Peterson",
+              "first": "Adrian",
+              "last": "Peterson",
+              "ascii_first": "Adrian",
+              "ascii_last": "Peterson"
+            },
+            "transaction_data": {
+              "type": "pending_trade",
+              "source_type": "team",
+              "source_team_key": "257.l.193.t.2",
+              "destination_type": "team",
+              "destination_team_key": "257.l.193.t.1"
+            }
+          },
+          {
+            "player_key": "257.p.9527",
+            "player_id": 9527,
+            "name": {
+              "full": "Arian Foster",
+              "first": "Arian",
+              "last": "Foster",
+              "ascii_first": "Arian",
+              "ascii_last": "Foster"
+            },
+            "transaction_data": {
+              "type": "pending_trade",
+              "source_type": "team",
+              "source_team_key": "257.l.193.t.1",
+              "destination_type": "team",
+              "destination_team_key": "257.l.193.t.2"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

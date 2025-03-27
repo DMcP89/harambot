@@ -1,8 +1,10 @@
 import discord
 import logging
+import objectpath
 
+from harambot import yahoo_api
 from harambot.config import settings
-from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes
+from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes, clear_guild_cache
 from harambot.ui.modals import ConfigModal
 from harambot.database.models import Guild
 
@@ -116,3 +118,48 @@ class ReportConfigView(discord.ui.View):
         return await interaction.response.send_message(
             f"Reports configured to go to {select.values[0].mention}"
         )
+
+class LeagueSelect(discord.ui.Select):
+    def __init__(self, guild_id):
+        # Uncomment this once this is merged and released - https://github.com/spilchen/yahoo_fantasy_api/pull/60
+        #leagues = yahoo_api.Yahoo().get_leagues(guild_id=guild_id)
+        
+        # This is a workaround until the above is merged and released
+        raw_api_json = yahoo_api.Yahoo().get_game(
+            guild_id=guild_id
+        ).yhandler.get(uri="users/games/leagues?use_login=1&is_available=1")
+        t = objectpath.Tree(raw_api_json)
+        leagues = list(t.execute('$..league'))
+
+
+        options = []
+        for league in leagues:
+            # Uncomment this once this is merged and released - https://github.com/spilchen/yahoo_fantasy_api/pull/60
+            #league = yahoo_api.Yahoo().get_settings_for_league(league_id=league, guild_id=guild_id)
+            options.append(
+                discord.SelectOption(
+                    label=league['name'],
+                    value=league['league_id']+"-"+league['game_code']+"-"+league['name'],
+                    description=league['game_code'] + " " + league['season']
+                )
+            )
+        super().__init__(placeholder="Select a league", min_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        logger.info(f"League selected: {self.values}")
+        guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
+        guild.league_id = self.values[0].split("-")[0]
+        guild.league_type = self.values[0].split("-")[1]
+        league_name = self.values[0].split("-")[2]
+        guild.save()
+        clear_guild_cache(guild.guild_id)
+
+        await interaction.response.send_message(
+            f"League set to {league_name}"
+        )
+
+class LeagueConfigView(discord.ui.View):
+    def __init__(self):
+        logger.info("LeagueConfigView initialized")
+        super().__init__()
+

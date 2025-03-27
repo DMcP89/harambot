@@ -1,6 +1,6 @@
 import discord
 import logging
-
+import json
 
 from discord.ext import commands
 from discord import app_commands
@@ -35,9 +35,10 @@ class YahooCog(commands.Cog):
     async def standings(self, interaction: discord.Interaction):
         logger.info("Command:Standings called in %i", interaction.guild_id)
         await interaction.response.defer()
+        scoring_type = self.yahoo_api.get_settings(guild_id=interaction.guild_id)["scoring_type"]
         embed = discord.Embed(
             title="Standings",
-            description="Team Name\n W-L-T",
+            description="W-L-T" if scoring_type == "head" else "Team \nPoints For - Points Change",
             color=0xEEE657,
         )
         standings = self.yahoo_api.get_standings(guild_id=interaction.guild_id)
@@ -86,6 +87,9 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
+        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+            await interaction.followup.send("Rosters not available yet")
+            return
         roster = self.yahoo_api.get_roster(
             guild_id=interaction.guild_id, team_name=team_name
         )
@@ -99,6 +103,7 @@ class YahooCog(commands.Cog):
             await interaction.followup.send(embed=embed)
         else:
             await interaction.followup.send(self.error_message)
+    
 
     @app_commands.command(
         name="trade",
@@ -111,10 +116,10 @@ class YahooCog(commands.Cog):
             self.yahoo_api.get_settings(guild_id=interaction.guild_id)[
                 "trade_ratify_type"
             ]
-            != "vote"
+            == "none"
         ):
             await interaction.followup.send(
-                "Trade command only available for leagues with vote ratification"
+                "Trade command only available for leagues with vote or commissioner ratification"
             )
             return
         latest_trade = self.yahoo_api.get_latest_trade(
@@ -126,86 +131,33 @@ class YahooCog(commands.Cog):
             )
             return
 
-        teams = self.yahoo_api.get_teams(guild_id=interaction.guild_id)
-        if teams is None:
-            await interaction.followup.send(self.error_message)
-            return
-        trader = teams[latest_trade["trader_team_key"]]
-        tradee = teams[latest_trade["tradee_team_key"]]
-        managers = [trader["name"], tradee["name"]]
+        trader = self.yahoo_api.league().to_team(latest_trade["trader_team_key"]).details()["name"]
+        tradee = self.yahoo_api.league().to_team(latest_trade["tradee_team_key"]).details()["name"]
 
-        player_set0 = []
-        player_set0_details = ""
+        trader_player_names = []
         for player in latest_trade["trader_players"]:
             if player:
-                player_set0.append(player["name"])
-                api_details = (
-                    self.get_player_text(
-                        self.yahoo_api.get_player_details(
-                            player["name"], guild_id=interaction.guild_id
-                        )
-                    )
-                    + "\n"
-                )
-                if api_details:
-                    player_set0_details = player_set0_details + api_details
-                else:
-                    await interaction.followup.send(self.error_message)
-                    return
+                trader_player_names.append(player["name"])
 
-        player_set1 = []
-        player_set1_details = ""
+        tradee_player_names = []
         for player in latest_trade["tradee_players"]:
-            player_set1.append(player["name"])
-            player_details = self.yahoo_api.get_player_details(
-                player["name"], guild_id=interaction.guild_id
-            )
-            if player_details is None:
-                await interaction.followup.send(self.error_message)
-                return
-            api_details = self.get_player_text(player_details) + "\n"
-            if api_details:
-                player_set1_details = player_set1_details + api_details
-            else:
-                await interaction.followup.send(self.error_message)
-                return
+            tradee_player_names.append(player["name"])
 
-            confirm_trade_message = "{} sends {} to {} for {}".format(
-                managers[0],
-                ", ".join(player_set0),
-                managers[1],
-                ", ".join(player_set1),
-            )
-            announcement = "There's collusion afoot!\n"
-            embed = discord.Embed(
-                title="The following trade is up for approval:",
-                description=confirm_trade_message,
-                color=0xEEE657,
-            )
-            embed.add_field(
-                name="{} sends:".format(managers[0]),
-                value=player_set0_details,
-                inline=False,
-            )
-            embed.add_field(
-                name="to {} for:".format(managers[1]),
-                value=player_set1_details,
-                inline=False,
-            )
-            embed.add_field(
-                name="Voting",
-                value=" Click :white_check_mark: for yes,\
-                     :no_entry_sign: for no",
-            )
-            response_message = await interaction.followup.send(
-                content=announcement, embed=embed
-            )
-            #            response_message = await interaction.original_response()
-            yes_emoji = "\U00002705"
-            no_emoji = "\U0001F6AB"
-            await response_message.add_reaction(yes_emoji)
-            await response_message.add_reaction(no_emoji)
+        confirm_trade_message = "\n{} sends {} to {} for {}".format(
+            trader,
+            ", ".join(trader_player_names),
+            tradee,
+            ", ".join(tradee_player_names),
+        )
+        trade_poll = discord.Poll(
+                question="The following trade is up for approval:{}".format(confirm_trade_message),
+                duration=timedelta(hours=24),
+                )
+        trade_poll.add_answer(text="Yes")
+        trade_poll.add_answer(text="No")
 
+        await interaction.followup.send(poll=trade_poll)
+        
     async def stats_autocomplete(
         self,
         interaction: discord.Interaction,
@@ -327,9 +279,13 @@ class YahooCog(commands.Cog):
             )
         )
         await interaction.response.defer()
+        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+            await interaction.followup.send("Matchups not available yet")
+            return
         week, details = self.yahoo_api.get_matchups(
             guild_id=interaction.guild_id, week=week
         )
+            
         if details:
             embed = discord.Embed(
                 title="Matchups for Week {}".format(week),
