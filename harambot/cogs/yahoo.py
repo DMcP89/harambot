@@ -87,7 +87,8 @@ class YahooCog(commands.Cog):
             description="",
             color=0xEEE657,
         )
-        if self.yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
+        settings = self.yahoo_api.get_settings(guild_id=interaction.guild_id)
+        if "draft_status" in settings and settings["draft_status"] == "predraft":
             await interaction.followup.send("Rosters not available yet")
             return
         roster = self.yahoo_api.get_roster(
@@ -95,6 +96,8 @@ class YahooCog(commands.Cog):
         )
         if roster:
             for player in roster:
+                if len(roster) > 25 and player["selected_position"] in ["IR", "IL"]:
+                    continue
                 embed.add_field(
                     name=player["selected_position"],
                     value=player["name"],
