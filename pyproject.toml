@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "harambot"
-version = "0.5.0"
+version = "0.5.1"
 description = "A Yahoo Fantasy Sports bot for Discord"
 authors = ["DMcP89 <davemcpherson@wochstudios.com>"]
 license = "MIT"
@@ -36,7 +36,7 @@ cachetools = "^5.5.2"
 psycopg2 = "^2.9.10"
 mysqlclient = "^2.2.7"
 yahoo-oauth = "^2.1.1"
-cryptography = ">=42.0.5,<44.0.0"
+cryptography = "^44.0.2"
 yahoo-fantasy-api = "^2.11.0"
 aiohttp = "^3.11.14"
 

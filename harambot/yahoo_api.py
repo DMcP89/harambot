@@ -221,9 +221,7 @@ class Yahoo:
         try:
             team_details = self.league().get_team(team_name)
             if team_details:
-                return team_details[team_name].roster(
-                    self.league().current_week()
-                )
+                return team_details[team_name].roster()
             else:
                 return None
         except Exception:
