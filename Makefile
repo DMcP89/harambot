@@ -41,7 +41,10 @@ run-docker:
 	 -e YAHOO_SECRET=${YAHOO_SECRET}\
 	 -e DATABASE_URL=${DATABASE_URL}\
 	 -e HARAMBOT_KEY=${HARAMBOT_KEY}\
-	 -e RUN_MIGRATIONS=${RUN_MIGRATIONS}\
+	 -e RUN_MIGRATIONS="false"\
+	 -e LOGLEVEL="INFO"\
+	 -e WEBHOOK_AVATAR_URL="https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot-1.jpg"\
+	 -e VERSION=${TAG}\
 	 -e PORT=10000\
 	  --rm ${MODULE}:${TAG}
 

@@ -29,6 +29,7 @@ def yahoo_auth(code):
             "grant_type": "authorization_code",
         },
         headers={
+            "User-Agent": "HaramBot",
             "Authorization": "Basic {0}".format(encoded_creds.decode("utf-8")),
             "Content-Type": "application/x-www-form-urlencoded",
         },
