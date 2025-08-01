@@ -136,10 +136,15 @@ class Meta(commands.Cog):
     async def reports_check_error(
         self, interaction: discord.Interaction, error
     ):
-        await interaction.response.send_message(
-            "Grant Harambot the Manage Webhooks permission to use this command"
-        )
-    
+        if isinstance(error, app_commands.MissingPermissions):
+            await interaction.response.send_message(
+                "Grant Harambot the Manage Webhooks permission to use this command"
+            )
+        elif isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message(
+                "This guild is not configured for Harambot. Please run `/configure` first."
+            )
+
     @app_commands.command(
             name="league",
             description="Set which league harambot should use for commands"
