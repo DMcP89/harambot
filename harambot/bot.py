@@ -41,7 +41,7 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     await bot.add_cog(Meta(bot))
-    await bot.add_cog(YahooCog(bot, settings.yahoo_key, settings.yahoo_secret))
+    await bot.add_cog(YahooCog(bot))
     await bot.add_cog(Misc(bot))
     server = WebServer(bot)
     await bot.add_cog(server)

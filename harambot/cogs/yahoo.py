@@ -22,10 +22,8 @@ class YahooCog(commands.Cog):
         "I'm having trouble getting that right now please try again later"
     )
 
-    def __init__(self, bot, KEY, SECRET):
+    def __init__(self, bot):
         self.bot = bot
-        self.KEY = KEY
-        self.SECRET = SECRET
         self.yahoo_api = Yahoo()
 
     @app_commands.command(
