@@ -8,7 +8,7 @@ from discord.ext import commands
 from harambot.cogs.meta import Meta
 from harambot.cogs.misc import Misc
 from harambot.cogs.yahoo import YahooCog
-from harambot.cogs.webserver import WebServer
+from harambot.services.webserver import WebServer
 from harambot.config import settings
 from harambot.database.models import Guild
 from harambot.database.migrations import migrations
@@ -44,7 +44,6 @@ async def on_ready():
     await bot.add_cog(YahooCog(bot))
     await bot.add_cog(Misc(bot))
     server = WebServer(bot)
-    await bot.add_cog(server)
     bot.loop.create_task(server.webserver())
 
     if not Guild.table_exists():
