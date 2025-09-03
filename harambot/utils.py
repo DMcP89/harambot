@@ -132,7 +132,7 @@ def clear_guild_cache(guild_id):
     for key in guild_cache_keys:
         yahoo_api.cache.pop(key, None)
 
-def get_player_embed(self, player):
+def get_player_embed(player):
     embed = Embed(
         title=player["name"]["full"],
         description="#" + player["uniform_number"],
