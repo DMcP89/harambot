@@ -62,10 +62,11 @@ def poll_transactions(guild: Guild):
                 time.sleep(
                     1
                 )  # sleep for 1 second between transactions to avoid rate limits
-    except Exception:
+    except Exception as e:
         logger.info(
             "Error fetching transactions for {}".format(guild.guild_id)
         )
+        logger.error(e)
 
 
 def report_service():
