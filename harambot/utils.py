@@ -131,3 +131,28 @@ def clear_guild_cache(guild_id):
     ]
     for key in guild_cache_keys:
         yahoo_api.cache.pop(key, None)
+
+def get_player_embed(player):
+    embed = Embed(
+        title=player["name"]["full"],
+        description="#" + player["uniform_number"],
+        color=0xEEE657,
+    )
+    embed.add_field(name="Postion", value=player["primary_position"])
+    embed.add_field(name="Team", value=player["editorial_team_abbr"])
+    if "bye_weeks" in player:
+        embed.add_field(name="Bye", value=player["bye_weeks"]["week"])
+    embed.add_field(name="Owner", value=player["owner"])
+    embed.set_thumbnail(url=player["image_url"])
+    if "total_points" in player["stats"]:
+        embed.add_field(
+            name="Total Points",
+            value=player["stats"]["total_points"],
+            inline=False,
+        )
+    if len(player["stats"].items()) < 20:
+        for key, value in player["stats"].items():
+            if key == "total_points":
+                continue
+            embed.add_field(name=key, value=value)
+    return embed

@@ -36,7 +36,7 @@ embed_functions_dict = {
 def poll_transactions(guild: Guild):
     logger.info("Polling transactions for {}".format(guild.guild_id))
     YahooAPI = Yahoo()
-    ts = datetime.now() - timedelta(minutes=5)
+    ts = datetime.now() - timedelta(minutes=settings.TRANSACTION_REPORT_LOOKBACK)
     try:
         transactions = YahooAPI.get_transactions(
             timestamp=ts.timestamp(), guild_id=guild.guild_id
@@ -62,10 +62,11 @@ def poll_transactions(guild: Guild):
                 time.sleep(
                     1
                 )  # sleep for 1 second between transactions to avoid rate limits
-    except Exception:
+    except Exception as e:
         logger.info(
             "Error fetching transactions for {}".format(guild.guild_id)
         )
+        logger.error(e)
 
 
 def report_service():

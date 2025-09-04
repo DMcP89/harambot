@@ -61,3 +61,16 @@ run-docker-dev:
 	 -e HARAMBOT_KEY=${HARAMBOT_KEY}\
 	 -e PORT=10000\
 	 --cpu-period=50000 --cpu-quota=25000 --memory=512m  ${MODULE}-dev:${TAG}
+
+publish:
+	@echo "${BLUE}Publishing ${MODULE}:${TAG}"
+	@poetry build
+	@poetry publish -r testpypi
+	@poetry publish 
+	$(MAKE) build-image
+	@docker tag ${MODULE}:${TAG} dmcp89/${MODULE}:${TAG}
+	@docker tag ${MODULE}:${TAG} dmcp89/latest
+	@docker push dmcp89/${MODULE}:${TAG}
+	@docker push dmcp89/${MODULE}:latest
+
+
