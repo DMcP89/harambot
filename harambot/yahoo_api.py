@@ -43,6 +43,16 @@ class Yahoo:
                 store_file=False,
                 **model_to_dict(guild),
             )
+            try:
+                if not self.oauth.token_is_valid():
+                    self.oauth.refresh_access_token()
+            except Exception:
+                logger.exception(
+                    "Error while refreshing access token for league: {}".format(
+                        self.league_id
+                    )
+                )
+                return None
             self.league_id = guild.league_id
             self.league_type = guild.league_type
             return f(self, *args, **kwargs)
@@ -50,46 +60,20 @@ class Yahoo:
         return wrapper
 
     def league(self):
-        try:
-            if not self.oauth.token_is_valid():
-                self.oauth.refresh_access_token()
-        except Exception:
-            logger.exception(
-                "Error while refreshing access token for league: {}".format(
-                    self.league_id
-                )
-            )
-            return None
-
         if (
             self.current_league
-            and self.league_id == self.current_league.league_id
+            and self.league_id == self.current_league.league_id.split(".l.")[-1]
         ):
             return self.current_league
-        try:
-            gm = game.Game(self.oauth, self.league_type)
-            try:
-                for id in gm.league_ids():
-                    if self.league_id in id:
-                        self.league_id = id
-                        break
-                self.current_league = gm.to_league(self.league_id)
-                return self.current_league
-            except (RuntimeError, AssertionError):
-                logger.error(
-                    "Error fetching league ids from Yahoo, trying with constructed league id"
-                )
-                self.current_league = gm.to_league(
-                    gm.game_id() + ".l." + self.league_id
-                )
-                return self.current_league
-        except Exception:
-            logger.exception(
-                "Error while fetching league details for league {}".format(
-                    self.league_id
-                )
+        else:
+            logger.error(
+                "Error fetching league ids from Yahoo, trying with constructed league id"
             )
-            return None
+            gm = game.Game(self.oauth, self.league_type)
+            self.current_league = gm.to_league(
+                gm.game_id() + ".l." + self.league_id
+            )
+            return self.current_league
     
     @cached(cache, key=functools.partial(keys.hashkey, "get_game"))
     @handle_oauth
