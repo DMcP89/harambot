@@ -32,7 +32,7 @@ build-image:
 	@docker build --no-cache -t ${MODULE}:${TAG} -f ./docker/Dockerfile .
 
 run-docker:
-	@echo "${BLUE}Running docker image.."
+	@echo "${BLUE}:Running docker image.."
 	@echo "name: ${MODULE}"
 	@echo "tag: ${MODULE}:${TAG}${NC}\n"
 	@docker run --name ${MODULE}\
@@ -46,7 +46,7 @@ run-docker:
 	 -e WEBHOOK_AVATAR_URL="https://raw.githubusercontent.com/DMcP89/harambot/main/assests/harambot-1.jpg"\
 	 -e VERSION=${TAG}\
 	 -e PORT=10000\
-	  --rm ${MODULE}:${TAG}
+	  -d --restart unless-stopped ${MODULE}:${TAG}
 
 run-docker-dev:
 	@echo "${BLUE}Running docker image.."
