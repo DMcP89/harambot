@@ -1,11 +1,18 @@
-# The Config Endpoint
+ # The Config Endpoint
  
  The Config Endpoint is used to configure guilds for Harambot via REST API calls instead of through commands in Discord. Functionally it performs the same logic as the `on_submit` function of the `ConfigModal` in `harambot/ui/modals.py`, minus the Discord-specific interactions.
+
+## Authentication
+All requests to the `/api/` endpoints must include an `X-API-Key` header with a valid API key.
+
+**Example Header:**
+```
+X-API-Key: your_api_key_here
+```
 
 ## Endpoint
 
  The endpoint is located at `/api/config/<guild_id>` and supports both GET and POST methods.
-
  ## GET Method
 The GET method retrieves the current configuration for the specified guild. It requires the `guild_id` as a URL parameter.
 

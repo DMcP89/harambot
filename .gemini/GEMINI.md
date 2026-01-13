@@ -91,3 +91,8 @@ The `pre-commit` configuration is in `.pre-commit-config.yaml`. To install the h
 ```bash
 pre-commit install
 ```
+
+### Making changes
+- When making changes, ensure to update or add tests in the `tests/` directory to cover new functionality or bug fixes.
+- Follow the existing code style and conventions used in the codebase.
+- Always produce a clear and concise plan that can be reviewed and approved before implementing any changes.

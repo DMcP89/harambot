@@ -90,8 +90,16 @@ class WebServer:
                 {"message": "Guild created and configured successfully."}
             )
 
+    @web.middleware
+    async def auth_middleware(self, request, handler):
+        if request.path.startswith("/api/"):
+            api_key = request.headers.get("X-API-Key")
+            if not api_key or api_key != settings.api_key:
+                return web.json_response({"error": "Unauthorized"}, status=401)
+        return await handler(request)
+
     async def webserver(self):
-        app = web.Application()
+        app = web.Application(middlewares=[self.auth_middleware])
         app.router.add_get("/", self.handler)
         app.router.add_get("/guilds", self.guilds_handler)
         app.router.add_get("/api/config/{guild_id}", self.config_get_handler)
