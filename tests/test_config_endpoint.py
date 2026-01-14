@@ -24,8 +24,7 @@ async def cli(aiohttp_client, mock_bot):
     server = WebServer(mock_bot)
     app = web.Application(middlewares=[server.auth_middleware])
     app["bot"] = mock_bot
-    app.router.add_get("/", server.handler)
-    app.router.add_get("/guilds", server.guilds_handler)
+    app.router.add_get("/status", server.status_handler)
     app.router.add_get("/api/config/{guild_id}", server.config_get_handler)
     app.router.add_post("/api/config/{guild_id}", server.config_post_handler)
     return await aiohttp_client(app)
@@ -33,20 +32,11 @@ async def cli(aiohttp_client, mock_bot):
 
 @pytest.mark.asyncio
 async def test_get_status(cli):
-    resp = await cli.get("/")
+    resp = await cli.get("/status")
     assert resp.status == 200
     text = await resp.text()
     assert "Harambot" in text
     assert "online" in text
-
-
-@pytest.mark.asyncio
-async def test_get_guilds(cli):
-    resp = await cli.get("/guilds")
-    assert resp.status == 200
-    text = await resp.text()
-    assert "Guild1" in text
-    assert "Guild2" in text
 
 
 @pytest.mark.asyncio

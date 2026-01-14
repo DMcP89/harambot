@@ -17,7 +17,7 @@ class WebServer:
     def __init__(self, bot):
         self.bot = bot
 
-    async def handler(self, request):
+    async def status_handler(self, request):
         bot = request.config_dict["bot"]
         status = (
             f"Harambot\n"
@@ -27,10 +27,6 @@ class WebServer:
         )
         return web.Response(text=status)
 
-    async def guilds_handler(self, request):
-        bot = request.config_dict["bot"]
-        guilds = "\n".join([guild.name for guild in bot.guilds])
-        return web.Response(text=guilds)
 
     async def config_get_handler(self, request):
         guild_id = request.match_info.get("guild_id")
@@ -100,8 +96,7 @@ class WebServer:
 
     async def webserver(self):
         app = web.Application(middlewares=[self.auth_middleware])
-        app.router.add_get("/", self.handler)
-        app.router.add_get("/guilds", self.guilds_handler)
+        app.router.add_get("/status", self.status_handler)
         app.router.add_get("/api/config/{guild_id}", self.config_get_handler)
         app.router.add_post("/api/config/{guild_id}", self.config_post_handler)
         app["bot"] = self.bot
