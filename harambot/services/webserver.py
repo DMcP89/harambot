@@ -3,6 +3,7 @@ from yahoo_fantasy_api import oauth2_logger
 from harambot.config import settings
 from harambot.database.models import Guild
 from harambot.utils import yahoo_auth
+from harambot.yahoo_api import Yahoo
 
 import logging
 
@@ -11,6 +12,8 @@ oauth2_logger.cleanup()
 
 logger = logging.getLogger("discord.harambot.services.webserver")
 logger.setLevel(logging.INFO)
+
+yahoo_api = Yahoo()
 
 
 class WebServer:
@@ -86,6 +89,16 @@ class WebServer:
                 {"message": "Guild created and configured successfully."}
             )
 
+    async def scoreboard_handler(self, request):
+        guild_id = request.match_info.get("guild_id")
+        matchups = yahoo_api.get_matchups(guild_id)
+        if not matchups:
+            return web.json_response(
+                {"error": "Guild not found or Yahoo API error"}, status=404
+            )
+        week, details = matchups
+        return web.json_response({"week": week, "matchups": details})
+
     @web.middleware
     async def auth_middleware(self, request, handler):
         if request.path.startswith("/api/"):
@@ -99,6 +112,7 @@ class WebServer:
         app.router.add_get("/status", self.status_handler)
         app.router.add_get("/api/config/{guild_id}", self.config_get_handler)
         app.router.add_post("/api/config/{guild_id}", self.config_post_handler)
+        app.router.add_get("/api/scoreboard/{guild_id}", self.scoreboard_handler)
         app["bot"] = self.bot
         runner = web.AppRunner(app)
         await runner.setup()
