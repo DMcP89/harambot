@@ -91,13 +91,12 @@ class WebServer:
 
     async def scoreboard_handler(self, request):
         guild_id = request.match_info.get("guild_id")
-        matchups = yahoo_api.get_matchups(guild_id)
+        matchups = yahoo_api.get_matchups(guild_id=guild_id)
         if not matchups:
             return web.json_response(
                 {"error": "Guild not found or Yahoo API error"}, status=404
             )
-        week, details = matchups
-        return web.json_response({"week": week, "matchups": details})
+        return web.json_response({"matchups": list(matchups)})
 
     @web.middleware
     async def auth_middleware(self, request, handler):
