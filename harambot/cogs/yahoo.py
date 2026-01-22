@@ -222,20 +222,11 @@ class YahooCog(commands.Cog):
         if yahoo_api.get_settings(guild_id=interaction.guild_id)["draft_status"] == "predraft":
             await interaction.followup.send("Matchups not available yet")
             return
-        week, details = yahoo_api.get_matchups(
+        matchups = yahoo_api.get_matchups(
             guild_id=interaction.guild_id, week=week
         )
-            
-        if details:
-            embed = discord.Embed(
-                title="Matchups for Week {}".format(week),
-                description="",
-                color=0xEEE657,
-            )
-            for detail in details:
-                embed.add_field(
-                    name=detail["name"], value=detail["value"], inline=False
-                )
+        embed = utils.get_matchups_embed(week, matchups)
+        if embed:
             await interaction.followup.send(embed=embed)
         else:
             await interaction.followup.send(self.error_message)

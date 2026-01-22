@@ -156,3 +156,60 @@ def get_player_embed(player):
                 continue
             embed.add_field(name=key, value=value)
     return embed
+
+def get_matchup_details(team):
+    team_name = team[0][2]["name"]
+    team_details = "***{}*** \n".format(team_name)
+
+    actual_points = team[1]["team_points"]["total"]
+    team_details += "Score: {} \n".format(actual_points)
+
+    if "team_projected_points" in team[1]:
+        projected_points = team[1]["team_projected_points"]["total"]
+        team_details += "Projected Score: {} \n".format(projected_points)
+
+    if "win_probability" in team[1]:
+        win_probability = "{:.0%}".format(team[1]["win_probability"])
+        team_details += "Win Probability: {} \n".format(win_probability)
+
+    if "team_remaining_games" in team[1]:
+        remaining_games = team[1]["team_remaining_games"]["total"][
+            "remaining_games"
+        ]
+        live_games = team[1]["team_remaining_games"]["total"]["live_games"]
+        completed_games = team[1]["team_remaining_games"]["total"][
+            "completed_games"
+        ]
+        team_details += "Remaining Games: {} \n".format(remaining_games)
+        team_details += "Live Games: {} \n".format(live_games)
+        team_details += "Completed Games: {} \n".format(completed_games)
+
+    return {"name": team_name, "text": team_details}
+
+def get_matchups_embed(week, matchups):
+    details = []
+    divider = "--------------------------------------"
+    for matchup in matchups:
+        team1_details = get_matchup_details(matchup["0"]["team"])
+        team2_details = get_matchup_details(matchup["1"]["team"])
+        details.append(
+            {
+                "name": "{} vs {}".format(
+                    team1_details["name"], team2_details["name"]
+                ),
+                "value": team1_details["text"]
+                + team2_details["text"]
+                + divider,
+            }
+        )
+    if details:
+        embed = Embed(
+            title="Matchups for Week {}".format(week),
+            description="",
+            color=0xEEE657,
+        )
+        for detail in details:
+            embed.add_field(
+                name=detail["name"], value=detail["value"], inline=False
+            )
+    return embed
