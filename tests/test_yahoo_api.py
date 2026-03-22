@@ -49,19 +49,18 @@ def test_get_matchups(api):
     get_matchups_func = api.get_matchups
     while hasattr(get_matchups_func, "__wrapped__"):
         get_matchups_func = get_matchups_func.__wrapped__
-    week, details = get_matchups_func(api, guild_id="mock")
-    assert isinstance(details, list)
-    assert week == "1"
+    details = get_matchups_func(api, guild_id="mock")
+    length = sum(1 for x in details)
+    assert length == 6
 
 
 def test_get_matchups_category(category_api):
     get_matchups_func = category_api.get_matchups
     while hasattr(get_matchups_func, "__wrapped__"):
         get_matchups_func = get_matchups_func.__wrapped__
-    week, details = get_matchups_func(category_api, guild_id="mock")
-    assert isinstance(details, list)
-    assert len(details) == 7
-    assert week == "1"
+    details = get_matchups_func(category_api, guild_id="mock")
+    length = sum(1 for x in details)
+    assert length == 7
 
 
 def test_get_latest_trade(api):

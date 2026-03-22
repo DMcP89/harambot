@@ -30,13 +30,14 @@ async def test_scoreboard_unauthorized(cli):
 @pytest.mark.asyncio
 @patch("harambot.services.webserver.yahoo_api")
 async def test_scoreboard_success(mock_yahoo_api, cli):
-    mock_yahoo_api.get_matchups.return_value = ("1", [{"name": "Team A vs Team B", "value": "Details"}])
+    mock_yahoo_api.get_matchups.return_value = ([{"name": "Team A vs Team B", "value": "Details"}])
     
     resp = await cli.get("/api/scoreboard/123", headers={"X-API-Key": "test_key"})
     assert resp.status == 200
     data = await resp.json()
-    assert data["week"] == "1"
+    print(data)
     assert len(data["matchups"]) == 1
+
     assert data["matchups"][0]["name"] == "Team A vs Team B"
 
 @pytest.mark.asyncio
