@@ -11,6 +11,10 @@ from yahoo_oauth import OAuth2
 from harambot.database.models import Guild
 from harambot.config import settings
 from harambot.utils import get_cache_key
+from harambot.handlers.api_handler import APIHandler
+
+logging.setLoggerClass(logging.Logger)
+logging.getLogger("yahoo_oauth").setLevel("INFO")
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
@@ -18,7 +22,7 @@ logger = logging.getLogger("discord.harambot.yahoo_api")
 cache = TTLCache(maxsize=1024, ttl=600)
 
 
-class Yahoo:
+class Yahoo (APIHandler):
     league_id = None
     league_type = None
     current_league = None
@@ -136,6 +140,7 @@ class Yahoo:
             )
             return None
 
+
     @cached(cache, key=functools.partial(keys.hashkey, "get_teams"))
     @handle_oauth
     def get_teams(self, guild_id):
@@ -164,10 +169,11 @@ class Yahoo:
             )
             return None
 
-    # @cached(cache, key=functools.partial(keys.hashkey, "get_standings"))
     @cached(cache, key=functools.partial(get_cache_key, "get_standings"))
     @handle_oauth
     def get_standings(self, guild_id):
+        scoring_type = self.get_settings(guild_id=guild_id)["scoring_type"]
+        description = "W-L-T" if scoring_type == "head" else "Team \nPoints For - Points Change"
         try:
             standings = []
             for idx, team in enumerate(self.league().standings()):
@@ -189,7 +195,7 @@ class Yahoo:
                             "record": "{} - {}".format(team["points_for"],team["points_change"])
                         }
                     )
-            return standings
+            return description, standings
         except Exception:
             logger.exception(
                 "Error while fetching standings for league {} in guild {}".format(
@@ -197,7 +203,13 @@ class Yahoo:
                     guild_id,
                 )
             )
-            return None
+            return None, None
+
+    @cached(cache, key=functools.partial(keys.hashkey, "roster_check"))
+    @handle_oauth
+    def roster_check(self, guild_id):
+        settings = self.get_settings(guild_id=guild_id)
+        return settings and settings.get("draft_status") != "predraft"
 
     @cached(cache, key=functools.partial(keys.hashkey, "get_roster"))
     @handle_oauth
@@ -273,6 +285,12 @@ class Yahoo:
             )
             return None
 
+    @cached(cache, key=functools.partial(keys.hashkey, "matchups_check"))
+    @handle_oauth
+    def matchups_check(self, guild_id):
+        settings = self.get_settings(guild_id=guild_id)
+        return settings and settings.get("draft_status") != "predraft"
+
     @cached(cache, key=functools.partial(keys.hashkey, "get_matchups"))
     @handle_oauth
     def get_matchups(self, guild_id, week=None):
@@ -292,6 +310,10 @@ class Yahoo:
                 e,
             )
 
+    @cached(cache, key=functools.partial(keys.hashkey, "trade_check"))
+    @handle_oauth
+    def trade_check(self, guild_id):
+        return self.get_settings(guild_id=guild_id)["trade_ratify_type"] == "none"
 
     @cached(cache, key=functools.partial(keys.hashkey, "get_latest_trade"))
     @handle_oauth
@@ -308,7 +330,25 @@ class Yahoo:
                     )
                     if accepted_trades:
                         # return the last accepted trade
-                        return accepted_trades[-1]
+                        latest_trade = accepted_trades[-1]
+                        trader = yahoo_api.league().to_team(latest_trade["trader_team_key"]).details()["name"]
+                        tradee = yahoo_api.league().to_team(latest_trade["tradee_team_key"]).details()["name"]
+                        trader_player_names = []
+                        for player in latest_trade["trader_players"]:
+                            if player:
+                                trader_player_names.append(player["name"])
+
+                        tradee_player_names = []
+                        for player in latest_trade["tradee_players"]:
+                            tradee_player_names.append(player["name"])
+
+                        confirm_trade_message = "\n{} sends {} to {} for {}".format(
+                            trader,
+                            ", ".join(trader_player_names),
+                            tradee,
+                            ", ".join(tradee_player_names),
+                        )
+                        return confirm_trade_message
                         
             return None
         except Exception:
@@ -318,6 +358,7 @@ class Yahoo:
                 )
             )
             return None
+    
 
     @cached(cache, key=functools.partial(keys.hashkey, "get_transactions"))
     @handle_oauth
