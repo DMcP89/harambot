@@ -86,9 +86,19 @@ def beta040_migrations():
             transaction_polling_webhook,
         ),
     )
+def alpah100_migrations():
+    league_provider = TextField(default="yahoo")
+    xoauth_yahoo_guid = TextField(null=True)
+    migrate(
+        migrator.add_column(
+            "guild", "league_provider", league_provider
+        ),
+        migrator.drop_column("guild", "xoauth_yahoo_guid")
+    )
 
 
 # Migration dictionary
 migrations = {}
 migrations["0.0.3-Beta"] = beta003_migrations
 migrations["0.4.0-Beta"] = beta040_migrations
+migrations["1.0.0-Alpha"] = alpah100_migrations

@@ -1,6 +1,7 @@
 import discord
 import logging
 import json
+import functools
 
 from discord.ext import commands
 from discord import app_commands
@@ -8,30 +9,64 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 
 from harambot.yahoo_api import Yahoo
+from harambot.database.models import Guild
 from harambot import utils
 
 logger = logging.getLogger("discord.harambot.cogs.yahoo")
 
 yahoo_api = Yahoo()
+
+handlers = {
+        "yahoo": Yahoo(),
+}
+
+
 class YahooCog(commands.Cog):
 
     error_message = (
         "I'm having trouble getting that right now please try again later"
     )
     
+    api_handler = None
 
     def __init__(self, bot):
         self.bot = bot
-        
+
+            
+    def api_handler_check(f):
+        @functools.wraps(f)
+        async def wrapper(self, interaction: discord.Interaction, *args, **kwargs):
+            logger.info("Setting api handler")
+            guild = Guild.get_or_none(Guild.guild_id == str(interaction.guild_id))
+            if guild is None:
+                logger.error("Guild %i not found in database", interaction.guild_id)
+                await interaction.response.send_message(
+                    "Guild not found in database"
+                )
+                return
+            handler = handlers.get(guild.league_provider)
+            if handler:
+                self.api_handler = handler
+                logger.info("Set api handler to %s for guild %i", guild.league_provider, interaction.guild_id)
+                logger.info ("API Handler: %s", self.api_handler)
+                await f(self, interaction, *args, **kwargs)
+            else:
+                logger.error("No handler found for league provider %s in guild %i", guild.league_provider, interaction.guild_id)
+                await interaction.response.send_message(
+                    "League provider not supported"
+                )
+        return wrapper
+
 
     @app_commands.command(
         name="standings",
         description="Returns the current standings of your league",
     )
+    @api_handler_check
     async def standings(self, interaction: discord.Interaction):
         logger.info("Command:Standings called in %i", interaction.guild_id)
         await interaction.response.defer()
-        description, standings = yahoo_api.get_standings(guild_id=interaction.guild_id)
+        description, standings = self.api_handler.get_standings(guild_id=interaction.guild_id)
         if standings:
             embed = discord.Embed(
                     title="Standings",
