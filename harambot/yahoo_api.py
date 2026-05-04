@@ -37,9 +37,10 @@ class Yahoo (APIHandler):
             guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
             if guild is None:
                 logger.error(
-                    "Guild with id %i does not exist in the database",
+                    "Guild with id %s does not exist in the database",
                     guild_id,
                 )
+
                 return None
             self.oauth = OAuth2(
                 settings.yahoo_key,
@@ -331,16 +332,15 @@ class Yahoo (APIHandler):
                     if accepted_trades:
                         # return the last accepted trade
                         latest_trade = accepted_trades[-1]
-                        trader = yahoo_api.league().to_team(latest_trade["trader_team_key"]).details()["name"]
-                        tradee = yahoo_api.league().to_team(latest_trade["tradee_team_key"]).details()["name"]
+                        trader = self.league().to_team(latest_trade["trader_team_key"]).details()["name"]
+                        tradee = self.league().to_team(latest_trade["tradee_team_key"]).details()["name"]
                         trader_player_names = []
-                        for player in latest_trade["trader_players"]:
-                            if player:
-                                trader_player_names.append(player["name"])
-
                         tradee_player_names = []
-                        for player in latest_trade["tradee_players"]:
-                            tradee_player_names.append(player["name"])
+                        for player in latest_trade["players"]["player"]:
+                            if player["transaction_data"]["source_team_key"] == latest_trade["trader_team_key"]:
+                                trader_player_names.append(player["name"]["full"])
+                            else:
+                                tradee_player_names.append(player["name"]["full"])
 
                         confirm_trade_message = "\n{} sends {} to {} for {}".format(
                             trader,

@@ -105,6 +105,7 @@ def api(
                 league = League(mock_oauth, 123456)
                 team = Team(mock_oauth, "")
                 team.proposed_trades = MagicMock(return_value=mock_pending_trades)
+                team.details = MagicMock(return_value={"name": "Hide and Go Zeke"})
                 league.standings = MagicMock(return_value=mock_standings)
                 league.teams = MagicMock(return_value=mock_teams)
                 league.current_week = MagicMock(return_value=1)

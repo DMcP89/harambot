@@ -14,14 +14,19 @@ from harambot import utils
 
 logger = logging.getLogger("discord.harambot.cogs.yahoo")
 
-yahoo_api = Yahoo()
-
 handlers = {
-        "yahoo": Yahoo(),
+    "yahoo": Yahoo(),
 }
 
 
-class YahooCog(commands.Cog):
+def get_handler(guild_id):
+    guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
+    if guild:
+        return handlers.get(guild.league_provider)
+    return None
+
+
+class FantasyCog(commands.Cog):
 
     error_message = (
         "I'm having trouble getting that right now please try again later"
@@ -37,24 +42,22 @@ class YahooCog(commands.Cog):
         @functools.wraps(f)
         async def wrapper(self, interaction: discord.Interaction, *args, **kwargs):
             logger.info("Setting api handler")
-            guild = Guild.get_or_none(Guild.guild_id == str(interaction.guild_id))
-            if guild is None:
-                logger.error("Guild %i not found in database", interaction.guild_id)
-                await interaction.response.send_message(
-                    "Guild not found in database"
+            self.api_handler = get_handler(interaction.guild_id)
+            if self.api_handler:
+                logger.info(
+                    "Set api handler to %s for guild %i",
+                    self.api_handler.__class__.__name__,
+                    interaction.guild_id,
                 )
-                return
-            handler = handlers.get(guild.league_provider)
-            if handler:
-                self.api_handler = handler
-                logger.info("Set api handler to %s for guild %i", guild.league_provider, interaction.guild_id)
-                logger.info ("API Handler: %s", self.api_handler)
-                await f(self, interaction, *args, **kwargs)
+                return await f(self, interaction, *args, **kwargs)
             else:
-                logger.error("No handler found for league provider %s in guild %i", guild.league_provider, interaction.guild_id)
+                logger.error(
+                    "No handler found for guild %i", interaction.guild_id
+                )
                 await interaction.response.send_message(
                     "League provider not supported"
                 )
+                return
         return wrapper
 
 
@@ -83,13 +86,14 @@ class YahooCog(commands.Cog):
         else:
             await interaction.followup.send(self.error_message)
 
+    @api_handler_check
     async def roster_autocomplete(
         self,
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
-        teams = yahoo_api.get_teams(guild_id=interaction.guild_id)
-        if teams:
+        if self.api_handler:
+            teams = self.api_handler.get_teams(guild_id=interaction.guild_id)
             options = list(
                 map(
                     lambda x: app_commands.Choice(
@@ -102,11 +106,13 @@ class YahooCog(commands.Cog):
         return []
 
     async def check_roster_available(interaction: discord.Interaction):
-        return yahoo_api.roster_check(guild_id=interaction.guild_id)
+        handler = get_handler(interaction.guild_id)
+        return handler.roster_check(guild_id=interaction.guild_id) if handler else False
 
     @app_commands.command(
         name="roster", description="Returns the roster of the given team"
     )
+    @api_handler_check
     @app_commands.check(check_roster_available)
     @app_commands.autocomplete(team_name=roster_autocomplete)
     async def roster(self, interaction: discord.Interaction, team_name: str):
@@ -116,7 +122,7 @@ class YahooCog(commands.Cog):
             team_name,
         )
         await interaction.response.defer()
-        roster = yahoo_api.get_roster(
+        roster = self.api_handler.get_roster(
             guild_id=interaction.guild_id, team_name=team_name
         )
         if roster:
@@ -145,17 +151,19 @@ class YahooCog(commands.Cog):
             )
     
     def check_trade_ratification(interaction: discord.Interaction):
-        return yahoo_api.trade_check(guild_id=interaction.guild_id)
+        handler = get_handler(interaction.guild_id)
+        return handler.trade_check(guild_id=interaction.guild_id) if handler else False
 
     @app_commands.command(
         name="trade",
         description="Create poll for latest trade for league approval",
     )
+    @api_handler_check
     @app_commands.check(check_trade_ratification)
     async def trade(self, interaction: discord.Interaction):
         logger.info("Command:Trade called in %i", interaction.guild_id)
         await interaction.response.defer()
-        latest_trade = yahoo_api.get_latest_trade(
+        latest_trade = self.api_handler.get_latest_trade(
             guild_id=interaction.guild_id
         )
         if latest_trade is None:
@@ -179,31 +187,35 @@ class YahooCog(commands.Cog):
                 "Trade command only available for leagues with vote or commissioner ratification"
             )
 
+    @api_handler_check
     async def stats_autocomplete(
         self,
         interaction: discord.Interaction,
         current: str,
     ) -> List[app_commands.Choice[str]]:
-        players = yahoo_api.get_players(
-            current, guild_id=interaction.guild_id
-        )
-        if players:
-            options = list(
-                map(
-                    lambda x: app_commands.Choice(
-                        name=x["name"]["full"],
-                        value=x["name"]["full"],
-                    ),
-                    players,
-                )
+        if self.api_handler:
+            players = self.api_handler.get_players(
+                current, guild_id=interaction.guild_id
             )
-        else:
-            options = []
-        return options
+            if players:
+                options = list(
+                    map(
+                        lambda x: app_commands.Choice(
+                            name=x["name"]["full"],
+                            value=x["name"]["full"],
+                        ),
+                        players,
+                    )
+                )
+            else:
+                options = []
+            return options
+        return []
 
     @app_commands.command(
         name="stats", description="Returns the details of the given player"
     )
+    @api_handler_check
     @app_commands.autocomplete(player_name=stats_autocomplete)
     async def stats(
         self,
@@ -217,7 +229,7 @@ class YahooCog(commands.Cog):
             player_name,
         )
         await interaction.response.defer()
-        player = yahoo_api.get_player_details(
+        player = self.api_handler.get_player_details(
             player_name, guild_id=interaction.guild_id, week=week
         )
         if player:
@@ -227,11 +239,13 @@ class YahooCog(commands.Cog):
             await interaction.followup.send("Player not found")
 
     async def check_matchups_available(interaction: discord.Interaction):
-        return yahoo_api.matchups_check(guild_id=interaction.guild_id)
+        handler = get_handler(interaction.guild_id)
+        return handler.matchups_check(guild_id=interaction.guild_id) if handler else False
 
     @app_commands.command(
         name="matchups", description="Returns the current weeks matchups"
     )
+    @api_handler_check
     @app_commands.check(check_matchups_available)
     async def matchups(
         self, interaction: discord.Interaction, week: Optional[int] = None
@@ -242,7 +256,7 @@ class YahooCog(commands.Cog):
             )
         )
         await interaction.response.defer()
-        matchups = yahoo_api.get_matchups(
+        matchups = self.api_handler.get_matchups(
             guild_id=interaction.guild_id, week=week
         )
         if matchups: 
@@ -263,11 +277,12 @@ class YahooCog(commands.Cog):
         name="waivers",
         description="Returns the waiver transactions from the last 24 hours",
     )
+    @api_handler_check
     async def waivers(self, interaction: discord.Interaction, days: int = 1):
         logger.info("Command:Waivers called in %i", interaction.guild_id)
         await interaction.response.defer()
         ts = datetime.now() - timedelta(days=days)
-        transactions = yahoo_api.get_transactions(
+        transactions = self.api_handler.get_transactions(
             guild_id=interaction.guild_id, timestamp=ts.timestamp()
         )
         if transactions:

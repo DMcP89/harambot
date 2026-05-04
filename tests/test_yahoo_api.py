@@ -10,10 +10,12 @@ def test_get_standings(api):
     get_standings_func = api.get_standings
     while hasattr(get_standings_func, "__wrapped__"):
         get_standings_func = get_standings_func.__wrapped__
-    return_value = get_standings_func(api, "mock")
-    assert isinstance(return_value, list)
-    assert len(return_value) == 3
-    assert return_value[0]["place"] == "1. Hide and Go Zeke"
+    with patch.object(api, "get_settings", return_value={"scoring_type": "head"}):
+        description, standings = get_standings_func(api, "mock")
+        assert isinstance(description, str)
+        assert isinstance(standings, list)
+        assert len(standings) == 3
+        assert standings[0]["place"] == "1. Hide and Go Zeke"
 
 
 def test_get_roster(api, mock_roster):
@@ -68,6 +70,5 @@ def test_get_latest_trade(api):
     while hasattr(get_latest_trade_func, "__wrapped__"):
         get_latest_trade_func = get_latest_trade_func.__wrapped__
     return_value = get_latest_trade_func(api, guild_id="mock")
-    assert isinstance(return_value, dict)
-    assert return_value["trader_team_key"] == "257.l.193.t.2"
-    assert return_value["tradee_team_key"] == "257.l.193.t.1"
+    assert isinstance(return_value, str)
+    assert "Hide and Go Zeke" in return_value
