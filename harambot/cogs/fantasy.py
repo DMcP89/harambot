@@ -8,7 +8,7 @@ from discord import app_commands
 from typing import List, Optional
 from datetime import datetime, timedelta
 
-from harambot.yahoo_api import Yahoo
+from harambot.handlers.yahoo_api import Yahoo
 from harambot.database.models import Guild
 from harambot import utils
 

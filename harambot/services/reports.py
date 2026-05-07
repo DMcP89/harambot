@@ -6,7 +6,7 @@ from discord.errors import NotFound
 
 from harambot.config import settings
 from harambot.database.models import Guild
-from harambot.yahoo_api import Yahoo
+from harambot.handlers.yahoo_api import Yahoo
 from harambot import utils
 
 

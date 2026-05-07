@@ -6,7 +6,7 @@ import logging
 from cachetools import keys
 
 from harambot.config import settings
-from harambot import yahoo_api
+from harambot.handlers import yahoo_api
 from discord import Embed
 
 YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"

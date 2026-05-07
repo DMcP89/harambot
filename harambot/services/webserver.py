@@ -4,7 +4,7 @@ from yahoo_fantasy_api import oauth2_logger
 from harambot.config import settings
 from harambot.database.models import Guild
 from harambot.utils import yahoo_auth
-from harambot.yahoo_api import Yahoo
+from harambot.handlers.yahoo_api import Yahoo
 
 import logging
 

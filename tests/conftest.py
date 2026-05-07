@@ -3,7 +3,7 @@ import json
 import pytest
 
 from unittest.mock import MagicMock, patch
-from harambot.yahoo_api import Yahoo
+from harambot.handlers.yahoo_api import Yahoo
 from yahoo_fantasy_api import game, League, Team
 
 root_path = os.path.dirname(os.path.realpath(__file__))

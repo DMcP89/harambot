@@ -2,7 +2,7 @@ import discord
 import logging
 import objectpath
 
-from harambot import yahoo_api
+from harambot.handlers import yahoo_api
 from harambot.config import settings
 from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes, clear_guild_cache
 from harambot.ui.modals import ConfigModal
