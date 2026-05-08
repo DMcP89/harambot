@@ -8,22 +8,10 @@ from discord import app_commands
 from typing import List, Optional
 from datetime import datetime, timedelta
 
-from harambot.handlers.yahoo_api import Yahoo
-from harambot.database.models import Guild
+from harambot.handlers import get_handler
 from harambot import utils
 
 logger = logging.getLogger("discord.harambot.cogs.yahoo")
-
-handlers = {
-    "yahoo": Yahoo(),
-}
-
-
-def get_handler(guild_id):
-    guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
-    if guild:
-        return handlers.get(guild.league_provider)
-    return None
 
 
 class FantasyCog(commands.Cog):
