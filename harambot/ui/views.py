@@ -2,7 +2,7 @@ import discord
 import logging
 import objectpath
 
-from harambot.handlers import yahoo_api
+from harambot.handlers import get_handler
 from harambot.config import settings
 from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes, clear_guild_cache
 from harambot.ui.modals import ConfigModal
@@ -120,22 +120,15 @@ class ReportConfigView(discord.ui.View):
         )
 
 class LeagueSelect(discord.ui.Select):
+    handler = None
     def __init__(self, guild_id):
-        # Uncomment this once this is merged and released - https://github.com/spilchen/yahoo_fantasy_api/pull/60
-        #leagues = yahoo_api.Yahoo().get_leagues(guild_id=guild_id)
+        self.handler = get_handler(guild_id)
+        leagues = self.handler.get_leagues(guild_id=guild_id)
         
-        # This is a workaround until the above is merged and released
-        raw_api_json = yahoo_api.Yahoo().get_game(
-            guild_id=guild_id
-        ).yhandler.get(uri="users/games/leagues?use_login=1&is_available=1")
-        t = objectpath.Tree(raw_api_json)
-        leagues = list(t.execute('$..league'))
-
 
         options = []
         for league in leagues:
-            # Uncomment this once this is merged and released - https://github.com/spilchen/yahoo_fantasy_api/pull/60
-            #league = yahoo_api.Yahoo().get_settings_for_league(league_id=league, guild_id=guild_id)
+            league = self.handler.get_settings_for_league(league_id=league, guild_id=guild_id)
             options.append(
                 discord.SelectOption(
                     label=league['name'],

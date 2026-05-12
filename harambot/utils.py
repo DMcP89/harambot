@@ -4,9 +4,7 @@ import time
 import logging
 
 from cachetools import keys
-
-from harambot.config import settings
-from harambot.handlers import yahoo_api
+from harambot.config import settings, cache
 from discord import Embed
 
 YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"
@@ -118,7 +116,7 @@ def get_cache_key(*args, **kwargs):
     guild_id = str(kwargs.get("guild_id"))
     return keys.hashkey(function_name, guild_id)
 
-def clear_guild_cache(guild_id):
+def clear_guild_cache(guild_id, cache=cache):
     guild_cache_keys = [
         get_cache_key("get_settings", guild_id=guild_id),
         get_cache_key("get_teams", guild_id=guild_id),
@@ -130,7 +128,7 @@ def clear_guild_cache(guild_id):
         get_cache_key("get_transactions", guild_id=guild_id)
     ]
     for key in guild_cache_keys:
-        yahoo_api.cache.pop(key, None)
+        cache.pop(key, None)
 
 def get_player_embed(player):
     embed = Embed(

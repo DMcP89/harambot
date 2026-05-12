@@ -4,12 +4,12 @@ import objectpath
 import functools
 
 from yahoo_fantasy_api import game
-from cachetools import cached, keys, TTLCache
+from cachetools import cached, keys
 from playhouse.shortcuts import model_to_dict
 from yahoo_oauth import OAuth2
 
 from harambot.database.models import Guild
-from harambot.config import settings
+from harambot.config import settings, cache
 from harambot.utils import get_cache_key
 from harambot.handlers.api_handler import APIHandler
 
@@ -19,10 +19,8 @@ logging.getLogger("yahoo_oauth").setLevel("INFO")
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
 
-cache = TTLCache(maxsize=1024, ttl=600)
-
-
 class Yahoo (APIHandler):
+    cache = cache
     league_id = None
     league_type = None
     current_league = None
@@ -80,7 +78,7 @@ class Yahoo (APIHandler):
             )
             return self.current_league
     
-    @cached(cache, key=functools.partial(keys.hashkey, "get_game"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_game"))
     @handle_oauth
     def get_game(self, guild_id):
         try:
@@ -95,7 +93,7 @@ class Yahoo (APIHandler):
             return None
 
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_leagues"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_leagues"))
     @handle_oauth
     def get_leagues(self, guild_id):
         logger.info("Fetching leagues for guild: %s", guild_id)
@@ -110,7 +108,7 @@ class Yahoo (APIHandler):
             return None
 
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_settings_for_league"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_settings_for_league"))
     @handle_oauth
     def get_settings_for_league(self, league_id, guild_id):
         try:
@@ -127,7 +125,7 @@ class Yahoo (APIHandler):
             return None
 
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_settings"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_settings"))
     @handle_oauth
     def get_settings(self, guild_id):
         try:
@@ -142,7 +140,7 @@ class Yahoo (APIHandler):
             return None
 
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_teams"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_teams"))
     @handle_oauth
     def get_teams(self, guild_id):
         try:
@@ -156,7 +154,7 @@ class Yahoo (APIHandler):
             )
             return None
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_players"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_players"))
     @handle_oauth
     def get_players(self, player, guild_id):
         try:
@@ -206,13 +204,13 @@ class Yahoo (APIHandler):
             )
             return None, None
 
-    @cached(cache, key=functools.partial(keys.hashkey, "roster_check"))
+    @cached(cache, key=functools.partial(get_cache_key, "roster_check"))
     @handle_oauth
     def roster_check(self, guild_id):
         settings = self.get_settings(guild_id=guild_id)
         return settings and settings.get("draft_status") != "predraft"
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_roster"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_roster"))
     @handle_oauth
     def get_roster(self, team_name, guild_id):
         try:
@@ -286,13 +284,13 @@ class Yahoo (APIHandler):
             )
             return None
 
-    @cached(cache, key=functools.partial(keys.hashkey, "matchups_check"))
+    @cached(cache, key=functools.partial(get_cache_key, "matchups_check"))
     @handle_oauth
     def matchups_check(self, guild_id):
         settings = self.get_settings(guild_id=guild_id)
         return settings and settings.get("draft_status") != "predraft"
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_matchups"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_matchups"))
     @handle_oauth
     def get_matchups(self, guild_id, week=None):
         try:
@@ -311,12 +309,12 @@ class Yahoo (APIHandler):
                 e,
             )
 
-    @cached(cache, key=functools.partial(keys.hashkey, "trade_check"))
+    @cached(cache, key=functools.partial(get_cache_key, "trade_check"))
     @handle_oauth
     def trade_check(self, guild_id):
         return self.get_settings(guild_id=guild_id)["trade_ratify_type"] == "none"
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_latest_trade"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_latest_trade"))
     @handle_oauth
     def get_latest_trade(self, guild_id):
         try:
@@ -360,7 +358,7 @@ class Yahoo (APIHandler):
             return None
     
 
-    @cached(cache, key=functools.partial(keys.hashkey, "get_transactions"))
+    @cached(cache, key=functools.partial(get_cache_key, "get_transactions"))
     @handle_oauth
     def get_transactions(self, guild_id, timestamp=0.0):
         try:
