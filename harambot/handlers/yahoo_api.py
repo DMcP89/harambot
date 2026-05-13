@@ -58,40 +58,15 @@ class Yahoo (APIHandler):
                 return None
             self.league_id = guild.league_id
             self.league_type = guild.league_type
+            if not self.current_league or self.current_league.league_id.split(".l.")[-1] != self.league_id:
+                gm = game.Game(self.oauth, self.league_type)
+                leagues = gm.league_ids(game_codes=[self.league_type])
+                for league_id in leagues:
+                    if league_id.split(".l.")[-1] == self.league_id:
+                        self.current_league = gm.to_league(league_id)
             return f(self, *args, **kwargs)
 
         return wrapper
-
-    def league(self):
-        if (
-            self.current_league
-            and self.league_id == self.current_league.league_id.split(".l.")[-1]
-        ):
-            return self.current_league
-        else:
-            logger.error(
-                "Error fetching league ids from Yahoo, trying with constructed league id"
-            )
-            gm = game.Game(self.oauth, self.league_type)
-            self.current_league = gm.to_league(
-                gm.game_id() + ".l." + self.league_id
-            )
-            return self.current_league
-    
-    @cached(cache, key=functools.partial(get_cache_key, "get_game"))
-    @handle_oauth
-    def get_game(self, guild_id):
-        try:
-            gm = game.Game(self.oauth, self.league_type)
-            return gm
-        except Exception:
-            logger.exception(
-                "Error while fetching game details for league {}".format(
-                    self.league_id
-                )
-            )
-            return None
-
 
     @cached(cache, key=functools.partial(get_cache_key, "get_leagues"))
     @handle_oauth
@@ -113,8 +88,8 @@ class Yahoo (APIHandler):
     def get_settings_for_league(self, league_id, guild_id):
         try:
             gm = game.Game(self.oauth, self.league_type)
-            current_league = gm.to_league(league_id)
-            return current_league.settings()
+            league = gm.to_league(league_id)
+            return league.settings()
         except Exception:
             logger.exception(
                 "Error while fetching settings for league {} in guild {}".format(
@@ -129,7 +104,7 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_settings(self, guild_id):
         try:
-            return self.league().settings()
+            return self.current_league.settings()
         except Exception:
             logger.exception(
                 "Error while fetching settings for league {} in guild {}".format(
@@ -144,7 +119,7 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_teams(self, guild_id):
         try:
-            return self.league().teams()
+            return self.current_league.teams()
         except Exception:
             logger.exception(
                 "Error while fetching teams for league {} in guild {}".format(
@@ -158,7 +133,7 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_players(self, player, guild_id):
         try:
-            return self.league().player_details(player)
+            return self.current_league.player_details(player)
         except Exception:
             logger.exception(
                 "Error while fetching players for league {} in guild: {}".format(
@@ -175,7 +150,7 @@ class Yahoo (APIHandler):
         description = "W-L-T" if scoring_type == "head" else "Team \nPoints For - Points Change"
         try:
             standings = []
-            for idx, team in enumerate(self.league().standings()):
+            for idx, team in enumerate(self.current_league.standings()):
                 if "outcome_totals" in team:
                     outcomes = team["outcome_totals"]
                     record = "{}-{}-{}".format(
@@ -214,7 +189,7 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_roster(self, team_name, guild_id):
         try:
-            team_details = self.league().get_team(team_name)
+            team_details = self.current_league.get_team(team_name)
             if team_details:
                 return team_details[team_name].roster()
             else:
@@ -231,16 +206,16 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_player_details(self, player_name, guild_id, week=None):
         try:
-            player = self.league().player_details(player_name)[0]
+            player = self.current_league.player_details(player_name)[0]
             player["owner"] = self.get_player_owner(player["player_id"])
             if week:
-                stats = self.league().player_stats(
+                stats = self.current_league.player_stats(
                     [player["player_id"]],
                     req_type="week",
                     week=week,
                 )[0]
             else:
-                stats = self.league().player_stats(
+                stats = self.current_league.player_stats(
                     [player["player_id"]],
                     req_type="season",
                 )[0]
@@ -262,7 +237,7 @@ class Yahoo (APIHandler):
 
     def get_player_owner(self, player_id):
         try:
-            player_ownership = self.league().ownership([player_id])[
+            player_ownership = self.current_league.ownership([player_id])[
                 str(player_id)
             ]
             if "owner_team_name" in player_ownership:
@@ -295,18 +270,17 @@ class Yahoo (APIHandler):
     def get_matchups(self, guild_id, week=None):
         try:
             if not week:
-                week = self.league().current_week()
+                week = self.current_league.current_week()
             matchups = objectpath.Tree(
-                self.league().matchups(week=week)
+                self.current_league.matchups(week=week)
             ).execute("$..scoreboard..matchups..matchup..teams")
             return matchups 
-        except Exception as e:
+        except Exception:
             logger.exception(
                 "Error while fetching matchups for league: {} for guild: {}".format(
                     self.league_id,
                     guild_id,
-                ),
-                e,
+                )
             )
 
     @cached(cache, key=functools.partial(get_cache_key, "trade_check"))
@@ -318,9 +292,9 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_latest_trade(self, guild_id):
         try:
-            for key, values in self.league().teams().items():
+            for key, values in self.current_league.teams().items():
                 if "is_owned_by_current_login" in values:
-                    team = self.league().to_team(key)
+                    team = self.current_league.to_team(key)
                     accepted_trades = list(
                         filter(
                             lambda d: d["status"] == "accepted",
@@ -330,8 +304,8 @@ class Yahoo (APIHandler):
                     if accepted_trades:
                         # return the last accepted trade
                         latest_trade = accepted_trades[-1]
-                        trader = self.league().to_team(latest_trade["trader_team_key"]).details()["name"]
-                        tradee = self.league().to_team(latest_trade["tradee_team_key"]).details()["name"]
+                        trader = self.current_league.to_team(latest_trade["trader_team_key"]).details()["name"]
+                        tradee = self.current_league.to_team(latest_trade["tradee_team_key"]).details()["name"]
                         trader_player_names = []
                         tradee_player_names = []
                         for player in latest_trade["players"]["player"]:
@@ -362,7 +336,7 @@ class Yahoo (APIHandler):
     @handle_oauth
     def get_transactions(self, guild_id, timestamp=0.0):
         try:
-            transactions = self.league().transactions("add,drop", "")
+            transactions = self.current_league.transactions("add,drop", "")
             filtered_transactions = [
                 t for t in transactions if float(t["timestamp"]) > timestamp
             ]

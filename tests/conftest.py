@@ -119,8 +119,9 @@ def api(
                 league.to_team = MagicMock(
                         return_value=team
                 )
-    
-    api.league = MagicMock(return_value=league)
+    api.current_league = league
+    api.league_id = "123456"
+    api.league_type = "nfl"
     return api
 
 
@@ -148,5 +149,7 @@ def category_api(
                 league.player_stats = MagicMock(return_value=mock_player_stats)
                 league.ownership = MagicMock(return_value=mock_ownership)
                 league.matchups = MagicMock(return_value=mock_matchups_category)
-    api.league = MagicMock(return_value=league)
+    api.current_league = league
+    api.league_id = "123456"
+    api.league_type = "nfl"
     return api

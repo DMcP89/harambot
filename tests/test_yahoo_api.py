@@ -2,10 +2,6 @@ from unittest.mock import patch
 from yahoo_fantasy_api import team
 
 
-def test_league(api):
-    assert api.league()
-
-
 def test_get_standings(api):
     get_standings_func = api.get_standings
     while hasattr(get_standings_func, "__wrapped__"):
