@@ -1,6 +1,7 @@
 import discord
 import logging
 import objectpath
+import urllib.parse
 
 from harambot.handlers import get_handler
 from harambot.config import settings
@@ -11,51 +12,16 @@ from harambot.database.models import Guild
 logger = logging.getLogger("discord.harambot.views")
 logger.setLevel(logging.INFO)
 
+DISCORD_OAUTH_URL = "https://discord.com/api/oauth2/authorize?client_id={}&redirect_uri={}&response_type=token&scope={}"
 
-class YahooAuthButton(discord.ui.Button):
+class ConfigureButton(discord.ui.Button):
     def __init__(self):
+        
         super().__init__(
             style=discord.ButtonStyle.link,
-            label="Login to Yahoo",
-            url=f"{YAHOO_API_URL}{YAHOO_AUTH_URI}{settings.yahoo_key}",
+            label="Open harambot.io",
+            url=f"{DISCORD_OAUTH_URL.format(settings.HARAMBOT_IO_CLIENT_ID, urllib.parse.quote(settings.HARAMBOT_IO_REDIRECT_URI, safe=''), urllib.parse.quote(settings.HARAMBOT_IO_SCOPES))}",
         )
-
-
-class ConfigGuildButton(discord.ui.Button):
-
-    parent_view: None
-
-    def __init__(self, parent_view: discord.ui.View):
-        super().__init__(
-            label="Configure Guild", style=discord.ButtonStyle.blurple
-        )
-        self.parent_view = parent_view
-
-    async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(
-            ConfigModal(
-                guild_id=str(interaction.guild_id), view=self.parent_view
-            )
-        )
-
-
-class ResetButton(discord.ui.Button):
-    def __init__(self):
-        super().__init__(style=discord.ButtonStyle.danger, label="Reset")
-
-    async def callback(self, interaction: discord.Interaction):
-        if (
-            Guild.select()
-            .where(Guild.guild_id == str(interaction.guild.id))
-            .exists()
-        ):
-            guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
-            guild.delete_instance()
-            await interaction.response.send_message(
-                "Guild configuration reset!"
-            )
-        else:
-            await interaction.response.send_message("Guild not configured!")
 
 
 class ConfigView(discord.ui.View):
@@ -63,96 +29,4 @@ class ConfigView(discord.ui.View):
         self,
     ):
         super().__init__()
-        self.add_item(YahooAuthButton())
-        self.add_item(ConfigGuildButton(parent_view=self))
-        self.add_item(ResetButton())
-
-
-class ReportConfigView(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-
-    @discord.ui.select(
-        cls=discord.ui.ChannelSelect, channel_types=[discord.ChannelType.text]
-    )
-    async def select_channels(
-        self,
-        interaction: discord.Interaction,
-        select: discord.ui.ChannelSelect,
-    ):
-
-        guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
-
-        channel = select.values[0].resolve()
-        if not channel:
-            channel = select.values[0].fetch()
-
-        for webhook in await channel.webhooks():
-            if webhook.user == interaction.guild.me:
-                guild.transaction_polling_webhook = webhook.url
-                guild.save()
-                return await interaction.response.send_message(
-                    f"Reports configured to go to {select.values[0].mention}"
-                )
-
-        if guild.transaction_polling_service_enabled == 0:
-            guild.transaction_polling_service_enabled = 1
-        else:
-            try:
-                webhook = discord.SyncWebhook.from_url(
-                    guild.transaction_polling_webhook
-                )
-                webhook.delete()
-            except discord.errors.NotFound:
-                logger.info("Webhook not found")
-            guild.transaction_polling_webhook = None
-
-        if not guild.transaction_polling_webhook:
-            webhook = await channel.create_webhook(
-                name="Harambot Reports", avatar=get_avatar_bytes()
-            )
-            guild.transaction_polling_webhook = webhook.url
-
-        guild.save()
-
-        return await interaction.response.send_message(
-            f"Reports configured to go to {select.values[0].mention}"
-        )
-
-class LeagueSelect(discord.ui.Select):
-    handler = None
-    def __init__(self, guild_id):
-        self.handler = get_handler(guild_id)
-        leagues = self.handler.get_leagues(guild_id=guild_id)
-        
-
-        options = []
-        for league in leagues:
-            league = self.handler.get_settings_for_league(league_id=league, guild_id=guild_id)
-            options.append(
-                discord.SelectOption(
-                    label=league['name'],
-                    value=league['league_id']+"-"+league['game_code']+"-"+league['name'],
-                    description=league['game_code'] + " " + league['season']
-                )
-            )
-        super().__init__(placeholder="Select a league", min_values=1, options=options)
-
-    async def callback(self, interaction: discord.Interaction):
-        logger.info(f"League selected: {self.values}")
-        guild = Guild.get(Guild.guild_id == str(interaction.guild.id))
-        guild.league_id = self.values[0].split("-")[0]
-        guild.league_type = self.values[0].split("-")[1]
-        league_name = self.values[0].split("-")[2]
-        guild.save()
-        clear_guild_cache(guild.guild_id)
-
-        await interaction.response.send_message(
-            f"League set to {league_name}"
-        )
-
-class LeagueConfigView(discord.ui.View):
-    def __init__(self):
-        logger.info("LeagueConfigView initialized")
-        super().__init__()
-
+        self.add_item(ConfigureButton())

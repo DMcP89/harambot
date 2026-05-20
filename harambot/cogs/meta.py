@@ -4,7 +4,7 @@ from discord import app_commands
 import discord
 import logging
 
-from harambot.ui.views import ConfigView, LeagueConfigView, LeagueSelect, ReportConfigView
+from harambot.ui.views import ConfigView
 from harambot.database.models import Guild
 
 
@@ -90,9 +90,7 @@ class Meta(commands.Cog):
     async def configure(self, interaction: discord.Interaction):
         await interaction.response.send_message(
             """
-            Lets setup your guild
-            1. Login into Yahoo and copy you authentication token
-2. Configure harambot with your league information
+            Configure your guild on harambot.io
             """,
             view=ConfigView(),
             ephemeral=True,
@@ -106,54 +104,9 @@ class Meta(commands.Cog):
             await interaction.response.send_message(
                 "You do not have the required permissions to run this command."
             )
-
-    def webhook_permissions(interaction: discord.Interaction):
-        return interaction.guild.me.guild_permissions.manage_webhooks
-
-    def guild_is_configured(interaction: discord.Interaction):
-        return (
-            Guild.select()
-            .where(Guild.guild_id == str(interaction.guild_id))
-            .exists()
-        )
-
-    @app_commands.command(
-        name="reports",
-        description="Configure automatic transaction and matchup reporting",
-    )
-    @app_commands.check(webhook_permissions)
-    @app_commands.check(guild_is_configured)
-    async def reports(
-        self,
-        interaction: discord.Interaction,
-    ):
-        message = "Set what channel transaction reports should be sent to."
-        await interaction.response.send_message(
-            message, view=ReportConfigView(), ephemeral=True
-        )
-
-    @reports.error
-    async def reports_check_error(
-        self, interaction: discord.Interaction, error
-    ):
-        if isinstance(error, app_commands.MissingPermissions):
+        else:
+            logger.error(f"Error in configure command: {error}")
             await interaction.response.send_message(
-                "Grant Harambot the Manage Webhooks permission to use this command"
+                "An error occurred while running the configure command. Please check the logs.",
+                ephemeral=True,
             )
-        elif isinstance(error, app_commands.CheckFailure):
-            await interaction.response.send_message(
-                "This guild is not configured for Harambot. Please run `/configure` first."
-            )
-
-    @app_commands.command(
-            name="league",
-            description="Set which league harambot should use for commands"
-            )
-    @app_commands.check(guild_is_configured)
-    async def league(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-        message = "Select which league you would like to use for commands"
-        view = LeagueConfigView()
-        view.add_item(LeagueSelect(interaction.guild_id))
-        await interaction.followup.send(message, view=view, ephemeral=True)
-
