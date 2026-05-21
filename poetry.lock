@@ -122,19 +122,21 @@ yarl = ">=1.17.0,<2.0"
 speedups = ["Brotli ; platform_python_implementation == \"CPython\"", "aiodns (>=3.3.0)", "brotlicffi ; platform_python_implementation != \"CPython\""]
 
 [[package]]
-name = "aiohttp-cors"
-version = "0.8.1"
-description = "CORS support for aiohttp"
+name = "aiohttp-middlewares"
+version = "2.4.0"
+description = "Collection of useful middlewares for aiohttp applications."
 optional = false
-python-versions = ">=3.9"
+python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "aiohttp_cors-0.8.1-py3-none-any.whl", hash = "sha256:3180cf304c5c712d626b9162b195b1db7ddf976a2a25172b35bb2448b890a80d"},
-    {file = "aiohttp_cors-0.8.1.tar.gz", hash = "sha256:ccacf9cb84b64939ea15f859a146af1f662a6b1d68175754a07315e305fb1403"},
+    {file = "aiohttp_middlewares-2.4.0-py3-none-any.whl", hash = "sha256:c71a7ca1af6f704aad9e6851c8f12debac7c2aac28aa11a5905f45e39370a490"},
+    {file = "aiohttp_middlewares-2.4.0.tar.gz", hash = "sha256:ee240fc21b7eb9154b4447e4bc9bab7b212584d93a35aa8f56333c79ca3cd0e8"},
 ]
 
 [package.dependencies]
-aiohttp = ">=3.9"
+aiohttp = ">=3.8.1,<4.0.0"
+async-timeout = ">=4.0.2,<5.0.0"
+yarl = ">=1.5.1,<2.0.0"
 
 [[package]]
 name = "aiosignal"
@@ -154,15 +156,14 @@ typing-extensions = {version = ">=4.2", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "async-timeout"
-version = "5.0.1"
+version = "4.0.3"
 description = "Timeout context manager for asyncio programs"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 groups = ["main"]
-markers = "python_version == \"3.10\""
 files = [
-    {file = "async_timeout-5.0.1-py3-none-any.whl", hash = "sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c"},
-    {file = "async_timeout-5.0.1.tar.gz", hash = "sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3"},
+    {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
+    {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
 ]
 
 [[package]]
@@ -2187,4 +2188,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "2524a3d02e417b7ec466d034bf41bea761ba93768e738b290e135897896eaa61"
+content-hash = "4e14d3588b21899d83cdeab9e811825d48bf17c6fb221c2b318b0ff62d080f03"

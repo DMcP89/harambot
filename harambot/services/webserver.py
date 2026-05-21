@@ -1,10 +1,9 @@
 from aiohttp import web, ClientSession
-import aiohttp_cors
+from aiohttp_middlewares import cors_middleware
 from yahoo_fantasy_api import oauth2_logger
 from harambot.config import settings
 from harambot.database.models import Guild
-from harambot.utils import yahoo_auth
-from harambot.handlers.yahoo_api import Yahoo
+from harambot.handlers import get_handler
 
 import logging
 
@@ -13,8 +12,6 @@ oauth2_logger.cleanup()
 
 logger = logging.getLogger("discord.harambot.services.webserver")
 logger.setLevel(logging.INFO)
-
-yahoo_api = Yahoo()
 
 DISCORD_API_BASE_URL = "https://discord.com/api/v10"
 DISCORD_USER_GUILDS_ENDPOINT = f"{DISCORD_API_BASE_URL}/users/@me/guilds"
@@ -69,32 +66,13 @@ class WebServer:
                 {"message": "Configuration updated successfully."}
             )
         else:
-            yahoo_token = data.get("yahoo_token")
-            if not yahoo_token:
-                return web.json_response(
-                    {
-                        "error": "Guild not found and no yahoo_token provided for creation"
-                    },
-                    status=404,
-                )
-
-            oauth_details = yahoo_auth(yahoo_token)
-            if not oauth_details:
-                return web.json_response(
-                    {"error": "Failed to authenticate with Yahoo API"},
-                    status=400,
-                )
-
-            details.update(oauth_details)
-            guild = Guild(guild_id=str(guild_id), **details)
-            guild.save()
             return web.json_response(
-                {"message": "Guild created and configured successfully."}
+                {"message": "Guild not setup yet!."}
             )
 
     async def scoreboard_handler(self, request):
         guild_id = request.match_info.get("guild_id")
-        matchups = yahoo_api.get_matchups(guild_id=guild_id)
+        matchups = get_handler(guild_id=guild_id).get_matchups(guild_id=guild_id)
         if matchups is None:
             return web.json_response(
                 {"error": "Guild not found or Yahoo API error"}, status=404
@@ -121,53 +99,55 @@ class WebServer:
             if not discord_user_token:
                 return web.json_response({"error": "Unauthorized"}, status=403)
             if not guild_id:
-                return web.json_response({"error": "Guild ID is required"}, status=400)
+                return web.json_response(
+                    {"error": "Guild ID is required"}, status=400
+                )
 
             # Make a request to Discord API to get the user's guilds and check if they are an admin in the guild specified by guild_id
-            aiohttp_client = ClientSession() 
+            aiohttp_client = ClientSession()
             async with aiohttp_client.get(
                 DISCORD_USER_GUILDS_ENDPOINT,
                 headers={"Authorization": f"Bearer {discord_user_token}"},
             ) as resp:
                 if resp.status != 200:
-                    return web.json_response({"error": "Unauthorized"}, status=403)
+                    return web.json_response(
+                        {"error": "Unauthorized"}, status=403
+                    )
                 guilds = await resp.json()
                 if not any(
-                    guild["id"] == guild_id and (int(guild["permissions"]) & 0x20 == 0x20)
+                    guild["id"] == guild_id
+                    and (int(guild["permissions"]) & 0x20 == 0x20)
                     for guild in guilds
                 ):
-                    return web.json_response({"error": "Forbidden: Admins only"}, status=403)
+                    return web.json_response(
+                        {"error": "Forbidden: Admins only"}, status=403
+                    )
         return await handler(request)
 
     async def webserver(self):
-        app = web.Application(middlewares=[self.auth_middleware, self.guild_auth_middleware])
-        cors = aiohttp_cors.setup(
-            app,
-            defaults={
-                "*": aiohttp_cors.ResourceOptions(
-                    allow_credentials=True,
-                    expose_headers="*",
-                    allow_headers="*",
-                    allow_methods=("GET", "POST", "OPTIONS"),
-                )
-            },
+        app = web.Application(
+            middlewares=[
+                cors_middleware(
+                    origins=("http://192.168.1.78:3001"),
+                    allow_headers=["X-Api-Key", "Discord-Token", "Content-Type", "Authorization"],
+                    allow_methods=["GET", "POST", "OPTIONS"]
+                ),
+                self.auth_middleware,
+                self.guild_auth_middleware
+            ]
         )
-
-        routes = [
-            app.router.add_get("/status", self.status_handler),
-            app.router.add_get(
-                "/api/config/{guild_id}", self.config_get_handler
-            ),
-            app.router.add_post(
-                "/api/config/{guild_id}", self.config_post_handler
-            ),
-            app.router.add_get(
-                "/api/scoreboard/{guild_id}", self.scoreboard_handler
-            ),
-        ]
-
-        for route in routes:
-            cors.add(route)
+        
+        app.router.add_get("/status", self.status_handler),
+        app.router.add_get(
+            "/api/config/{guild_id}", self.config_get_handler
+        ),
+        app.router.add_post(
+            "/api/config/{guild_id}", self.config_post_handler
+        ),
+        app.router.add_get(
+            "/api/scoreboard/{guild_id}", self.scoreboard_handler
+        )
+        
 
         app["bot"] = self.bot
         runner = web.AppRunner(app)

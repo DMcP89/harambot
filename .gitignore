@@ -20,3 +20,5 @@ answers.txt
 
 dist/
 backups/
+
+.gemini/plans/*
