@@ -4,6 +4,11 @@ from abc import ABC, abstractmethod
 class APIHandler(ABC):
 
     @abstractmethod
+    def handle_authentication(self, guild_id: int, token: str) -> bool:
+        """Handles authentication for the league."""
+        pass
+
+    @abstractmethod
     def get_standings(self, guild_id: int) -> (str, List[Dict[str, Any]]):
         """Returns the current standings of the league."""
         pass

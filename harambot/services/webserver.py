@@ -79,6 +79,12 @@ class WebServer:
             )
         return web.json_response({"matchups": matchups})
 
+
+    async def fantasy_provider_auth_callback_handler(self, request):
+        # This is a placeholder for handling OAuth callbacks from fantasy providers like Yahoo
+        # You would need to implement the logic to exchange the code for an access token and save it to the database
+        return web.Response(text="OAuth callback received")
+
     @web.middleware
     async def auth_middleware(self, request, handler):
         if request.method == "OPTIONS":
