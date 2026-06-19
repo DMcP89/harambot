@@ -18,12 +18,42 @@ logging.getLogger("yahoo_oauth").setLevel("INFO")
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
+YAHOO_API_TOKEN_URL = "https://api.login.yahoo.com/oauth2/get_token"
 
 class Yahoo (APIHandler):
     cache = cache
     league_id = None
     league_type = None
     current_league = None
+
+    def handle_authentication(self, guild_id: int, token: str):
+        encoded_creds = base64.b64encode(
+            ("{0}:{1}".format(settings.yahoo_key, settings.yahoo_secret)).encode(
+                "utf-8"
+            )
+        )
+        response = requests.post(
+            url="{}get_token".format(YAHOO_API_URL),
+            data={
+                "code": token,
+                "redirect_uri": "oob",
+                "grant_type": "authorization_code",
+            },
+            headers={
+                "User-Agent": "HaramBot",
+                "Authorization": "Basic {0}".format(encoded_creds.decode("utf-8")),
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        )
+        if response.status_code != 200:
+            logger.error(
+                "Failed to authenticate with Yahoo API: {}".format(response.json)
+            )
+            return {}
+        details = response.json()
+
+        details["token_time"] = time.time()
+        return details
 
     def handle_oauth(f):
         @functools.wraps(f)

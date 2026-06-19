@@ -3,7 +3,7 @@ from aiohttp_middlewares import cors_middleware
 from yahoo_fantasy_api import oauth2_logger
 from harambot.config import settings
 from harambot.database.models import Guild
-from harambot.handlers import get_handler
+from harambot.handlers import get_handler, handlers
 
 import logging
 
@@ -83,6 +83,19 @@ class WebServer:
     async def fantasy_provider_auth_callback_handler(self, request):
         # This is a placeholder for handling OAuth callbacks from fantasy providers like Yahoo
         # You would need to implement the logic to exchange the code for an access token and save it to the database
+        data = await request.json()
+        guild_id = data.get("guild_id")
+        code = data.get("code")
+        provider = data.get("provider")
+        fantasy_handler = handlers.get(provider)
+        if not fantasy_handler:
+            return web.json_response({"error": "Unsupported provider"}, status=400)
+        try:
+            token_data = fantasy_handler.handle_authentication(guild_id=guild_id, code=code)
+            return web.json_response({"message": "Authentication successful", "token_data": token_data})
+        except Exception as e:
+            logger.error(f"Error handling authentication callback: {e}")
+            return web.json_response({"error": "Authentication failed"}, status=500)
         return web.Response(text="OAuth callback received")
 
     @web.middleware
@@ -92,6 +105,7 @@ class WebServer:
         if request.path.startswith("/api/"):
             api_key = request.headers.get("X-Api-Key")
             if not api_key or api_key != settings.api_key:
+                logger.debug(f"Unauthorized access attempt with API key: {api_key}")
                 return web.json_response({"error": "Unauthorized"}, status=401)
         return await handler(request)
 
@@ -99,7 +113,7 @@ class WebServer:
     async def guild_auth_middleware(self, request, handler):
         if request.method == "OPTIONS":
             return await handler(request)
-        if request.path.startswith("/api/"):
+        if request.path.startswith("/api/config/"):
             discord_user_token = request.headers.get("Discord-Token")
             guild_id = request.match_info.get("guild_id")
             if not discord_user_token:
@@ -116,6 +130,7 @@ class WebServer:
                 headers={"Authorization": f"Bearer {discord_user_token}"},
             ) as resp:
                 if resp.status != 200:
+                    await aiohttp_client.close()
                     return web.json_response(
                         {"error": "Unauthorized"}, status=403
                     )
@@ -125,16 +140,18 @@ class WebServer:
                     and (int(guild["permissions"]) & 0x20 == 0x20)
                     for guild in guilds
                 ):
+                    await aiohttp_client.close()
                     return web.json_response(
                         {"error": "Forbidden: Admins only"}, status=403
                     )
+            await aiohttp_client.close()
         return await handler(request)
 
     async def webserver(self):
         app = web.Application(
             middlewares=[
                 cors_middleware(
-                    origins=("http://192.168.1.78:3001"),
+                    origins=("http://192.168.1.78:3001","https://192.168.1.78"),
                     allow_headers=["X-Api-Key", "Discord-Token", "Content-Type", "Authorization"],
                     allow_methods=["GET", "POST", "OPTIONS"]
                 ),
@@ -152,6 +169,9 @@ class WebServer:
         ),
         app.router.add_get(
             "/api/scoreboard/{guild_id}", self.scoreboard_handler
+        )
+        app.router.add_post(
+            "/api/auth/callback", self.fantasy_provider_auth_callback_handler
         )
         
 

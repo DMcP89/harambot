@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class APIHandler(ABC):
 
     @abstractmethod
-    def handle_authentication(self, guild_id: int, token: str) -> bool:
+    def handle_authentication(self, guild_id: int, token: str) -> Dict[str, Any]:
         """Handles authentication for the league."""
         pass
 
