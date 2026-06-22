@@ -1,7 +1,9 @@
 import logging
-import os
+import base64
+import time
 import objectpath
 import functools
+import requests
 
 from yahoo_fantasy_api import game
 from cachetools import cached, keys
@@ -18,7 +20,7 @@ logging.getLogger("yahoo_oauth").setLevel("INFO")
 
 logger = logging.getLogger("discord.harambot.yahoo_api")
 
-YAHOO_API_TOKEN_URL = "https://api.login.yahoo.com/oauth2/get_token"
+YAHOO_OAUTH_URL = "https://api.login.yahoo.com/oauth2/"
 
 class Yahoo (APIHandler):
     cache = cache
@@ -33,7 +35,7 @@ class Yahoo (APIHandler):
             )
         )
         response = requests.post(
-            url="{}get_token".format(YAHOO_API_URL),
+            url="{}get_token".format(YAHOO_OAUTH_URL),
             data={
                 "code": token,
                 "redirect_uri": "oob",
@@ -53,7 +55,21 @@ class Yahoo (APIHandler):
         details = response.json()
 
         details["token_time"] = time.time()
-        return details
+        guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
+        if guild:
+            Guild.update(
+                yahoo_token=details["access_token"],
+                yahoo_refresh_token=details["refresh_token"],
+                yahoo_token_time=details["token_time"],
+            ).where(Guild.guild_id == str(guild_id)).execute()
+        else:
+            Guild.create(
+                guild_id=str(guild_id),
+                yahoo_token=details["access_token"],
+                yahoo_refresh_token=details["refresh_token"],
+                yahoo_token_time=details["token_time"],
+            )
+        return guild
 
     def handle_oauth(f):
         @functools.wraps(f)

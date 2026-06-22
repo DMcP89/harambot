@@ -91,12 +91,13 @@ class WebServer:
         if not fantasy_handler:
             return web.json_response({"error": "Unsupported provider"}, status=400)
         try:
-            token_data = fantasy_handler.handle_authentication(guild_id=guild_id, code=code)
-            return web.json_response({"message": "Authentication successful", "token_data": token_data})
+            guild = fantasy_handler.handle_authentication(guild_id=guild_id, token=code)
+            if guild:
+                return web.json_response({"message": "Authentication successful"})
         except Exception as e:
             logger.error(f"Error handling authentication callback: {e}")
             return web.json_response({"error": "Authentication failed"}, status=500)
-        return web.Response(text="OAuth callback received")
+        return web.json_response({"error": "Authentication failed"}, status=500)
 
     @web.middleware
     async def auth_middleware(self, request, handler):

@@ -1,13 +1,8 @@
 import discord
 import logging
-import objectpath
 import urllib.parse
-
-from harambot.handlers import get_handler
 from harambot.config import settings
-from harambot.utils import YAHOO_API_URL, YAHOO_AUTH_URI, get_avatar_bytes, clear_guild_cache
-from harambot.ui.modals import ConfigModal
-from harambot.database.models import Guild
+
 
 logger = logging.getLogger("discord.harambot.views")
 logger.setLevel(logging.INFO)

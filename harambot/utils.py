@@ -1,46 +1,11 @@
-import base64
 import requests
-import time
 import logging
 
 from cachetools import keys
 from harambot.config import settings, cache
 from discord import Embed
 
-YAHOO_API_URL = "https://api.login.yahoo.com/oauth2/"
-YAHOO_AUTH_URI = "request_auth?redirect_uri=oob&response_type=code&client_id="
-
 logger = logging.getLogger("discord.harambot.utils")
-
-
-def yahoo_auth(code):
-    encoded_creds = base64.b64encode(
-        ("{0}:{1}".format(settings.yahoo_key, settings.yahoo_secret)).encode(
-            "utf-8"
-        )
-    )
-    response = requests.post(
-        url="{}get_token".format(YAHOO_API_URL),
-        data={
-            "code": code,
-            "redirect_uri": "oob",
-            "grant_type": "authorization_code",
-        },
-        headers={
-            "User-Agent": "HaramBot",
-            "Authorization": "Basic {0}".format(encoded_creds.decode("utf-8")),
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    )
-    if response.status_code != 200:
-        logger.error(
-            "Failed to authenticate with Yahoo API: {}".format(response.json)
-        )
-        return {}
-    details = response.json()
-
-    details["token_time"] = time.time()
-    return details
 
 
 def create_add_embed(transaction):
