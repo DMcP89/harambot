@@ -28,7 +28,7 @@ class Yahoo (APIHandler):
     league_type = None
     current_league = None
 
-    def handle_authentication(self, guild_id: int, token: str):
+    def handle_authentication(self, guild_id: int, token: str) -> bool:
         encoded_creds = base64.b64encode(
             ("{0}:{1}".format(settings.yahoo_key, settings.yahoo_secret)).encode(
                 "utf-8"
@@ -51,7 +51,7 @@ class Yahoo (APIHandler):
             logger.error(
                 "Failed to authenticate with Yahoo API: {}".format(response.json)
             )
-            return {}
+            return False
         details = response.json()
 
         details["token_time"] = time.time()
@@ -69,7 +69,7 @@ class Yahoo (APIHandler):
                 yahoo_refresh_token=details["refresh_token"],
                 yahoo_token_time=details["token_time"],
             )
-        return guild
+        return True
 
     def handle_oauth(f):
         @functools.wraps(f)

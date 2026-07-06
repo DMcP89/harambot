@@ -91,8 +91,7 @@ class WebServer:
         if not fantasy_handler:
             return web.json_response({"error": "Unsupported provider"}, status=400)
         try:
-            guild = fantasy_handler.handle_authentication(guild_id=guild_id, token=code)
-            if guild:
+            if fantasy_handler.handle_authentication(guild_id=guild_id, token=code):
                 return web.json_response({"message": "Authentication successful"})
         except Exception as e:
             logger.error(f"Error handling authentication callback: {e}")

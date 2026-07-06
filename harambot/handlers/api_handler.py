@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class APIHandler(ABC):
 
     @abstractmethod
-    def handle_authentication(self, guild_id: int, token: str) -> Dict[str, Any]:
+    def handle_authentication(self, guild_id: int, token: str) -> bool:
         """Handles authentication for the league."""
         pass
 
@@ -16,6 +16,11 @@ class APIHandler(ABC):
     @abstractmethod
     def get_teams(self, guild_id: int) -> Dict[str, Any]:
         """Returns the teams in the league."""
+        pass
+
+    @abstractmethod
+    def get_leagues(self, guild_id: int) -> List[Dict[str, Any]]:
+        """Returns the leagues for the given guild."""
         pass
 
     @abstractmethod
