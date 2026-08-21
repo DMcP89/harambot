@@ -97,6 +97,17 @@ class WebServer:
             logger.error(f"Error handling authentication callback: {e}")
             return web.json_response({"error": "Authentication failed"}, status=500)
         return web.json_response({"error": "Authentication failed"}, status=500)
+    
+    async def get_leagues_handler(self, request):
+        guild_id = request.match_info.get("guild_id")
+        fantasy_handler = get_handler(guild_id=guild_id)
+        if not fantasy_handler:
+            return web.json_response({"error": "Unsupported provider"}, status=400)
+        leagues = fantasy_handler.get_leagues(guild_id=guild_id)
+        if leagues is None:
+            return web.json_response({"error": "No leagues found"}, status=404)
+        return web.json_response({"leagues": leagues})
+
 
     @web.middleware
     async def auth_middleware(self, request, handler):
@@ -172,6 +183,9 @@ class WebServer:
         )
         app.router.add_post(
             "/api/auth/callback", self.fantasy_provider_auth_callback_handler
+        )
+        app.router.add_get(
+            "/api/leagues/{guild_id}", self.get_leagues_handler
         )
         
 
