@@ -10,7 +10,12 @@
       "ApiKeyAuth": {
         "type": "apiKey",
         "in": "header",
-        "name": "X-API-Key"
+        "name": "X-Api-Key"
+      },
+      "GuildTokenAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Discord OAuth2 token. Required for /api/config/ endpoints alongside X-Api-Key."
       }
     },
     "schemas": {
@@ -28,6 +33,12 @@
           },
           "RIP_image_url": {
             "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "yahoo_authenticated": {
+            "type": "boolean"
           }
         }
       },
@@ -45,10 +56,6 @@
           },
           "RIP_image_url": {
             "type": "string"
-          },
-          "yahoo_token": {
-            "type": "string",
-            "description": "Required when creating a new guild configuration."
           }
         }
       },
@@ -92,6 +99,9 @@
       "security": [
         {
           "ApiKeyAuth": []
+        },
+        {
+          "GuildTokenAuth": []
         }
       ],
       "parameters": [
@@ -102,6 +112,15 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "Discord-Token",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Discord OAuth2 bearer token. The user must be an admin of the guild."
         }
       ],
       "get": {
@@ -130,7 +149,7 @@
         }
       },
       "post": {
-        "summary": "Update or create guild configuration",
+        "summary": "Update guild configuration",
         "requestBody": {
           "required": true,
           "content": {
@@ -143,7 +162,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Configuration updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -152,8 +171,8 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request (e.g., Auth failure)",
+          "403": {
+            "description": "Unauthorized or Forbidden (invalid token or not admin)",
             "content": {
               "application/json": {
                 "schema": {
@@ -163,7 +182,7 @@
             }
           },
           "404": {
-            "description": "Guild not found and no token provided",
+            "description": "Guild not found",
             "content": {
               "application/json": {
                 "schema": {
