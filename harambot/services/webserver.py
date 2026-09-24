@@ -37,14 +37,18 @@ class WebServer:
         guild = Guild.get_or_none(Guild.guild_id == str(guild_id))
         if not guild:
             return web.json_response({"error": "Guild not found"}, status=404)
-        return web.json_response(
-            {
+        response = {
                 "league_id": guild.league_id,
                 "league_type": guild.league_type,
                 "RIP_text": guild.RIP_text,
                 "RIP_image_url": guild.RIP_image_url,
-            }
-        )
+                "provider": guild.provider,
+        }
+        if guild.provider == "yahoo" and guild.yahoo_access_token and guild.yahoo_refresh_token:
+            response["yahoo_authenticated"] = True
+        else:
+            response["yahoo_authenticated"] = False
+        return web.json_response(response)
 
     async def config_post_handler(self, request):
         guild_id = request.match_info.get("guild_id")
@@ -56,6 +60,7 @@ class WebServer:
             "league_type": data.get("league_type", "").lower(),
             "RIP_text": data.get("RIP_text"),
             "RIP_image_url": data.get("RIP_image_url"),
+            "provider": data.get("provider", "").lower(),
         }
 
         if guild:
@@ -163,7 +168,7 @@ class WebServer:
             middlewares=[
                 cors_middleware(
                     origins=("http://192.168.1.78:3001","https://192.168.1.78"),
-                    allow_headers=["X-Api-Key", "Discord-Token", "Content-Type", "Authorization"],
+                    allow_headers=["x-api-key", "discord-token", "Content-Type", "Authorization"],
                     allow_methods=["GET", "POST", "OPTIONS"]
                 ),
                 self.auth_middleware,
