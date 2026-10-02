@@ -1,11 +1,10 @@
-FROM python:3.10.7-slim as python-base
+FROM python:3.12.7-slim as python-base
 ENV PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100
 ENV PATH="/root/.local/bin:$PATH"
 
 RUN apt-get update
-RUN apt-get upgrade -y
 RUN apt-get install -y gcc libc-dev make git libffi-dev python3-dev libxml2-dev libxslt-dev
 RUN apt-get install -y default-libmysqlclient-dev pkg-config
 RUN apt-get install -y libpq-dev
