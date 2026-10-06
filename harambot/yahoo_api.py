@@ -37,15 +37,23 @@ class Yahoo:
                     guild_id,
                 )
                 return None
-            self.oauth = OAuth2(
-                settings.yahoo_key,
-                settings.yahoo_secret,
-                store_file=False,
-                **model_to_dict(guild),
-            )
+
             try:
-                if not self.oauth.token_is_valid():
-                    self.oauth.refresh_access_token()
+                self.oauth = OAuth2(
+                    settings.yahoo_key,
+                    settings.yahoo_secret,
+                    store_file=False,
+                    **model_to_dict(guild),
+                )
+                if self.oauth.token_time > guild.token_time:
+                    logger.info("Refreshing access token for league: {}".format(guild.league_id))
+                    Guild.update({
+                        "access_token": self.oauth.access_token,
+                        "refresh_token": self.oauth.refresh_token,
+                        "token_time": self.oauth.token_time
+                    }).where(
+                        Guild.guild_id == guild.guild_id
+                    ).execute()
             except Exception:
                 logger.exception(
                     "Error while refreshing access token for league: {}".format(
