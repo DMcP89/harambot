@@ -107,7 +107,7 @@ class YahooCog(commands.Cog):
             await interaction.followup.send(self.error_message)
     
     def check_trade_ratification(interaction: discord.Interaction):
-        return yahoo_api.get_settings(guild_id=interaction.guild_id)["trade_ratify_type"] == "none"
+        return yahoo_api.get_settings(guild_id=interaction.guild_id)["trade_ratify_type"] != "none"
 
     @app_commands.command(
         name="trade",
@@ -156,7 +156,7 @@ class YahooCog(commands.Cog):
     @trade.error
     async def trade_check_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.CheckFailure):
-            await interaction.followup.send(
+            await interaction.response.send_message(
                 "Trade command only available for leagues with vote or commissioner ratification"
             )
 
